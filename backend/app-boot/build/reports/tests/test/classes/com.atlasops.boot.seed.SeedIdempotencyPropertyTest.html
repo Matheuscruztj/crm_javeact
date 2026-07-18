@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - SeedIdempotencyPropertyTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>SeedIdempotencyPropertyTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.atlasops.boot.seed.html">com.atlasops.boot.seed</a> &gt; SeedIdempotencyPropertyTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">4</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.107s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">seedExecution shouldNeverCreateDuplicates</td>
+<td class="success">0.051s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">seedState shouldBeIdentical forAnyNumberOfExecutions</td>
+<td class="success">0.036s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">seedState shouldContainExactTenantNames</td>
+<td class="success">0.007s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">seedState shouldSatisfyMinimumDataRequirements</td>
+<td class="success">0.013s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>timestamp = 2026-07-18T04:52:37.577256600, SeedIdempotencyPropertyTest:seedState shouldBeIdentical forAnyNumberOfExecutions = 
+                              |-----------------------jqwik-----------------------
+tries = 20                    | # of calls to property
+checks = 20                   | # of not rejected calls
+generation = EXHAUSTIVE       | parameters are exhaustively generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 0          | # of all combined edge cases
+edge-cases#tried = 0          | # of edge cases tried in current run
+seed = -273614210933098467    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:52:37.625081100, SeedIdempotencyPropertyTest:seedExecution shouldNeverCreateDuplicates = 
+                              |-----------------------jqwik-----------------------
+tries = 14                    | # of calls to property
+checks = 14                   | # of not rejected calls
+generation = EXHAUSTIVE       | parameters are exhaustively generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 0          | # of all combined edge cases
+edge-cases#tried = 0          | # of edge cases tried in current run
+seed = -232243930674146657    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:52:37.640425400, SeedIdempotencyPropertyTest:seedState shouldSatisfyMinimumDataRequirements = 
+                              |-----------------------jqwik-----------------------
+tries = 10                    | # of calls to property
+checks = 10                   | # of not rejected calls
+generation = EXHAUSTIVE       | parameters are exhaustively generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 0          | # of all combined edge cases
+edge-cases#tried = 0          | # of edge cases tried in current run
+seed = -7785969194289403690   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:52:37.648585, SeedIdempotencyPropertyTest:seedState shouldContainExactTenantNames = 
+                              |-----------------------jqwik-----------------------
+tries = 10                    | # of calls to property
+checks = 10                   | # of not rejected calls
+generation = EXHAUSTIVE       | parameters are exhaustively generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 0          | # of all combined edge cases
+edge-cases#tried = 0          | # of edge cases tried in current run
+seed = -5465032159006723807   | random seed to reproduce generated values
+
+
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.7</a> at 18 de jul. de 2026 04:52:38</p>
+</div>
+</div>
+</body>
+</html>

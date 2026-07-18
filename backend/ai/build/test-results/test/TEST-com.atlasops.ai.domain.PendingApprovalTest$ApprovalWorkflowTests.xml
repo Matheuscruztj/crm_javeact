@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Approval workflow" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:50" hostname="AIRW64S3XT3" time="0.116">
+  <properties/>
+  <testcase name="should reject rejecting with null decidedAt" classname="com.atlasops.ai.domain.PendingApprovalTest$ApprovalWorkflowTests" time="0.018"/>
+  <testcase name="should approve pending approval" classname="com.atlasops.ai.domain.PendingApprovalTest$ApprovalWorkflowTests" time="0.055"/>
+  <testcase name="should reject approving with blank userId" classname="com.atlasops.ai.domain.PendingApprovalTest$ApprovalWorkflowTests" time="0.01"/>
+  <testcase name="should reject rejecting an already rejected record" classname="com.atlasops.ai.domain.PendingApprovalTest$ApprovalWorkflowTests" time="0.007"/>
+  <testcase name="should reject pending approval" classname="com.atlasops.ai.domain.PendingApprovalTest$ApprovalWorkflowTests" time="0.003"/>
+  <testcase name="should reject approving an already approved record" classname="com.atlasops.ai.domain.PendingApprovalTest$ApprovalWorkflowTests" time="0.004"/>
+  <testcase name="should reject approving with null userId" classname="com.atlasops.ai.domain.PendingApprovalTest$ApprovalWorkflowTests" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

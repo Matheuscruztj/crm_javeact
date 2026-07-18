@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="renderAll" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:26" hostname="AIRW64S3XT3" time="0.01">
+  <properties/>
+  <testcase name="should return empty string for empty list" classname="com.atlasops.shared.sdd.TaskMarkdownRendererTest$RenderAll" time="0.001"/>
+  <testcase name="should return empty string for null list" classname="com.atlasops.shared.sdd.TaskMarkdownRendererTest$RenderAll" time="0.003"/>
+  <testcase name="should render multiple tasks" classname="com.atlasops.shared.sdd.TaskMarkdownRendererTest$RenderAll" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

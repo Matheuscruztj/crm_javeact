@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.ai.application.RagQueryResultBoundsPropertyTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:52" hostname="AIRW64S3XT3" time="4.65">
+  <properties/>
+  <testcase name="vectorSearchAdapter shouldOnlyReturnChunksWithScoreAboveThreshold" classname="com.atlasops.ai.application.RagQueryResultBoundsPropertyTest" time="2.955"/>
+  <testcase name="ragQueryResult shouldNeverContainMoreThan5ChunkIds" classname="com.atlasops.ai.application.RagQueryResultBoundsPropertyTest" time="0.505"/>
+  <testcase name="vectorSearchAdapter shouldCapResultsAtFive" classname="com.atlasops.ai.application.RagQueryResultBoundsPropertyTest" time="0.37"/>
+  <testcase name="ragQueryResult chunkIds shouldBeImmutable" classname="com.atlasops.ai.application.RagQueryResultBoundsPropertyTest" time="0.145"/>
+  <testcase name="vectorSearchAdapter shouldEnforceMinScoreThreshold" classname="com.atlasops.ai.application.RagQueryResultBoundsPropertyTest" time="0.429"/>
+  <testcase name="ragQueryResult shouldIncludeIdentifiersOfAllChunksUsed" classname="com.atlasops.ai.application.RagQueryResultBoundsPropertyTest" time="0.23"/>
+  <system-out><![CDATA[timestamp = 2026-07-18T04:51:55.841667800, RagQueryResultBoundsPropertyTest:vectorSearchAdapter shouldOnlyReturnChunksWithScoreAboveThreshold = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 8          | # of all combined edge cases
+edge-cases#tried = 6          | # of edge cases tried in current run
+seed = -7250688594565887963   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:56.357693800, RagQueryResultBoundsPropertyTest:ragQueryResult shouldNeverContainMoreThan5ChunkIds = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 5          | # of all combined edge cases
+edge-cases#tried = 4          | # of edge cases tried in current run
+seed = 3204607797280838992    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:56.729201800, RagQueryResultBoundsPropertyTest:vectorSearchAdapter shouldCapResultsAtFive = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 32         | # of all combined edge cases
+edge-cases#tried = 21         | # of edge cases tried in current run
+seed = -6785184496287238974   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:56.875885700, RagQueryResultBoundsPropertyTest:ragQueryResult chunkIds shouldBeImmutable = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 5          | # of all combined edge cases
+edge-cases#tried = 3          | # of edge cases tried in current run
+seed = 2823873669838406744    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:57.304924300, RagQueryResultBoundsPropertyTest:vectorSearchAdapter shouldEnforceMinScoreThreshold = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 32         | # of all combined edge cases
+edge-cases#tried = 17         | # of edge cases tried in current run
+seed = -2881118018584004305   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:57.544821200, RagQueryResultBoundsPropertyTest:ragQueryResult shouldIncludeIdentifiersOfAllChunksUsed = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 6          | # of all combined edge cases
+edge-cases#tried = 3          | # of edge cases tried in current run
+seed = 4027244515753319358    | random seed to reproduce generated values
+
+
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

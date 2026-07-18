@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="10.14.2">
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\AggregateRoot.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\DomainEvent.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\Entity.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\ErrorResponse.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\package-info.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\ports\Clock.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\ports\EventPublisher.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\ports\IdGenerator.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\ports\package-info.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\types\CorrelationId.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\types\Email.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\types\package-info.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\types\TenantId.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\types\UserId.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\domain\ValueObject.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\ActionDescriptor.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\ActionType.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\AgentRole.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\AgentTask.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\AgentTaskStatus.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\AgentTaskValidator.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\AuditEntry.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\CrossSandboxIsolation.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\EnforcementResult.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\package-info.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\ProhibitedActionEnforcer.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\SandboxManager.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\SandboxNamingConvention.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\SandboxResources.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\harness\TaskContext.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\package-info.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\sdd\InvalidTaskStatusTransitionException.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\sdd\package-info.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\sdd\SpecConfig.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\sdd\SpecValidator.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\sdd\TaskItem.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\sdd\TaskMarkdownParser.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\sdd\TaskMarkdownRenderer.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\sdd\TaskStatus.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\types\package-info.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\validation\FeatureNameValidator.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\shared-kernel\src\main\java\com\atlasops\shared\validation\package-info.java">
+</file>
+</checkstyle>

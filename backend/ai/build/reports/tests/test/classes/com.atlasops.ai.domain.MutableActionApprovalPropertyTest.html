@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - MutableActionApprovalPropertyTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>MutableActionApprovalPropertyTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.atlasops.ai.domain.html">com.atlasops.ai.domain</a> &gt; MutableActionApprovalPropertyTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">4</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.238s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">allActionTypes shouldBeMutable</td>
+<td class="success">0.037s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">createFromAnalysis shouldAlwaysContainAllRequiredFields</td>
+<td class="success">0.066s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">createFromAnalysis shouldAlwaysSetStatusToPendingApproval</td>
+<td class="success">0.085s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">createFromAnalysis shouldHaveNullDecisionFieldsUntilApproval</td>
+<td class="success">0.050s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>timestamp = 2026-07-18T04:51:58.709400900, MutableActionApprovalPropertyTest:allActionTypes shouldBeMutable = 
+                              |-----------------------jqwik-----------------------
+tries = 3                     | # of calls to property
+checks = 3                    | # of not rejected calls
+generation = EXHAUSTIVE       | parameters are exhaustively generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 0          | # of all combined edge cases
+edge-cases#tried = 0          | # of edge cases tried in current run
+seed = -4681648665486581227   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:58.803970900, MutableActionApprovalPropertyTest:createFromAnalysis shouldAlwaysSetStatusToPendingApproval = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 96         | # of all combined edge cases
+edge-cases#tried = 16         | # of edge cases tried in current run
+seed = -1389621669381756244   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:58.856871700, MutableActionApprovalPropertyTest:createFromAnalysis shouldHaveNullDecisionFieldsUntilApproval = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 96         | # of all combined edge cases
+edge-cases#tried = 13         | # of edge cases tried in current run
+seed = -1629652465580399722   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:58.923069500, MutableActionApprovalPropertyTest:createFromAnalysis shouldAlwaysContainAllRequiredFields = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 96         | # of all combined edge cases
+edge-cases#tried = 14         | # of edge cases tried in current run
+seed = -5526735105445351181   | random seed to reproduce generated values
+
+
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.7</a> at 18 de jul. de 2026 04:52:04</p>
+</div>
+</div>
+</body>
+</html>

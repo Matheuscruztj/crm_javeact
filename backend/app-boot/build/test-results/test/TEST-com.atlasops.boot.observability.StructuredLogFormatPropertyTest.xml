@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.boot.observability.StructuredLogFormatPropertyTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:52:34" hostname="AIRW64S3XT3" time="2.656">
+  <properties/>
+  <testcase name="anyLogEvent shouldContainAllMandatoryFields" classname="com.atlasops.boot.observability.StructuredLogFormatPropertyTest" time="0.957"/>
+  <testcase name="timestamp shouldAlwaysBeIso8601Utc" classname="com.atlasops.boot.observability.StructuredLogFormatPropertyTest" time="0.727"/>
+  <testcase name="levelField shouldMatchEmittedLogLevel" classname="com.atlasops.boot.observability.StructuredLogFormatPropertyTest" time="0.591"/>
+  <testcase name="allMandatoryFields shouldBeNonNull" classname="com.atlasops.boot.observability.StructuredLogFormatPropertyTest" time="0.377"/>
+  <system-out><![CDATA[timestamp = 2026-07-18T04:52:35.838491800, StructuredLogFormatPropertyTest:anyLogEvent shouldContainAllMandatoryFields = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 112        | # of all combined edge cases
+edge-cases#tried = 19         | # of edge cases tried in current run
+seed = -7013205973331387608   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:52:36.568878800, StructuredLogFormatPropertyTest:timestamp shouldAlwaysBeIso8601Utc = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 112        | # of all combined edge cases
+edge-cases#tried = 15         | # of edge cases tried in current run
+seed = -1786661845870256205   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:52:37.160742100, StructuredLogFormatPropertyTest:levelField shouldMatchEmittedLogLevel = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 112        | # of all combined edge cases
+edge-cases#tried = 21         | # of edge cases tried in current run
+seed = 4220530469754307413    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:52:37.539755900, StructuredLogFormatPropertyTest:allMandatoryFields shouldBeNonNull = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 112        | # of all combined edge cases
+edge-cases#tried = 15         | # of edge cases tried in current run
+seed = -8636291800863098      | random seed to reproduce generated values
+
+
+]]></system-out>
+  <system-err><![CDATA[jul. 18, 2026 4:52:34 AM net.jqwik.engine.properties.RandomizedShrinkablesGenerator logEdgeCasesOutnumberTriesIfApplicable
+INFORMAÇÕES: Edge case generation exceeds number of tries. Stopped after 112 generated cases.
+jul. 18, 2026 4:52:35 AM net.jqwik.engine.properties.RandomizedShrinkablesGenerator logEdgeCasesOutnumberTriesIfApplicable
+INFORMAÇÕES: Edge case generation exceeds number of tries. Stopped after 112 generated cases.
+jul. 18, 2026 4:52:36 AM net.jqwik.engine.properties.RandomizedShrinkablesGenerator logEdgeCasesOutnumberTriesIfApplicable
+INFORMAÇÕES: Edge case generation exceeds number of tries. Stopped after 112 generated cases.
+jul. 18, 2026 4:52:37 AM net.jqwik.engine.properties.RandomizedShrinkablesGenerator logEdgeCasesOutnumberTriesIfApplicable
+INFORMAÇÕES: Edge case generation exceeds number of tries. Stopped after 112 generated cases.
+]]></system-err>
+</testsuite>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.boot.filter.CorrelationIdFilterTest" tests="10" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:52:26" hostname="AIRW64S3XT3" time="0.204">
+  <properties/>
+  <testcase name="should_preserveExistingTraceId_when_alreadySetInMdc()" classname="com.atlasops.boot.filter.CorrelationIdFilterTest" time="0.141"/>
+  <testcase name="should_clearMdc_afterRequestCompletes()" classname="com.atlasops.boot.filter.CorrelationIdFilterTest" time="0.004"/>
+  <testcase name="should_reuseCorrelationId_when_headerPresent()" classname="com.atlasops.boot.filter.CorrelationIdFilterTest" time="0.005"/>
+  <testcase name="should_generateUuidV4_when_headerAbsent()" classname="com.atlasops.boot.filter.CorrelationIdFilterTest" time="0.011"/>
+  <testcase name="should_clearTraceId_afterRequestCompletes()" classname="com.atlasops.boot.filter.CorrelationIdFilterTest" time="0.004"/>
+  <testcase name="should_alwaysSetResponseHeader()" classname="com.atlasops.boot.filter.CorrelationIdFilterTest" time="0.004"/>
+  <testcase name="should_trimCorrelationId_when_headerHasWhitespace()" classname="com.atlasops.boot.filter.CorrelationIdFilterTest" time="0.005"/>
+  <testcase name="should_clearMdc_evenWhenExceptionOccurs()" classname="com.atlasops.boot.filter.CorrelationIdFilterTest" time="0.004"/>
+  <testcase name="should_setTraceIdInMdc_when_noExternalTracing()" classname="com.atlasops.boot.filter.CorrelationIdFilterTest" time="0.002"/>
+  <testcase name="should_generateUuidV4_when_headerIsBlank()" classname="com.atlasops.boot.filter.CorrelationIdFilterTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

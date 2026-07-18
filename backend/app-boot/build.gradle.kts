@@ -1,0 +1,58 @@
+plugins {
+    java
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
+}
+
+description = "App Boot module - Spring Boot application entry point (aggregator)"
+
+dependencies {
+    // All domain modules
+    implementation(project(":backend:shared-kernel"))
+    implementation(project(":backend:auth"))
+    implementation(project(":backend:tenants"))
+    implementation(project(":backend:users"))
+    implementation(project(":backend:customers"))
+    implementation(project(":backend:documents"))
+    implementation(project(":backend:requests"))
+    implementation(project(":backend:pipeline"))
+    implementation(project(":backend:tasks"))
+    implementation(project(":backend:workflows"))
+    implementation(project(":backend:ai"))
+    implementation(project(":backend:analytics"))
+    implementation(project(":backend:audit"))
+
+    // Spring Boot starters
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    // Database
+    runtimeOnly("org.postgresql:postgresql:${property("postgresqlDriverVersion")}")
+    runtimeOnly("com.h2database:h2")
+    implementation("org.flywaydb:flyway-core:${property("flywayVersion")}")
+    implementation("org.flywaydb:flyway-database-postgresql:${property("flywayVersion")}")
+
+    // AWS S3 SDK (MinIO)
+    implementation(platform("software.amazon.awssdk:bom:${property("awsSdkVersion")}"))
+    implementation("software.amazon.awssdk:s3")
+
+    // Observability
+    implementation("io.micrometer:micrometer-registry-prometheus:${property("micrometerVersion")}")
+
+    // Logging - structured JSON
+    implementation("net.logstash.logback:logstash-logback-encoder:7.4")
+
+    // Testing
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.testcontainers:testcontainers:${property("testcontainersVersion")}")
+    testImplementation("org.testcontainers:postgresql:${property("testcontainersVersion")}")
+    testImplementation("org.testcontainers:junit-jupiter:${property("testcontainersVersion")}")
+
+    // Architecture testing
+    testImplementation("com.tngtech.archunit:archunit-junit5:${property("archunitVersion")}")
+}

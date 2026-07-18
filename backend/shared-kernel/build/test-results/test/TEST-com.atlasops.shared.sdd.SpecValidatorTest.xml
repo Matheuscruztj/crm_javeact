@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.shared.sdd.SpecValidatorTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:22" hostname="AIRW64S3XT3" time="3.811">
+  <properties/>
+  <testcase name="should_beComplete_when_allFilesPresent()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.295"/>
+  <testcase name="should_reportAllMissingFiles_when_directoryEmpty()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.023"/>
+  <testcase name="should_reportMissingFiles_when_configKiroAbsent()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.211"/>
+  <testcase name="should_beInvalid_when_directoryDoesNotExistForCompleteness()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.015"/>
+  <testcase name="should_haveExactlyFourRequiredFiles()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.02"/>
+  <testcase name="should_reportMissingFiles_when_designMdAbsent()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.172"/>
+  <testcase name="should_reportMissingFiles_when_tasksMdAbsent()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.176"/>
+  <testcase name="should_beInvalid_when_featureNameNotKebabCase()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.291"/>
+  <testcase name="should_beInvalid_when_directoryDoesNotExist()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.028"/>
+  <testcase name="should_beComplete_when_allFilesPresentIgnoringName()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.588"/>
+  <testcase name="should_reportMissing_when_filesAbsentInCompletenessCheck()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.443"/>
+  <testcase name="should_beInvalid_when_featureNameTooLong()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.644"/>
+  <testcase name="should_throwNPE_when_specDirIsNull()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.032"/>
+  <testcase name="should_reportBothErrors_when_badNameAndMissingFiles()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.246"/>
+  <testcase name="should_reportMissingFiles_when_requirementsMdAbsent()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.236"/>
+  <testcase name="should_reportMultipleMissing_when_twoFilesAbsent()" classname="com.atlasops.shared.sdd.SpecValidatorTest" time="0.318"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

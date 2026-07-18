@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.shared.domain.AggregateRootTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:16" hostname="AIRW64S3XT3" time="2.487">
+  <properties/>
+  <testcase name="should_collectDomainEvents_when_registered()" classname="com.atlasops.shared.domain.AggregateRootTest" time="2.085"/>
+  <testcase name="should_throwException_when_nullEventRegistered()" classname="com.atlasops.shared.domain.AggregateRootTest" time="0.016"/>
+  <testcase name="should_returnUnmodifiableList_when_getDomainEvents()" classname="com.atlasops.shared.domain.AggregateRootTest" time="0.047"/>
+  <testcase name="should_clearDomainEvents_when_clearCalled()" classname="com.atlasops.shared.domain.AggregateRootTest" time="0.009"/>
+  <testcase name="should_haveNoDomainEvents_when_newlyCreated()" classname="com.atlasops.shared.domain.AggregateRootTest" time="0.257"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

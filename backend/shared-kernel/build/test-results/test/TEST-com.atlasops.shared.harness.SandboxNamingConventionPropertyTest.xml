@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.shared.harness.SandboxNamingConventionPropertyTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:45" hostname="AIRW64S3XT3" time="1.101">
+  <properties/>
+  <testcase name="databaseAndComposeProject shouldAlwaysBeEqual" classname="com.atlasops.shared.harness.SandboxNamingConventionPropertyTest" time="0.047"/>
+  <testcase name="runId shouldFollowPattern issueAgentRole" classname="com.atlasops.shared.harness.SandboxNamingConventionPropertyTest" time="0.09"/>
+  <testcase name="bucketPrefix shouldFollowPattern issueSlash" classname="com.atlasops.shared.harness.SandboxNamingConventionPropertyTest" time="0.19"/>
+  <testcase name="allRoles shouldProduceRunIdContainingRoleCode" classname="com.atlasops.shared.harness.SandboxNamingConventionPropertyTest" time="0.044"/>
+  <testcase name="createResources shouldProduceConsistentNaming" classname="com.atlasops.shared.harness.SandboxNamingConventionPropertyTest" time="0.313"/>
+  <testcase name="composeProject shouldFollowPattern atlasopsIssue" classname="com.atlasops.shared.harness.SandboxNamingConventionPropertyTest" time="0.182"/>
+  <testcase name="databaseName shouldFollowPattern atlasopsIssue" classname="com.atlasops.shared.harness.SandboxNamingConventionPropertyTest" time="0.129"/>
+  <system-out><![CDATA[timestamp = 2026-07-18T04:51:45.970620900, SandboxNamingConventionPropertyTest:databaseAndComposeProject shouldAlwaysBeEqual = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 8          | # of all combined edge cases
+edge-cases#tried = 8          | # of edge cases tried in current run
+seed = -5728180816937144731   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:46.066246500, SandboxNamingConventionPropertyTest:runId shouldFollowPattern issueAgentRole = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 16         | # of all combined edge cases
+edge-cases#tried = 8          | # of edge cases tried in current run
+seed = -6116957826876555673   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:46.211240800, SandboxNamingConventionPropertyTest:bucketPrefix shouldFollowPattern issueSlash = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 8          | # of all combined edge cases
+edge-cases#tried = 4          | # of edge cases tried in current run
+seed = -5962673628034263502   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:46.398811800, SandboxNamingConventionPropertyTest:allRoles shouldProduceRunIdContainingRoleCode = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 16         | # of all combined edge cases
+edge-cases#tried = 16         | # of edge cases tried in current run
+seed = 4494959470254640319    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:46.694901500, SandboxNamingConventionPropertyTest:createResources shouldProduceConsistentNaming = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 64         | # of all combined edge cases
+edge-cases#tried = 15         | # of edge cases tried in current run
+seed = -3246167690166781485   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:46.882465100, SandboxNamingConventionPropertyTest:composeProject shouldFollowPattern atlasopsIssue = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 8          | # of all combined edge cases
+edge-cases#tried = 8          | # of edge cases tried in current run
+seed = -9112924219645973285   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:47.028673200, SandboxNamingConventionPropertyTest:databaseName shouldFollowPattern atlasopsIssue = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 8          | # of all combined edge cases
+edge-cases#tried = 7          | # of edge cases tried in current run
+seed = 4036871116188148211    | random seed to reproduce generated values
+
+
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

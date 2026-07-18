@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.boot.observability.HealthMetricsTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:52:31" hostname="AIRW64S3XT3" time="0.511">
+  <properties/>
+  <testcase name="should_updateGaugeValues_when_statusChanges()" classname="com.atlasops.boot.observability.HealthMetricsTest" time="0.41"/>
+  <testcase name="should_reportDown_when_redisIsUnhealthy()" classname="com.atlasops.boot.observability.HealthMetricsTest" time="0.006"/>
+  <testcase name="should_registerGauges_when_constructed()" classname="com.atlasops.boot.observability.HealthMetricsTest" time="0.017"/>
+  <testcase name="should_reflectGaugeInMeterRegistry()" classname="com.atlasops.boot.observability.HealthMetricsTest" time="0.02"/>
+  <testcase name="should_reportAllUp_when_allDependenciesAreHealthy()" classname="com.atlasops.boot.observability.HealthMetricsTest" time="0.008"/>
+  <testcase name="should_reportDown_when_contributorNotFound()" classname="com.atlasops.boot.observability.HealthMetricsTest" time="0.01"/>
+  <testcase name="should_reportDown_when_minioIsUnhealthy()" classname="com.atlasops.boot.observability.HealthMetricsTest" time="0.009"/>
+  <testcase name="should_reportDown_when_postgresIsUnhealthy()" classname="com.atlasops.boot.observability.HealthMetricsTest" time="0.007"/>
+  <testcase name="should_returnMinusOne_when_unknownDependencyQueried()" classname="com.atlasops.boot.observability.HealthMetricsTest" time="0.006"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

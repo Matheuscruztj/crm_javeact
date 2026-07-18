@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.shared.domain.types.CorrelationIdPropertyTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:29" hostname="AIRW64S3XT3" time="3.207">
+  <properties/>
+  <testcase name="generatedIds shouldBeUniqueInBatch" classname="com.atlasops.shared.domain.types.CorrelationIdPropertyTest" time="3.09"/>
+  <testcase name="generatedId shouldAlwaysBeValidUuidV4Format" classname="com.atlasops.shared.domain.types.CorrelationIdPropertyTest" time="0.079"/>
+  <testcase name="generatedId shouldAlwaysHaveCorrectVersionAndVariantBits" classname="com.atlasops.shared.domain.types.CorrelationIdPropertyTest" time="0.028"/>
+  <system-out><![CDATA[timestamp = 2026-07-18T04:51:32.508100600, CorrelationIdPropertyTest:generatedIds shouldBeUniqueInBatch = 
+                              |-----------------------jqwik-----------------------
+tries = 41                    | # of calls to property
+checks = 41                   | # of not rejected calls
+generation = EXHAUSTIVE       | parameters are exhaustively generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 0          | # of all combined edge cases
+edge-cases#tried = 0          | # of edge cases tried in current run
+seed = 189918767897989755     | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:32.738720400, CorrelationIdPropertyTest:generatedId shouldAlwaysBeValidUuidV4Format = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 0          | # of all combined edge cases
+edge-cases#tried = 0          | # of edge cases tried in current run
+seed = 3861413033023253348    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:32.770789300, CorrelationIdPropertyTest:generatedId shouldAlwaysHaveCorrectVersionAndVariantBits = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 0          | # of all combined edge cases
+edge-cases#tried = 0          | # of edge cases tried in current run
+seed = -7783926216513550585   | random seed to reproduce generated values
+
+
+]]></system-out>
+  <system-err><![CDATA[jul. 18, 2026 4:51:32 AM net.jqwik.engine.execution.CheckedProperty maybeWarnOnMultipleTriesWithoutForallParameters
+ADVERTÊNCIA: Running Property [CorrelationIdPropertyTest:generatedId shouldAlwaysBeValidUuidV4Format] in container [com.atlasops.shared.domain.types.CorrelationIdPropertyTest] without any @ForAll parameters for 100 tries.
+    Maybe you want to change it into an @Example?
+jul. 18, 2026 4:51:32 AM net.jqwik.engine.execution.CheckedProperty maybeWarnOnMultipleTriesWithoutForallParameters
+ADVERTÊNCIA: Running Property [CorrelationIdPropertyTest:generatedId shouldAlwaysHaveCorrectVersionAndVariantBits] in container [com.atlasops.shared.domain.types.CorrelationIdPropertyTest] without any @ForAll parameters for 100 tries.
+    Maybe you want to change it into an @Example?
+]]></system-err>
+</testsuite>

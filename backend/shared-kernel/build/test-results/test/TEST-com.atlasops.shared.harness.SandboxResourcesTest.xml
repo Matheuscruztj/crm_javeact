@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.shared.harness.SandboxResourcesTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:21" hostname="AIRW64S3XT3" time="0.164">
+  <properties/>
+  <testcase name="should_haveTtlOf24Hours()" classname="com.atlasops.shared.harness.SandboxResourcesTest" time="0.011"/>
+  <testcase name="should_beExpired_when_afterExpiryTime()" classname="com.atlasops.shared.harness.SandboxResourcesTest" time="0.003"/>
+  <testcase name="should_haveCleanupDelayOf5Minutes()" classname="com.atlasops.shared.harness.SandboxResourcesTest" time="0.002"/>
+  <testcase name="should_beExpired_when_exactlyAtExpiryTime()" classname="com.atlasops.shared.harness.SandboxResourcesTest" time="0.003"/>
+  <testcase name="should_calculateExpiresAt_when_withTtlUsed()" classname="com.atlasops.shared.harness.SandboxResourcesTest" time="0.003"/>
+  <testcase name="should_preserveAllFields_when_constructed()" classname="com.atlasops.shared.harness.SandboxResourcesTest" time="0.004"/>
+  <testcase name="should_notBeExpired_when_beforeExpiryTime()" classname="com.atlasops.shared.harness.SandboxResourcesTest" time="0.005"/>
+  <testcase name="should_notBeExpired_when_justBeforeExpiryTime()" classname="com.atlasops.shared.harness.SandboxResourcesTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

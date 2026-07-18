@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="AnalysisId" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:51" hostname="AIRW64S3XT3" time="0.052">
+  <properties/>
+  <testcase name="should have meaningful toString" classname="com.atlasops.ai.domain.ValueObjectsTest$AnalysisIdTest" time="0.008"/>
+  <testcase name="should create valid AnalysisId" classname="com.atlasops.ai.domain.ValueObjectsTest$AnalysisIdTest" time="0.002"/>
+  <testcase name="should be equal when same value" classname="com.atlasops.ai.domain.ValueObjectsTest$AnalysisIdTest" time="0.003"/>
+  <testcase name="should reject null value" classname="com.atlasops.ai.domain.ValueObjectsTest$AnalysisIdTest" time="0.004"/>
+  <testcase name="should not be equal when different value" classname="com.atlasops.ai.domain.ValueObjectsTest$AnalysisIdTest" time="0.003"/>
+  <testcase name="should reject blank value" classname="com.atlasops.ai.domain.ValueObjectsTest$AnalysisIdTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="10.14.2">
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\application\RagQueryResultBoundsPropertyTest.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\domain\AIAnalysisRecordCompletenessPropertyTest.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\domain\AIAnalysisRecordTest.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\domain\AnalysisRequestTest.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\domain\AnalysisResultTest.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\domain\IngestionResultTest.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\domain\MutableActionApprovalPropertyTest.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\domain\PendingApprovalTest.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\domain\PromptVersionSelectionPropertyTest.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\domain\RelevantChunkTest.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\domain\ValueObjectsTest.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\infrastructure\DocumentChunkerPropertyTest.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\infrastructure\DocumentChunkerTest.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\ai\src\test\java\com\atlasops\ai\infrastructure\DocumentIngestionAdapterTest.java">
+</file>
+</checkstyle>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="10.14.2">
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\customers\src\main\java\com\atlasops\customers\application\package-info.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\customers\src\main\java\com\atlasops\customers\domain\package-info.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\customers\src\main\java\com\atlasops\customers\domain\ports\package-info.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\customers\src\main\java\com\atlasops\customers\infrastructure\package-info.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\customers\src\main\java\com\atlasops\customers\package-info.java">
+</file>
+<file name="C:\Users\matheus.bernardo\Downloads\crm_javeact\backend\customers\src\main\java\com\atlasops\customers\presentation\package-info.java">
+</file>
+</checkstyle>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.ai.infrastructure.DocumentChunkerPropertyTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:52:00" hostname="AIRW64S3XT3" time="2.131">
+  <properties/>
+  <testcase name="consecutiveChunks shouldOverlapByExactly200Tokens" classname="com.atlasops.ai.infrastructure.DocumentChunkerPropertyTest" time="1.636"/>
+  <testcase name="everyChunk shouldBeAssociatedWithSourceDocumentId" classname="com.atlasops.ai.infrastructure.DocumentChunkerPropertyTest" time="0.168"/>
+  <testcase name="eachChunk shouldHaveAtMost1000Tokens" classname="com.atlasops.ai.infrastructure.DocumentChunkerPropertyTest" time="0.181"/>
+  <testcase name="nonEmptyInput shouldAlwaysProduceAtLeastOneChunk" classname="com.atlasops.ai.infrastructure.DocumentChunkerPropertyTest" time="0.144"/>
+  <system-out><![CDATA[timestamp = 2026-07-18T04:52:02.338793, DocumentChunkerPropertyTest:consecutiveChunks shouldOverlapByExactly200Tokens = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 24         | # of all combined edge cases
+edge-cases#tried = 15         | # of edge cases tried in current run
+seed = -668760350951819921    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:52:02.508327200, DocumentChunkerPropertyTest:everyChunk shouldBeAssociatedWithSourceDocumentId = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 24         | # of all combined edge cases
+edge-cases#tried = 17         | # of edge cases tried in current run
+seed = 3804688886305607566    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:52:02.690417500, DocumentChunkerPropertyTest:eachChunk shouldHaveAtMost1000Tokens = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 24         | # of all combined edge cases
+edge-cases#tried = 23         | # of edge cases tried in current run
+seed = -4431393801147101545   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:52:02.835074800, DocumentChunkerPropertyTest:nonEmptyInput shouldAlwaysProduceAtLeastOneChunk = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 24         | # of all combined edge cases
+edge-cases#tried = 10         | # of edge cases tried in current run
+seed = 5855366997099028835    | random seed to reproduce generated values
+
+
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

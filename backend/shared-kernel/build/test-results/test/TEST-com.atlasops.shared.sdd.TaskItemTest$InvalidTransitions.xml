@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Invalid transitions" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:26" hostname="AIRW64S3XT3" time="0.045">
+  <properties/>
+  <testcase name="should reject BLOCKED → DONE" classname="com.atlasops.shared.sdd.TaskItemTest$InvalidTransitions" time="0.008"/>
+  <testcase name="should reject DONE → TODO" classname="com.atlasops.shared.sdd.TaskItemTest$InvalidTransitions" time="0.009"/>
+  <testcase name="should reject IN_PROGRESS → TODO" classname="com.atlasops.shared.sdd.TaskItemTest$InvalidTransitions" time="0.003"/>
+  <testcase name="should provide from and to statuses in exception" classname="com.atlasops.shared.sdd.TaskItemTest$InvalidTransitions" time="0.006"/>
+  <testcase name="should reject TODO → BLOCKED" classname="com.atlasops.shared.sdd.TaskItemTest$InvalidTransitions" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

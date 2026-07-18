@@ -1,0 +1,22 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+  flyway:
+    baseline-on-migrate: true
+
+logging:
+  level:
+    root: INFO
+    com.atlasops: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+management:
+  endpoint:
+    health:
+      show-details: always

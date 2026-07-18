@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="AnalysisRequest domain record" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:49" hostname="AIRW64S3XT3" time="0.09">
+  <properties/>
+  <testcase name="should reject blank promptVersion" classname="com.atlasops.ai.domain.AnalysisRequestTest" time="0.015"/>
+  <testcase name="should reject blank tenantId" classname="com.atlasops.ai.domain.AnalysisRequestTest" time="0.002"/>
+  <testcase name="should reject null promptVersion" classname="com.atlasops.ai.domain.AnalysisRequestTest" time="0.003"/>
+  <testcase name="should reject null model" classname="com.atlasops.ai.domain.AnalysisRequestTest" time="0.015"/>
+  <testcase name="should reject blank inputText" classname="com.atlasops.ai.domain.AnalysisRequestTest" time="0.005"/>
+  <testcase name="should reject blank model" classname="com.atlasops.ai.domain.AnalysisRequestTest" time="0.004"/>
+  <testcase name="should reject null inputText" classname="com.atlasops.ai.domain.AnalysisRequestTest" time="0.005"/>
+  <testcase name="should reject null tenantId" classname="com.atlasops.ai.domain.AnalysisRequestTest" time="0.007"/>
+  <testcase name="should create valid AnalysisRequest with all fields" classname="com.atlasops.ai.domain.AnalysisRequestTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

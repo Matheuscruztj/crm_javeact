@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.shared.sdd.TaskStatusMarkdownPropertyTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:57" hostname="AIRW64S3XT3" time="0.616">
+  <properties/>
+  <testcase name="renderThenParse shouldPreserveStatus" classname="com.atlasops.shared.sdd.TaskStatusMarkdownPropertyTest" time="0.121"/>
+  <testcase name="validTransition shouldRenderCorrectMarkdownForNewStatus" classname="com.atlasops.shared.sdd.TaskStatusMarkdownPropertyTest" time="0.127"/>
+  <testcase name="blockedMarker shouldAlwaysParseAsBlocked" classname="com.atlasops.shared.sdd.TaskStatusMarkdownPropertyTest" time="0.094"/>
+  <testcase name="todoCheckbox shouldAlwaysParseAsTodo" classname="com.atlasops.shared.sdd.TaskStatusMarkdownPropertyTest" time="0.07"/>
+  <testcase name="inProgressMarker shouldAlwaysParseAsInProgress" classname="com.atlasops.shared.sdd.TaskStatusMarkdownPropertyTest" time="0.082"/>
+  <testcase name="doneCheckbox shouldAlwaysParseAsDone" classname="com.atlasops.shared.sdd.TaskStatusMarkdownPropertyTest" time="0.1"/>
+  <system-out><![CDATA[timestamp = 2026-07-18T04:51:58.010210100, TaskStatusMarkdownPropertyTest:renderThenParse shouldPreserveStatus = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 12         | # of all combined edge cases
+edge-cases#tried = 8          | # of edge cases tried in current run
+seed = 4598555158852298496    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:58.147465300, TaskStatusMarkdownPropertyTest:validTransition shouldRenderCorrectMarkdownForNewStatus = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 12         | # of all combined edge cases
+edge-cases#tried = 11         | # of edge cases tried in current run
+seed = 5891518810187713270    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:58.248072100, TaskStatusMarkdownPropertyTest:blockedMarker shouldAlwaysParseAsBlocked = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 6          | # of all combined edge cases
+edge-cases#tried = 1          | # of edge cases tried in current run
+seed = -8023132561104154244   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:58.320941600, TaskStatusMarkdownPropertyTest:todoCheckbox shouldAlwaysParseAsTodo = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 6          | # of all combined edge cases
+edge-cases#tried = 4          | # of edge cases tried in current run
+seed = 4205485453350337393    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:58.404194900, TaskStatusMarkdownPropertyTest:inProgressMarker shouldAlwaysParseAsInProgress = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 6          | # of all combined edge cases
+edge-cases#tried = 4          | # of edge cases tried in current run
+seed = 8952261070188239349    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:58.505104600, TaskStatusMarkdownPropertyTest:doneCheckbox shouldAlwaysParseAsDone = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 6          | # of all combined edge cases
+edge-cases#tried = 6          | # of edge cases tried in current run
+seed = 1169122015504522139    | random seed to reproduce generated values
+
+
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

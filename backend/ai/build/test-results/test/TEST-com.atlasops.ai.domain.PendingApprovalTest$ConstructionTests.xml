@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Construction and validation" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:50" hostname="AIRW64S3XT3" time="0.158">
+  <properties/>
+  <testcase name="should reject blank requestedBy" classname="com.atlasops.ai.domain.PendingApprovalTest$ConstructionTests" time="0.004"/>
+  <testcase name="should reject null analysisId" classname="com.atlasops.ai.domain.PendingApprovalTest$ConstructionTests" time="0.004"/>
+  <testcase name="should create PendingApproval with all valid fields" classname="com.atlasops.ai.domain.PendingApprovalTest$ConstructionTests" time="0.012"/>
+  <testcase name="should reject blank payload" classname="com.atlasops.ai.domain.PendingApprovalTest$ConstructionTests" time="0.017"/>
+  <testcase name="should reject null actionType" classname="com.atlasops.ai.domain.PendingApprovalTest$ConstructionTests" time="0.005"/>
+  <testcase name="should reject null requestedBy" classname="com.atlasops.ai.domain.PendingApprovalTest$ConstructionTests" time="0.004"/>
+  <testcase name="should reject null targetResource" classname="com.atlasops.ai.domain.PendingApprovalTest$ConstructionTests" time="0.003"/>
+  <testcase name="should reject null payload" classname="com.atlasops.ai.domain.PendingApprovalTest$ConstructionTests" time="0.031"/>
+  <testcase name="should reject blank analysisId" classname="com.atlasops.ai.domain.PendingApprovalTest$ConstructionTests" time="0.011"/>
+  <testcase name="should reject blank targetResource" classname="com.atlasops.ai.domain.PendingApprovalTest$ConstructionTests" time="0.005"/>
+  <testcase name="should reject null createdAt" classname="com.atlasops.ai.domain.PendingApprovalTest$ConstructionTests" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - EnvironmentValidatorPropertyTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>EnvironmentValidatorPropertyTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/com.atlasops.boot.config.html">com.atlasops.boot.config</a> &gt; EnvironmentValidatorPropertyTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">5</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">1.334s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">completeEnvironment shouldAlwaysPassValidation</td>
+<td class="success">0.522s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">emptyStringValues shouldBeTreatedAsAbsent</td>
+<td class="success">0.078s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">incompleteEnvironment shouldFailListingExactlyMissingVariables</td>
+<td class="success">0.036s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">incompleteEnvironment shouldThrowWithAllMissingNamesInMessage</td>
+<td class="success">0.660s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">mixOfAbsentAndEmpty shouldReportAll</td>
+<td class="success">0.038s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>timestamp = 2026-07-18T04:52:33.129882100, EnvironmentValidatorPropertyTest:incompleteEnvironment shouldThrowWithAllMissingNamesInMessage = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 5          | # of all combined edge cases
+edge-cases#tried = 2          | # of edge cases tried in current run
+seed = -6378183594963713986   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:52:33.174052500, EnvironmentValidatorPropertyTest:mixOfAbsentAndEmpty shouldReportAll = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 0          | # of all combined edge cases
+edge-cases#tried = 0          | # of edge cases tried in current run
+seed = -7598524428755948152   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:52:33.693504700, EnvironmentValidatorPropertyTest:completeEnvironment shouldAlwaysPassValidation = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 6          | # of all combined edge cases
+edge-cases#tried = 6          | # of edge cases tried in current run
+seed = 3104635922987440779    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:52:33.775649, EnvironmentValidatorPropertyTest:emptyStringValues shouldBeTreatedAsAbsent = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 25         | # of all combined edge cases
+edge-cases#tried = 20         | # of edge cases tried in current run
+seed = -4881349762060289810   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:52:33.812762600, EnvironmentValidatorPropertyTest:incompleteEnvironment shouldFailListingExactlyMissingVariables = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 5          | # of all combined edge cases
+edge-cases#tried = 5          | # of edge cases tried in current run
+seed = 3308389056619074597    | random seed to reproduce generated values
+
+
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.7</a> at 18 de jul. de 2026 04:52:38</p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.shared.harness.SandboxNamingConventionTest" tests="27" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:21" hostname="AIRW64S3XT3" time="0.284">
+  <properties/>
+  <testcase name="should_normalizeHyphens_when_issueContainsHyphens()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.006"/>
+  <testcase name="should_generateDatabaseName_when_issueProvided()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.009"/>
+  <testcase name="should_generateComposeProject_when_issueProvided()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.003"/>
+  <testcase name="should_throwNPE_when_bucketIssueIsNull()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.008"/>
+  <testcase name="should_throwNPE_when_issueIsNull()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.067"/>
+  <testcase name="[1] role=A1" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.002"/>
+  <testcase name="[2] role=A2" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.002"/>
+  <testcase name="[3] role=A3" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.002"/>
+  <testcase name="[4] role=A4" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.002"/>
+  <testcase name="[5] role=A5" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.002"/>
+  <testcase name="[6] role=A6" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.004"/>
+  <testcase name="[7] role=A7" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.002"/>
+  <testcase name="[8] role=A8" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.002"/>
+  <testcase name="[9] role=A9" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.001"/>
+  <testcase name="[10] role=A10" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.007"/>
+  <testcase name="[11] role=A11" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.001"/>
+  <testcase name="should_throwNPE_when_roleIsNull()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.003"/>
+  <testcase name="should_generateBucketPrefix_when_issueProvided()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.003"/>
+  <testcase name="should_throwNPE_when_composeIssueIsNull()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.004"/>
+  <testcase name="should_throwNPE_when_branchRunIdIsNull()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.008"/>
+  <testcase name="should_generateRunId_when_issueAndRoleProvided()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.002"/>
+  <testcase name="should_matchDatabaseAndComposeNaming()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.002"/>
+  <testcase name="should_endWithSlash_when_bucketPrefixGenerated()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.002"/>
+  <testcase name="should_generateBranchName_when_runIdProvided()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.002"/>
+  <testcase name="should_throwNPE_when_databaseIssueIsNull()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.003"/>
+  <testcase name="should_generateRunIdWithA11_when_roleIsA11()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.001"/>
+  <testcase name="should_createCompleteResources_when_allParamsProvided()" classname="com.atlasops.shared.harness.SandboxNamingConventionTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.shared.harness.ProhibitedActionEnforcementPropertyTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:44" hostname="AIRW64S3XT3" time="1.156">
+  <properties/>
+  <testcase name="blockedAction shouldRegisterAuditEntryWithAllFields" classname="com.atlasops.shared.harness.ProhibitedActionEnforcementPropertyTest" time="0.399"/>
+  <testcase name="multipleBlockedActions shouldEachAddOneAuditEntry" classname="com.atlasops.shared.harness.ProhibitedActionEnforcementPropertyTest" time="0.194"/>
+  <testcase name="allowedAction shouldNotCreateAuditEntry" classname="com.atlasops.shared.harness.ProhibitedActionEnforcementPropertyTest" time="0.056"/>
+  <testcase name="auditEntry shouldRecordTimestampFromClock" classname="com.atlasops.shared.harness.ProhibitedActionEnforcementPropertyTest" time="0.059"/>
+  <testcase name="destructiveDbOperation shouldAlwaysBeBlocked" classname="com.atlasops.shared.harness.ProhibitedActionEnforcementPropertyTest" time="0.091"/>
+  <testcase name="destructiveCommand shouldAlwaysBeBlocked" classname="com.atlasops.shared.harness.ProhibitedActionEnforcementPropertyTest" time="0.069"/>
+  <testcase name="mergeToProtectedBranch shouldAlwaysBeBlocked" classname="com.atlasops.shared.harness.ProhibitedActionEnforcementPropertyTest" time="0.183"/>
+  <testcase name="productionSecretAccess shouldAlwaysBeBlocked" classname="com.atlasops.shared.harness.ProhibitedActionEnforcementPropertyTest" time="0.076"/>
+  <system-out><![CDATA[timestamp = 2026-07-18T04:51:44.635108, ProhibitedActionEnforcementPropertyTest:blockedAction shouldRegisterAuditEntryWithAllFields = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 12         | # of all combined edge cases
+edge-cases#tried = 10         | # of edge cases tried in current run
+seed = -1253335897478823719   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:44.830222900, ProhibitedActionEnforcementPropertyTest:multipleBlockedActions shouldEachAddOneAuditEntry = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 120        | # of all combined edge cases
+edge-cases#tried = 16         | # of edge cases tried in current run
+seed = -7067369995058399240   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:44.885352200, ProhibitedActionEnforcementPropertyTest:allowedAction shouldNotCreateAuditEntry = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 16         | # of all combined edge cases
+edge-cases#tried = 16         | # of edge cases tried in current run
+seed = 1328855710103939701    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:44.948678500, ProhibitedActionEnforcementPropertyTest:auditEntry shouldRecordTimestampFromClock = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 48         | # of all combined edge cases
+edge-cases#tried = 14         | # of edge cases tried in current run
+seed = -2732096748407980196   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:45.045315500, ProhibitedActionEnforcementPropertyTest:destructiveDbOperation shouldAlwaysBeBlocked = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 64         | # of all combined edge cases
+edge-cases#tried = 21         | # of edge cases tried in current run
+seed = 8949785889725003765    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:45.114569800, ProhibitedActionEnforcementPropertyTest:destructiveCommand shouldAlwaysBeBlocked = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 64         | # of all combined edge cases
+edge-cases#tried = 13         | # of edge cases tried in current run
+seed = -1397924912176314849   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:45.296051100, ProhibitedActionEnforcementPropertyTest:mergeToProtectedBranch shouldAlwaysBeBlocked = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 64         | # of all combined edge cases
+edge-cases#tried = 16         | # of edge cases tried in current run
+seed = -7339091688134043623   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:45.383472200, ProhibitedActionEnforcementPropertyTest:productionSecretAccess shouldAlwaysBeBlocked = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 64         | # of all combined edge cases
+edge-cases#tried = 16         | # of edge cases tried in current run
+seed = -5077556764846582230   | random seed to reproduce generated values
+
+
+]]></system-out>
+  <system-err><![CDATA[jul. 18, 2026 4:51:44 AM net.jqwik.engine.properties.RandomizedShrinkablesGenerator logEdgeCasesOutnumberTriesIfApplicable
+INFORMAÇÕES: Edge case generation exceeds number of tries. Stopped after 120 generated cases.
+]]></system-err>
+</testsuite>

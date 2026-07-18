@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.ai.domain.AIAnalysisRecordCompletenessPropertyTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:57" hostname="AIRW64S3XT3" time="1.11">
+  <properties/>
+  <testcase name="durationMs shouldAlwaysBeNonNegative" classname="com.atlasops.ai.domain.AIAnalysisRecordCompletenessPropertyTest" time="0.163"/>
+  <testcase name="modelAndPromptVersion shouldNeverBeNullOrBlank" classname="com.atlasops.ai.domain.AIAnalysisRecordCompletenessPropertyTest" time="0.14"/>
+  <testcase name="inputHash shouldAlwaysBeValidSha256HexString" classname="com.atlasops.ai.domain.AIAnalysisRecordCompletenessPropertyTest" time="0.122"/>
+  <testcase name="confidenceScore shouldAlwaysBeBetweenZeroAndOne" classname="com.atlasops.ai.domain.AIAnalysisRecordCompletenessPropertyTest" time="0.062"/>
+  <testcase name="anyValidRecord shouldContainAllMandatoryFields" classname="com.atlasops.ai.domain.AIAnalysisRecordCompletenessPropertyTest" time="0.292"/>
+  <testcase name="bothSuccessfulAndFallbackRecords shouldContainAllRequiredFields" classname="com.atlasops.ai.domain.AIAnalysisRecordCompletenessPropertyTest" time="0.321"/>
+  <system-out><![CDATA[timestamp = 2026-07-18T04:51:57.720857900, AIAnalysisRecordCompletenessPropertyTest:durationMs shouldAlwaysBeNonNegative = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 5          | # of all combined edge cases
+edge-cases#tried = 5          | # of edge cases tried in current run
+seed = -6736981559385094857   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:57.862820900, AIAnalysisRecordCompletenessPropertyTest:modelAndPromptVersion shouldNeverBeNullOrBlank = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 16         | # of all combined edge cases
+edge-cases#tried = 12         | # of edge cases tried in current run
+seed = 7094851756144787385    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:57.988943100, AIAnalysisRecordCompletenessPropertyTest:inputHash shouldAlwaysBeValidSha256HexString = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 4          | # of all combined edge cases
+edge-cases#tried = 4          | # of edge cases tried in current run
+seed = 4039229347195969180    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:58.050310300, AIAnalysisRecordCompletenessPropertyTest:confidenceScore shouldAlwaysBeBetweenZeroAndOne = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 5          | # of all combined edge cases
+edge-cases#tried = 4          | # of edge cases tried in current run
+seed = 5067630740303834318    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:58.346795500, AIAnalysisRecordCompletenessPropertyTest:anyValidRecord shouldContainAllMandatoryFields = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 128        | # of all combined edge cases
+edge-cases#tried = 21         | # of edge cases tried in current run
+seed = -3041460406597610302   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:58.663393200, AIAnalysisRecordCompletenessPropertyTest:bothSuccessfulAndFallbackRecords shouldContainAllRequiredFields = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 128        | # of all combined edge cases
+edge-cases#tried = 19         | # of edge cases tried in current run
+seed = 5424803019900328420    | random seed to reproduce generated values
+
+
+]]></system-out>
+  <system-err><![CDATA[jul. 18, 2026 4:51:58 AM net.jqwik.engine.properties.RandomizedShrinkablesGenerator logEdgeCasesOutnumberTriesIfApplicable
+INFORMAÇÕES: Edge case generation exceeds number of tries. Stopped after 128 generated cases.
+jul. 18, 2026 4:51:58 AM net.jqwik.engine.properties.RandomizedShrinkablesGenerator logEdgeCasesOutnumberTriesIfApplicable
+INFORMAÇÕES: Edge case generation exceeds number of tries. Stopped after 128 generated cases.
+]]></system-err>
+</testsuite>

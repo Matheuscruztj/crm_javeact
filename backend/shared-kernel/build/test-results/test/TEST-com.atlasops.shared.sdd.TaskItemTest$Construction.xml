@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.shared.sdd.TaskItemTest$Construction" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:26" hostname="AIRW64S3XT3" time="0.011">
+  <properties/>
+  <testcase name="should create task with description and status" classname="com.atlasops.shared.sdd.TaskItemTest$Construction" time="0.001"/>
+  <testcase name="should reject null status" classname="com.atlasops.shared.sdd.TaskItemTest$Construction" time="0.002"/>
+  <testcase name="should reject null description" classname="com.atlasops.shared.sdd.TaskItemTest$Construction" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

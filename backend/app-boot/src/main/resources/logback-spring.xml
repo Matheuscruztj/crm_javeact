@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="atlasops-api"/>
+    <springProperty scope="context" name="appEnv" source="spring.profiles.active" defaultValue="local"/>
+
+    <!-- Console encoder for local profile (human-readable) -->
+    <springProfile name="local">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>%d{yyyy-MM-dd'T'HH:mm:ss.SSS'Z', UTC} [%thread] %-5level %logger{36} - [%X{correlationId:-}] %msg%n</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <!-- JSON structured logging for non-local profiles (ci, staging, production) -->
+    <springProfile name="!local">
+        <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+                <timeZone>UTC</timeZone>
+                <timestampPattern>yyyy-MM-dd'T'HH:mm:ss.SSS'Z'</timestampPattern>
+
+                <!-- Rename default fields to match mandatory spec:
+                     timestamp, level, service, environment, tenantId, actorId,
+                     correlationId, traceId, event, resource, duration, errorCode -->
+                <fieldNames>
+                    <timestamp>timestamp</timestamp>
+                    <level>level</level>
+                    <logger>event</logger>
+                    <message>message</message>
+                    <thread>[ignore]</thread>
+                    <stackTrace>stackTrace</stackTrace>
+                    <version>[ignore]</version>
+                    <levelValue>[ignore]</levelValue>
+                </fieldNames>
+
+                <!-- Static fields: service and environment -->
+                <customFields>{"service":"${appName}","environment":"${appEnv}"}</customFields>
+
+                <!-- Include MDC keys that map to mandatory structured log fields -->
+                <includeMdcKeyName>tenantId</includeMdcKeyName>
+                <includeMdcKeyName>actorId</includeMdcKeyName>
+                <includeMdcKeyName>correlationId</includeMdcKeyName>
+                <includeMdcKeyName>traceId</includeMdcKeyName>
+                <includeMdcKeyName>event</includeMdcKeyName>
+                <includeMdcKeyName>resource</includeMdcKeyName>
+                <includeMdcKeyName>duration</includeMdcKeyName>
+                <includeMdcKeyName>errorCode</includeMdcKeyName>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="JSON_CONSOLE"/>
+        </root>
+    </springProfile>
+
+</configuration>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.shared.sdd.SpecConfigTest" tests="19" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:22" hostname="AIRW64S3XT3" time="0.525">
+  <properties/>
+  <testcase name="should_reportTwoErrors_when_twoFieldsInvalid()" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.104"/>
+  <testcase name="[1] specType=null" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.006"/>
+  <testcase name="[2] specType=" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.002"/>
+  <testcase name="[3] specType=   " classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.003"/>
+  <testcase name="should_reportAllErrors_when_multipleFieldsInvalid()" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.002"/>
+  <testcase name="[1] specType=bug" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.015"/>
+  <testcase name="[2] specType=enhancement" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.002"/>
+  <testcase name="[3] specType=task" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.003"/>
+  <testcase name="[4] specType=FEATURE" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.004"/>
+  <testcase name="[5] specType=FIX" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.001"/>
+  <testcase name="should_beInvalid_when_workflowTypeNotSdd()" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.119"/>
+  <testcase name="[1] specId=null" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.004"/>
+  <testcase name="[2] specId=" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.006"/>
+  <testcase name="[3] specId=   " classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.003"/>
+  <testcase name="should_beValid_when_allFieldsCorrect_featureType()" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.003"/>
+  <testcase name="should_beValid_when_allFieldsCorrect_fixType()" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.002"/>
+  <testcase name="[1] workflowType=null" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.016"/>
+  <testcase name="[2] workflowType=" classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.002"/>
+  <testcase name="[3] workflowType=   " classname="com.atlasops.shared.sdd.SpecConfigTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

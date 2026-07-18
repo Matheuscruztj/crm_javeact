@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.atlasops.shared.harness.AgentTaskFieldValidationPropertyTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:32" hostname="AIRW64S3XT3" time="9.494">
+  <properties/>
+  <testcase name="anySubsetOfNullFields shouldRejectAndReportExactly" classname="com.atlasops.shared.harness.AgentTaskFieldValidationPropertyTest" time="0.851"/>
+  <testcase name="fullyValidTask shouldAlwaysPassValidation" classname="com.atlasops.shared.harness.AgentTaskFieldValidationPropertyTest" time="7.47"/>
+  <testcase name="missingFieldsList shouldNeverContainDuplicates" classname="com.atlasops.shared.harness.AgentTaskFieldValidationPropertyTest" time="0.352"/>
+  <testcase name="blankObjective shouldAlwaysBeReportedAsMissing" classname="com.atlasops.shared.harness.AgentTaskFieldValidationPropertyTest" time="0.015"/>
+  <testcase name="listWithOnlyBlankStrings shouldBeReportedAsMissing" classname="com.atlasops.shared.harness.AgentTaskFieldValidationPropertyTest" time="0.172"/>
+  <testcase name="anySubsetOfEmptyListFields shouldRejectAndReportExactly" classname="com.atlasops.shared.harness.AgentTaskFieldValidationPropertyTest" time="0.535"/>
+  <system-out><![CDATA[timestamp = 2026-07-18T04:51:33.373558500, AgentTaskFieldValidationPropertyTest:anySubsetOfNullFields shouldRejectAndReportExactly = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 4          | # of all combined edge cases
+edge-cases#tried = 4          | # of edge cases tried in current run
+seed = 4695245717904710169    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:41.002697400, AgentTaskFieldValidationPropertyTest:fullyValidTask shouldAlwaysPassValidation = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 147        | # of all combined edge cases
+edge-cases#tried = 25         | # of edge cases tried in current run
+seed = -6447179421502746215   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:41.551826800, AgentTaskFieldValidationPropertyTest:missingFieldsList shouldNeverContainDuplicates = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 4          | # of all combined edge cases
+edge-cases#tried = 4          | # of edge cases tried in current run
+seed = 6990059876887299000    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:41.566150300, AgentTaskFieldValidationPropertyTest:blankObjective shouldAlwaysBeReportedAsMissing = 
+                              |-----------------------jqwik-----------------------
+tries = 6                     | # of calls to property
+checks = 6                    | # of not rejected calls
+generation = EXHAUSTIVE       | parameters are exhaustively generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 0          | # of all combined edge cases
+edge-cases#tried = 0          | # of edge cases tried in current run
+seed = -2592017045439649658   | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:41.738412100, AgentTaskFieldValidationPropertyTest:listWithOnlyBlankStrings shouldBeReportedAsMissing = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 4          | # of all combined edge cases
+edge-cases#tried = 3          | # of edge cases tried in current run
+seed = -356869349070172416    | random seed to reproduce generated values
+
+
+timestamp = 2026-07-18T04:51:42.236977900, AgentTaskFieldValidationPropertyTest:anySubsetOfEmptyListFields shouldRejectAndReportExactly = 
+                              |-----------------------jqwik-----------------------
+tries = 100                   | # of calls to property
+checks = 100                  | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+when-fixed-seed = ALLOW       | fixing the random seed is allowed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 4          | # of all combined edge cases
+edge-cases#tried = 4          | # of edge cases tried in current run
+seed = 657668337253336669     | random seed to reproduce generated values
+
+
+]]></system-out>
+  <system-err><![CDATA[jul. 18, 2026 4:51:35 AM net.jqwik.engine.properties.RandomizedShrinkablesGenerator logEdgeCasesOutnumberTriesIfApplicable
+INFORMAÇÕES: Edge case generation exceeds number of tries. Stopped after 147 generated cases.
+]]></system-err>
+</testsuite>

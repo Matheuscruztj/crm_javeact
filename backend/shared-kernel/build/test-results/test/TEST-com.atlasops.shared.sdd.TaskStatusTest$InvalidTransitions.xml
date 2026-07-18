@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Invalid transitions" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:27" hostname="AIRW64S3XT3" time="0.038">
+  <properties/>
+  <testcase name="should reject BLOCKED → DONE" classname="com.atlasops.shared.sdd.TaskStatusTest$InvalidTransitions" time="0.002"/>
+  <testcase name="should reject BLOCKED → TODO" classname="com.atlasops.shared.sdd.TaskStatusTest$InvalidTransitions" time="0.002"/>
+  <testcase name="should reject IN_PROGRESS → TODO" classname="com.atlasops.shared.sdd.TaskStatusTest$InvalidTransitions" time="0.002"/>
+  <testcase name="should reject DONE → IN_PROGRESS" classname="com.atlasops.shared.sdd.TaskStatusTest$InvalidTransitions" time="0.001"/>
+  <testcase name="should reject DONE → BLOCKED" classname="com.atlasops.shared.sdd.TaskStatusTest$InvalidTransitions" time="0.001"/>
+  <testcase name="should reject BLOCKED → IN_PROGRESS" classname="com.atlasops.shared.sdd.TaskStatusTest$InvalidTransitions" time="0.006"/>
+  <testcase name="should reject DONE → TODO" classname="com.atlasops.shared.sdd.TaskStatusTest$InvalidTransitions" time="0.001"/>
+  <testcase name="should reject TODO → BLOCKED" classname="com.atlasops.shared.sdd.TaskStatusTest$InvalidTransitions" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
