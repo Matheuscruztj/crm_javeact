@@ -1,0 +1,15 @@
+{
+  "name": "protected-files-check",
+  "description": "Detects modifications to protected files that require explicit human review before merge (AGENTS.md, security configs, production migrations, settings.gradle.kts)",
+  "triggerEvent": "fileModified",
+  "condition": {
+    "globPattern": "{AGENTS.md,settings.gradle.kts,gradle.properties,.env.production,docker-compose.prod.yml,backend/**/SecurityConfig.java,backend/**/JwtConfig.java,infra/init-db/**}"
+  },
+  "validationAction": {
+    "type": "alert",
+    "command": "echo 'PROTECTED FILE MODIFIED: Human review required before merge'",
+    "description": "Flag that a protected file has been modified. These files require explicit human approval per project governance rules.",
+    "failureMessage": "A protected file was modified. This change requires explicit approval from a human maintainer before merge. See AGENTS.md section 'Arquivos Protegidos' for the full list.",
+    "requiresHumanApproval": true
+  }
+}

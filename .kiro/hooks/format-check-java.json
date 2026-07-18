@@ -1,0 +1,14 @@
+{
+  "name": "format-check-java",
+  "description": "Runs Spotless format check when Java source files in the backend are modified to ensure code style compliance",
+  "triggerEvent": "fileModified",
+  "condition": {
+    "globPattern": "backend/**/*.java"
+  },
+  "validationAction": {
+    "type": "command",
+    "command": "make format",
+    "description": "Verify Java code formatting using Spotless. Applies auto-fix and flags non-conformant files.",
+    "failureMessage": "Java source files do not conform to project formatting standards. Run 'make format' to auto-fix."
+  }
+}

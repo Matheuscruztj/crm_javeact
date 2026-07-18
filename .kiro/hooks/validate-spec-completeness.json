@@ -1,0 +1,14 @@
+{
+  "name": "validate-spec-completeness",
+  "description": "Validates that spec directories contain all required files (requirements.md, design.md, tasks.md, .config.kiro) when any spec file is modified",
+  "triggerEvent": "fileModified",
+  "condition": {
+    "globPattern": ".kiro/specs/**/*"
+  },
+  "validationAction": {
+    "type": "command",
+    "command": "make verify-specs",
+    "description": "Check that all spec directories contain the four required files: requirements.md, design.md, tasks.md, .config.kiro",
+    "failureMessage": "Spec is incomplete. Ensure all required files (requirements.md, design.md, tasks.md, .config.kiro) are present in the spec directory."
+  }
+}
