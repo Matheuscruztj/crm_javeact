@@ -125,10 +125,11 @@ public class AuthenticateUserUseCase {
     String accessToken =
         jwtTokenPort.generateAccessToken(userData.userId(), userData.tenantId(), role);
 
-    // 6. Create and persist refresh token
+    // 6. Create and persist refresh token (with role and family ID for rotation)
     String rawRefreshToken = UUID.randomUUID().toString();
     String refreshTokenHash = hashToken(rawRefreshToken);
     Instant expiresAt = now.plus(DEFAULT_REFRESH_TOKEN_TTL);
+    String familyId = idGenerator.generate();
 
     RefreshToken refreshToken =
         new RefreshToken(
@@ -136,6 +137,8 @@ public class AuthenticateUserUseCase {
             refreshTokenHash,
             userData.userId(),
             userData.tenantId(),
+            role.name(),
+            familyId,
             expiresAt,
             false,
             now);

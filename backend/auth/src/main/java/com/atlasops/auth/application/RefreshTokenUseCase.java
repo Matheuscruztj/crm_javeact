@@ -2,6 +2,7 @@ package com.atlasops.auth.application;
 
 import com.atlasops.auth.domain.AuthenticationResult;
 import com.atlasops.auth.domain.RefreshToken;
+import com.atlasops.auth.domain.Role;
 import com.atlasops.auth.domain.ports.JwtTokenPort;
 import com.atlasops.auth.domain.ports.RefreshTokenRepository;
 import com.atlasops.shared.domain.exceptions.UnauthorizedException;
@@ -18,9 +19,20 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Use case for refreshing an access token using a valid refresh token. Implements token rotation:
- * old refresh token is invalidated, new tokens are issued. On expired/revoked refresh tokens, all
- * user tokens are invalidated for security.
+ * Use case for refreshing an access token using a valid refresh token.
+ * Implements token rotation with replay detection via token families.
+ *
+ * <p>On each refresh:
+ * <ol>
+ *   <li>Validate the current refresh token (not expired, not revoked)</li>
+ *   <li>Revoke the old refresh token</li>
+ *   <li>Issue a new refresh token in the same family</li>
+ *   <li>Issue a new access token</li>
+ * </ol>
+ *
+ * <p>If a revoked/expired token is presented, ALL tokens in the family are revoked
+ * (replay detection — a stolen token was likely reused after the legitimate user
+ * already rotated it).
  */
 public class RefreshTokenUseCase {
 
@@ -64,15 +76,26 @@ public class RefreshTokenUseCase {
     RefreshToken existingToken = optionalToken.get();
     Instant now = clock.now();
 
+    // Replay detection: if token is already revoked or expired,
+    // someone is trying to reuse a token that was already rotated.
+    // Revoke ALL tokens for this user (the whole family is compromised).
     if (!existingToken.isValid(now)) {
       refreshTokenRepository.revokeAllByUserId(existingToken.getUserId());
-      throw new UnauthorizedException("Refresh token expired or revoked");
+      throw new UnauthorizedException("Refresh token expired or revoked — all sessions invalidated");
     }
 
     // Revoke the old token (rotation)
     refreshTokenRepository.revokeByTokenHash(tokenHash);
 
-    // Generate new refresh token
+    // Determine role from existing token (stored during login)
+    String roleName = existingToken.getRole() != null ? existingToken.getRole() : "VIEWER";
+    Role role = Role.valueOf(roleName);
+
+    // Preserve the token family for replay detection chain
+    String familyId =
+        existingToken.getFamilyId() != null ? existingToken.getFamilyId() : idGenerator.generate();
+
+    // Generate new refresh token in the same family
     String newRawToken = UUID.randomUUID().toString();
     String newTokenHash = hashToken(newRawToken);
     Instant expiresAt = now.plus(DEFAULT_REFRESH_TOKEN_TTL);
@@ -83,6 +106,8 @@ public class RefreshTokenUseCase {
             newTokenHash,
             existingToken.getUserId(),
             existingToken.getTenantId(),
+            roleName,
+            familyId,
             expiresAt,
             false,
             now);
@@ -90,27 +115,9 @@ public class RefreshTokenUseCase {
 
     // Generate new access token
     String accessToken =
-        jwtTokenPort.generateAccessToken(
-            existingToken.getUserId(),
-            existingToken.getTenantId(),
-            com.atlasops.auth.domain.Role.valueOf(getRoleFromUser(existingToken)));
+        jwtTokenPort.generateAccessToken(existingToken.getUserId(), existingToken.getTenantId(), role);
 
-    return AuthenticationResult.of(
-        accessToken, newRawToken, DEFAULT_ACCESS_TOKEN_EXPIRES_IN_SECONDS);
-  }
-
-  private String getRoleFromUser(RefreshToken token) {
-    // The RefreshToken doesn't store role directly; we need to derive it from the JWT.
-    // For token rotation, we re-read from the access token context.
-    // Since RefreshToken does not carry role info, we need an additional lookup.
-    // For now, we generate a new access token using the JwtTokenPort which will
-    // include the role from the user's current state in the database.
-    // However, per the design, the role is embedded in the access token, and
-    // RefreshTokenUseCase needs it. We'll add role to the token generation.
-    // Looking at the design: JwtTokenPort.generateAccessToken requires role.
-    // We need to store role or look it up. For simplicity matching the task,
-    // we'll need to adjust the approach.
-    return "ADMIN"; // placeholder — will be refactored
+    return AuthenticationResult.of(accessToken, newRawToken, DEFAULT_ACCESS_TOKEN_EXPIRES_IN_SECONDS);
   }
 
   static String hashToken(String rawToken) {

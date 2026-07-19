@@ -13,6 +13,8 @@ public class RefreshToken extends Entity<String> {
   private final String tokenHash;
   private final String userId;
   private final String tenantId;
+  private final String role;
+  private final String familyId;
   private final Instant expiresAt;
   private boolean revoked;
   private final Instant createdAt;
@@ -25,10 +27,25 @@ public class RefreshToken extends Entity<String> {
       Instant expiresAt,
       boolean revoked,
       Instant createdAt) {
+    this(id, tokenHash, userId, tenantId, null, null, expiresAt, revoked, createdAt);
+  }
+
+  public RefreshToken(
+      String id,
+      String tokenHash,
+      String userId,
+      String tenantId,
+      String role,
+      String familyId,
+      Instant expiresAt,
+      boolean revoked,
+      Instant createdAt) {
     super(id);
     this.tokenHash = Objects.requireNonNull(tokenHash, "tokenHash must not be null");
     this.userId = Objects.requireNonNull(userId, "userId must not be null");
     this.tenantId = Objects.requireNonNull(tenantId, "tenantId must not be null");
+    this.role = role;
+    this.familyId = familyId;
     this.expiresAt = Objects.requireNonNull(expiresAt, "expiresAt must not be null");
     this.revoked = revoked;
     this.createdAt = Objects.requireNonNull(createdAt, "createdAt must not be null");
@@ -68,5 +85,13 @@ public class RefreshToken extends Entity<String> {
 
   public Instant getCreatedAt() {
     return createdAt;
+  }
+
+  public String getRole() {
+    return role;
+  }
+
+  public String getFamilyId() {
+    return familyId;
   }
 }

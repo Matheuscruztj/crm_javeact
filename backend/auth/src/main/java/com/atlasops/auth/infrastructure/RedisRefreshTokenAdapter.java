@@ -87,6 +87,8 @@ public class RedisRefreshTokenAdapter implements RefreshTokenRepository {
       node.put("id", token.getId());
       node.put("userId", token.getUserId());
       node.put("tenantId", token.getTenantId());
+      node.put("role", token.getRole() != null ? token.getRole() : "");
+      node.put("familyId", token.getFamilyId() != null ? token.getFamilyId() : "");
       node.put("expiresAt", token.getExpiresAt().toString());
       node.put("revoked", token.isRevoked());
       node.put("createdAt", token.getCreatedAt().toString());
@@ -99,11 +101,17 @@ public class RedisRefreshTokenAdapter implements RefreshTokenRepository {
   private RefreshToken deserializeToken(String tokenHash, String json) {
     try {
       ObjectNode node = (ObjectNode) objectMapper.readTree(json);
+      String role = node.has("role") && !node.get("role").asText().isEmpty()
+          ? node.get("role").asText() : null;
+      String familyId = node.has("familyId") && !node.get("familyId").asText().isEmpty()
+          ? node.get("familyId").asText() : null;
       return new RefreshToken(
           node.get("id").asText(),
           tokenHash,
           node.get("userId").asText(),
           node.get("tenantId").asText(),
+          role,
+          familyId,
           Instant.parse(node.get("expiresAt").asText()),
           node.get("revoked").asBoolean(),
           Instant.parse(node.get("createdAt").asText()));
