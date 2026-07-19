@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Application Layer Isolation (Req 2.5)" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:52:25" hostname="AIRW64S3XT3" time="0.01">
-  <properties/>
-  <testcase name="should_notImportPresentation_from_applicationLayer" classname="com.atlasops.boot.architecture.HexagonalArchitectureTest$ApplicationLayerIsolationTests" time="0.005"/>
-  <testcase name="should_notImportInfrastructure_from_applicationLayer" classname="com.atlasops.boot.architecture.HexagonalArchitectureTest$ApplicationLayerIsolationTests" time="0.003"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.atlasops.shared.domain.DomainEventTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:19" hostname="AIRW64S3XT3" time="0.295">
-  <properties/>
-  <testcase name="should_generateEventIdAndTimestamp_when_defaultConstructor()" classname="com.atlasops.shared.domain.DomainEventTest" time="0.17"/>
-  <testcase name="should_generateUniqueIds_when_multipleEvents()" classname="com.atlasops.shared.domain.DomainEventTest" time="0.089"/>
-  <testcase name="should_useProvidedValues_when_parameterizedConstructor()" classname="com.atlasops.shared.domain.DomainEventTest" time="0.03"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

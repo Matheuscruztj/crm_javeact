@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.atlasops.boot.observability.MetricsConfigurationTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:52:32" hostname="AIRW64S3XT3" time="0.137">
-  <properties/>
-  <testcase name="should_registerRequestDurationTimer_when_meterBinderBound()" classname="com.atlasops.boot.observability.MetricsConfigurationTest" time="0.132"/>
-  <testcase name="should_haveCorrectDescription_when_timerRegistered()" classname="com.atlasops.boot.observability.MetricsConfigurationTest" time="0.003"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

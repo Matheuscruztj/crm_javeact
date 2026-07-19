@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ActionType enum" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:50" hostname="AIRW64S3XT3" time="0.015">
-  <properties/>
-  <testcase name="should have all three mutable action types" classname="com.atlasops.ai.domain.PendingApprovalTest$ActionTypeTests" time="0.004"/>
-  <testcase name="all action types should be mutable" classname="com.atlasops.ai.domain.PendingApprovalTest$ActionTypeTests" time="0.006"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

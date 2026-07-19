@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="TaskStatus" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:27" hostname="AIRW64S3XT3" time="0.174">
-  <properties/>
-  <testcase name="should have 4 status values" classname="com.atlasops.shared.sdd.TaskStatusTest" time="0.174"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

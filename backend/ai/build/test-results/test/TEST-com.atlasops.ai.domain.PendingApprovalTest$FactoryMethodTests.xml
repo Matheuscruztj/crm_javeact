@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Factory method createFromAnalysis" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:51:50" hostname="AIRW64S3XT3" time="0.028">
-  <properties/>
-  <testcase name="should create approval with PENDING_APPROVAL status" classname="com.atlasops.ai.domain.PendingApprovalTest$FactoryMethodTests" time="0.016"/>
-  <testcase name="should create approval for UPDATE action" classname="com.atlasops.ai.domain.PendingApprovalTest$FactoryMethodTests" time="0.002"/>
-  <testcase name="should create approval for DELETE action" classname="com.atlasops.ai.domain.PendingApprovalTest$FactoryMethodTests" time="0.003"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

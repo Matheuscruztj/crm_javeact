@@ -1,0 +1,69 @@
+# ===========================
+# Gradle
+# ===========================
+.gradle/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/**/build/
+
+# ===========================
+# Java
+# ===========================
+*.class
+*.jar
+*.war
+*.ear
+*.exec
+hs_err_pid*
+
+# jqwik
+**/.jqwik-database
+
+# ===========================
+# Node / Frontend
+# ===========================
+node_modules/
+.next/
+*.tsbuildinfo
+.pnpm-store/
+.turbo/
+
+# ===========================
+# Environment
+# ===========================
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ===========================
+# IDE
+# ===========================
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+*.swp
+*.swo
+
+# ===========================
+# OS
+# ===========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===========================
+# Test outputs
+# ===========================
+test-results/
+playwright-report/
+coverage/
+
+# ===========================
+# Logs
+# ===========================
+*.log
+logs/

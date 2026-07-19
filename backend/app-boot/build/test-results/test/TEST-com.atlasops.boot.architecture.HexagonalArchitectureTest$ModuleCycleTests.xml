@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Module Cycle Detection (Req 2.8)" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-07-18T07:52:25" hostname="AIRW64S3XT3" time="0.316">
-  <properties/>
-  <testcase name="should_haveNoCycles_between_backendModules" classname="com.atlasops.boot.architecture.HexagonalArchitectureTest$ModuleCycleTests" time="0.316"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
