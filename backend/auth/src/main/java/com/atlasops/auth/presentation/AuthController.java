@@ -4,6 +4,7 @@ import com.atlasops.auth.application.AuthenticateCommand;
 import com.atlasops.auth.application.AuthenticateUserUseCase;
 import com.atlasops.auth.application.LogoutUseCase;
 import com.atlasops.auth.application.RefreshTokenUseCase;
+import com.atlasops.auth.application.RevokeAllSessionsUseCase;
 import com.atlasops.auth.domain.AuthenticationResult;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -33,14 +34,17 @@ public class AuthController {
   private final AuthenticateUserUseCase authenticateUserUseCase;
   private final RefreshTokenUseCase refreshTokenUseCase;
   private final LogoutUseCase logoutUseCase;
+  private final RevokeAllSessionsUseCase revokeAllSessionsUseCase;
 
   public AuthController(
       AuthenticateUserUseCase authenticateUserUseCase,
       RefreshTokenUseCase refreshTokenUseCase,
-      LogoutUseCase logoutUseCase) {
+      LogoutUseCase logoutUseCase,
+      RevokeAllSessionsUseCase revokeAllSessionsUseCase) {
     this.authenticateUserUseCase = authenticateUserUseCase;
     this.refreshTokenUseCase = refreshTokenUseCase;
     this.logoutUseCase = logoutUseCase;
+    this.revokeAllSessionsUseCase = revokeAllSessionsUseCase;
   }
 
   /**
@@ -82,6 +86,19 @@ public class AuthController {
   @PostMapping("/logout")
   public ResponseEntity<Void> logout(@Valid @RequestBody LogoutRequest request) {
     logoutUseCase.execute(request.refreshToken());
+    return ResponseEntity.noContent().build();
+  }
+
+  /**
+   * Revokes all active sessions for the authenticated user.
+   * All refresh tokens are invalidated, requiring re-authentication on all devices.
+   *
+   * @param userId the authenticated user's ID (extracted from JWT by security filter)
+   * @return 204 No Content on successful revocation
+   */
+  @PostMapping("/revoke-all-sessions")
+  public ResponseEntity<Void> revokeAllSessions(@RequestHeader("X-User-ID") String userId) {
+    revokeAllSessionsUseCase.execute(userId);
     return ResponseEntity.noContent().build();
   }
 }
