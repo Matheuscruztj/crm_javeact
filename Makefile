@@ -3,6 +3,8 @@ SHELL := /bin/bash
 
 COMPOSE_FILE := docker-compose.yml
 GRADLEW := ./gradlew
+# Use daemon by default for faster builds
+GRADLE_OPTS := --build-cache --parallel
 
 # ============================================================================
 # Help
@@ -63,8 +65,8 @@ bootstrap: ## Full environment setup for new developer
 	fi
 	@echo "  [OK] Ports 5432, 6379, 9000, 3000 are free"
 	@echo ""
-	@echo "==> Installing dependencies..."
-	@$(GRADLEW) --no-daemon dependencies > /dev/null 2>&1 || $(GRADLEW) --no-daemon dependencies
+	@echo "==> Installing dependencies (with caching)..."
+	@$(GRADLEW) $(GRADLE_OPTS) dependencies > /dev/null 2>&1 || $(GRADLEW) $(GRADLE_OPTS) dependencies
 	@echo "  [OK] Gradle dependencies resolved"
 	@echo ""
 	@echo "==> Generating .env file..."
@@ -169,40 +171,85 @@ doctor: ## Diagnose environment (check Java, Docker, ports, env vars, connectivi
 .PHONY: verify
 verify: ## Run all quality gates in sequence (format → lint → compile → test → build)
 	@echo "==> [1/6] Checking format..."
-	@$(GRADLEW) --no-daemon spotlessCheck || { echo "FAILED at: format-check"; exit 1; }
+	@$(GRADLEW) $(GRADLE_OPTS) spotlessCheck || { echo "FAILED at: format-check"; exit 1; }
 	@echo "==> [2/6] Running lint (Checkstyle)..."
-	@$(GRADLEW) --no-daemon checkstyleMain || { echo "FAILED at: lint (checkstyle)"; exit 1; }
+	@$(GRADLEW) $(GRADLE_OPTS) checkstyleMain || { echo "FAILED at: lint (checkstyle)"; exit 1; }
 	@echo "==> [3/6] Compiling..."
-	@$(GRADLEW) --no-daemon compileJava || { echo "FAILED at: compile"; exit 1; }
+	@$(GRADLEW) $(GRADLE_OPTS) compileJava || { echo "FAILED at: compile"; exit 1; }
 	@echo "==> [4/6] Running unit tests..."
-	@$(GRADLEW) --no-daemon test || { echo "FAILED at: unit tests"; exit 1; }
+	@$(GRADLEW) $(GRADLE_OPTS) test || { echo "FAILED at: unit tests"; exit 1; }
 	@echo "==> [5/6] Running SpotBugs..."
-	@$(GRADLEW) --no-daemon spotbugsMain || { echo "FAILED at: spotbugs"; exit 1; }
+	@$(GRADLEW) $(GRADLE_OPTS) spotbugsMain || { echo "FAILED at: spotbugs"; exit 1; }
 	@echo "==> [6/6] Building..."
-	@$(GRADLEW) --no-daemon build -x test || { echo "FAILED at: build"; exit 1; }
+	@$(GRADLEW) $(GRADLE_OPTS) build -x test || { echo "FAILED at: build"; exit 1; }
 	@echo ""
 	@echo "==> All quality gates passed!"
 
+.PHONY: verify-fast
+verify-fast: ## Run fast quality gates only (skip SpotBugs, coverage, slow tests)
+	@echo "==> [FAST MODE] Running quick quality gates..."
+	@$(GRADLEW) $(GRADLE_OPTS) verifyFast
+	@echo "==> Fast verification passed!"
+
+.PHONY: verify-full
+verify-full: ## Run ALL quality gates including integration tests and coverage verification
+	@echo "==> [FULL MODE] Running complete verification..."
+	@$(GRADLEW) $(GRADLE_OPTS) verifyFull
+	@echo "==> Full verification passed!"
+
 .PHONY: test-unit
-test-unit: ## Run only unit tests
-	@$(GRADLEW) --no-daemon test
+test-unit: ## Run only unit tests (parallel, optimized)
+	@$(GRADLEW) $(GRADLE_OPTS) test
+
+.PHONY: test-fast
+test-fast: ## Run fast unit tests only (excludes slow, integration, property tests)
+	@$(GRADLEW) $(GRADLE_OPTS) testFast
+
+.PHONY: test-property
+test-property: ## Run property-based tests (jqwik)
+	@$(GRADLEW) $(GRADLE_OPTS) testProperty
 
 .PHONY: test-integration
 test-integration: ## Run integration tests (requires Docker)
 	@docker compose -f $(COMPOSE_FILE) ps --quiet > /dev/null 2>&1 || { echo "ERROR: Docker Compose services not running. Run 'make compose-up' first."; exit 1; }
-	@$(GRADLEW) --no-daemon integrationTest
+	@$(GRADLEW) $(GRADLE_OPTS) integrationTest
+
+.PHONY: test-all
+test-all: ## Run all tests (unit + property + integration)
+	@docker compose -f $(COMPOSE_FILE) ps --quiet > /dev/null 2>&1 || { echo "WARNING: Docker not running, skipping integration tests."; $(GRADLEW) $(GRADLE_OPTS) test testProperty; exit 0; }
+	@$(GRADLEW) $(GRADLE_OPTS) test testProperty integrationTest
 
 .PHONY: build
-build: ## Compile and package
-	@$(GRADLEW) --no-daemon build
+build: ## Compile and package (optimized with caching)
+	@$(GRADLEW) $(GRADLE_OPTS) build
+
+.PHONY: build-fast
+build-fast: ## Fast build (skip tests and checks)
+	@$(GRADLEW) $(GRADLE_OPTS) build -x test -x checkstyleMain -x spotbugsMain -x spotlessCheck
 
 .PHONY: format
 format: ## Format code (Spotless)
-	@$(GRADLEW) --no-daemon spotlessApply
+	@$(GRADLEW) $(GRADLE_OPTS) spotlessApply
 
 .PHONY: lint
 lint: ## Run lint checks (Checkstyle + SpotBugs)
-	@$(GRADLEW) --no-daemon checkstyleMain spotbugsMain
+	@$(GRADLEW) $(GRADLE_OPTS) checkstyleMain spotbugsMain
+
+.PHONY: coverage
+coverage: ## Generate aggregated coverage report
+	@$(GRADLEW) $(GRADLE_OPTS) test jacocoTestReport aggregateJacocoReport
+	@echo "Coverage report: build/reports/jacoco/aggregated/index.html"
+
+.PHONY: clean
+clean: ## Clean all build artifacts
+	@$(GRADLEW) clean
+	@echo "Build artifacts cleaned."
+
+.PHONY: clean-cache
+clean-cache: ## Clean Gradle caches (use when builds behave unexpectedly)
+	@$(GRADLEW) --stop
+	@rm -rf .gradle/caches .gradle/configuration-cache
+	@echo "Gradle caches cleaned."
 
 # ============================================================================
 # Infrastructure
@@ -297,7 +344,7 @@ test-load-report: ## Run k6 load test and generate HTML report in tests/load/rep
 
 .PHONY: migrate
 migrate: ## Run database migrations
-	@$(GRADLEW) --no-daemon :backend:app-boot:flywayMigrate 2>/dev/null || \
+	@$(GRADLEW) $(GRADLE_OPTS) :backend:app-boot:flywayMigrate 2>/dev/null || \
 		echo "NOTE: Flyway migration task not yet configured. Skipping."
 
 .PHONY: seed
@@ -330,3 +377,67 @@ seed-tests: ## Populate minimal test data (tenants + users only)
 		-f /seed/seed-tests.sql \
 		2>&1 | tail -5
 	@echo "==> Test seed complete!"
+
+# ============================================================================
+# Operational Commands (P0.S.2)
+# ============================================================================
+
+.PHONY: format-check
+format-check: ## Check code formatting without applying changes (alias for spotlessCheck)
+	@$(GRADLEW) $(GRADLE_OPTS) spotlessCheck
+
+.PHONY: health
+health: ## Check health of API and Worker (requires running services)
+	@echo "==> Checking API health..."
+	@curl -sf http://localhost:$${APP_PORT:-8080}/actuator/health | python3 -m json.tool 2>/dev/null || \
+		curl -sf http://localhost:$${APP_PORT:-8080}/actuator/health || \
+		echo "  [FAIL] API not reachable at localhost:$${APP_PORT:-8080}"
+	@echo ""
+	@echo "==> Checking Worker health..."
+	@curl -sf http://localhost:$${WORKER_PORT:-8081}/actuator/health | python3 -m json.tool 2>/dev/null || \
+		curl -sf http://localhost:$${WORKER_PORT:-8081}/actuator/health || \
+		echo "  [FAIL] Worker not reachable at localhost:$${WORKER_PORT:-8081}"
+
+.PHONY: compose-logs
+compose-logs: ## Follow Docker Compose logs for all services
+	@docker compose -f $(COMPOSE_FILE) logs -f
+
+.PHONY: worker-logs
+worker-logs: ## Follow Docker Compose logs for the worker service
+	@docker compose -f $(COMPOSE_FILE) logs -f worker
+
+.PHONY: reset
+reset: compose-reset ## Safe alias for compose-reset (removes volumes, recreates, migrates)
+
+.PHONY: projection-status
+projection-status: ## Query current projection status from database
+	@docker compose -f $(COMPOSE_FILE) exec -T postgres \
+		psql -U $${POSTGRES_USER:-atlasops} -d $${POSTGRES_DB:-atlasops} \
+		-c "SELECT name, status, last_processed_position, last_run_at FROM projection_status ORDER BY name;" \
+		2>&1 || echo "projection_status table not found — ensure migrations have run"
+
+.PHONY: verify-specs
+verify-specs: ## Validate completeness of spec files in .kiro/specs/
+	@echo "==> Verifying spec completeness in .kiro/specs/..."
+	@MISSING=0; \
+	for spec_dir in .kiro/specs/*/; do \
+		spec_name=$$(basename "$$spec_dir"); \
+		has_req=0; has_design=0; has_tasks=0; \
+		[ -f "$$spec_dir/requirements.md" ] && has_req=1; \
+		[ -f "$$spec_dir/design.md" ] && has_design=1; \
+		[ -f "$$spec_dir/tasks.md" ] && has_tasks=1; \
+		if [ $$has_req -eq 0 ] || [ $$has_design -eq 0 ] || [ $$has_tasks -eq 0 ]; then \
+			echo "  [INCOMPLETE] $$spec_name (req=$$has_req, design=$$has_design, tasks=$$has_tasks)"; \
+			MISSING=$$((MISSING + 1)); \
+		else \
+			echo "  [OK] $$spec_name"; \
+		fi; \
+	done; \
+	if [ $$MISSING -gt 0 ]; then \
+		echo ""; \
+		echo "WARNING: $$MISSING spec(s) are incomplete"; \
+		exit 0; \
+	else \
+		echo ""; \
+		echo "All specs are complete!"; \
+	fi
