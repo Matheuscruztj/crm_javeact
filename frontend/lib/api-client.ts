@@ -45,6 +45,8 @@ export function setTokens(tokens: TokenPair): void {
       "atlasops_token_expires",
       String(Date.now() + tokens.expiresIn * 1000),
     );
+    // Set cookie for middleware route protection (P0.L.1)
+    document.cookie = `atlasops_refresh_token=${tokens.refreshToken}; path=/; SameSite=Lax`;
   }
 }
 
@@ -54,6 +56,9 @@ export function clearTokens(): void {
     localStorage.removeItem("atlasops_refresh_token");
     localStorage.removeItem("atlasops_token_expires");
     localStorage.removeItem("atlasops_tenant_id");
+    // Clear cookies used by middleware (P0.L.1)
+    document.cookie =
+      "atlasops_refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
   }
 }
 

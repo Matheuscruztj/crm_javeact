@@ -51,8 +51,15 @@ function setStoredUser(user: User | null): void {
   if (typeof window === "undefined") return;
   if (user) {
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+    // Set cookies for middleware to read (role-based route protection)
+    document.cookie = `atlasops_user_role=${user.role}; path=/; SameSite=Lax`;
   } else {
     localStorage.removeItem(USER_STORAGE_KEY);
+    // Clear cookies
+    document.cookie =
+      "atlasops_user_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie =
+      "atlasops_refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
   }
 }
 
