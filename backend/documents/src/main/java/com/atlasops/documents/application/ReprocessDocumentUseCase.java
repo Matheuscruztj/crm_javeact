@@ -50,7 +50,7 @@ public class ReprocessDocumentUseCase {
 
     Document document =
         documentRepository
-            .findByIdAndTenantId(documentId, tenantId)
+            .findById(documentId, tenantId)
             .orElseThrow(
                 () ->
                     new ResourceNotFoundException(

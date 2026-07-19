@@ -17,6 +17,8 @@ dependencies {
 
     // Spring Data JPA for persistence adapters
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    // Spring Web for REST controllers
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework:spring-context")
 
     // Testing

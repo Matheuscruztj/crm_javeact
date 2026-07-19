@@ -6,9 +6,6 @@ import com.atlasops.operations.application.ListJobsUseCase.JobPageResult;
 import com.atlasops.operations.application.ListJobsUseCase.ListJobsQuery;
 import com.atlasops.operations.domain.Job;
 import com.atlasops.operations.domain.JobStatus;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1/operations")
-@Tag(name = "Operations", description = "Job monitoring and system health endpoints")
 public class OperationsController {
 
   private final GetJobDetailsUseCase getJobDetailsUseCase;
@@ -47,10 +43,6 @@ public class OperationsController {
   /**
    * Lists jobs for the tenant with optional status filter and pagination.
    */
-  @Operation(
-      summary = "List jobs",
-      description = "Lists asynchronous jobs for the tenant with optional status filtering")
-  @ApiResponse(responseCode = "200", description = "List of jobs")
   @GetMapping("/jobs")
   public ResponseEntity<PageResponse<JobResponse>> listJobs(
       @RequestHeader("X-Tenant-ID") String tenantId,
@@ -76,9 +68,6 @@ public class OperationsController {
   /**
    * Retrieves job details by identifier.
    */
-  @Operation(summary = "Get job details", description = "Retrieves job details by identifier")
-  @ApiResponse(responseCode = "200", description = "Job details")
-  @ApiResponse(responseCode = "404", description = "Job not found")
   @GetMapping("/jobs/{id}")
   public ResponseEntity<JobResponse> getJob(
       @RequestHeader("X-Tenant-ID") String tenantId,
