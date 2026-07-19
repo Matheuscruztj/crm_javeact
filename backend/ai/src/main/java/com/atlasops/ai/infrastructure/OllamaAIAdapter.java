@@ -1,9 +1,9 @@
 package com.atlasops.ai.infrastructure;
 
-import com.atlasops.ai.domain.AnalysisRequest;
-import com.atlasops.ai.domain.AnalysisResult;
+import com.atlasops.ai.domain.DocumentAnalysisRequest;
+import com.atlasops.ai.domain.DocumentAnalysisResult;
 import com.atlasops.ai.domain.RelevantChunk;
-import com.atlasops.ai.domain.ports.AIAnalysisPort;
+import com.atlasops.ai.domain.ports.DocumentAnalysisPort;
 import java.time.Duration;
 import java.util.List;
 import org.slf4j.Logger;
@@ -13,14 +13,14 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Component;
 
 /**
- * Adapter implementing AIAnalysisPort via Spring AI Ollama starter. Configures a timeout of 120
- * seconds per request. Activates fallback when Ollama is unavailable or times out, returning a
+ * Adapter implementing DocumentAnalysisPort via Spring AI Ollama starter. Configures a timeout of
+ * 120 seconds per request. Activates fallback when Ollama is unavailable or times out, returning a
  * default response with fallback=true and the reason for unavailability.
  *
  * <p>Validates: Requirements 4.1, 4.3, 4.6
  */
 @Component
-public class OllamaAIAdapter implements AIAnalysisPort {
+public class OllamaAIAdapter implements DocumentAnalysisPort {
 
   private static final Logger log = LoggerFactory.getLogger(OllamaAIAdapter.class);
   private static final Duration TIMEOUT = Duration.ofSeconds(120);
@@ -32,9 +32,7 @@ public class OllamaAIAdapter implements AIAnalysisPort {
   }
 
   @Override
-  public AnalysisResult analyze(AnalysisRequest request) {
-    long startTime = System.currentTimeMillis();
-
+  public DocumentAnalysisResult analyze(DocumentAnalysisRequest request) {
     try {
       ChatClient chatClient = ChatClient.builder(chatModel).build();
 
@@ -42,18 +40,20 @@ public class OllamaAIAdapter implements AIAnalysisPort {
 
       String response = chatClient.prompt().user(promptText).call().content();
 
-      long durationMs = System.currentTimeMillis() - startTime;
+      String summary = response != null && !response.isBlank() ? response : "Analysis completed";
 
-      return new AnalysisResult(
-          response != null ? response : "",
-          0.8, // default confidence for successful response
+      return new DocumentAnalysisResult(
+          summary,
+          "general",
           List.of(),
-          false,
-          durationMs);
+          List.of(),
+          List.of(),
+          0.8,
+          "ollama:" + request.promptVersion(),
+          false);
     } catch (Exception e) {
-      long durationMs = System.currentTimeMillis() - startTime;
       log.warn("Ollama unavailable or timed out, activating fallback. Reason: {}", e.getMessage());
-      return createFallbackResult(e.getMessage(), durationMs);
+      return createFallbackResult(e.getMessage(), request.promptVersion());
     }
   }
 
@@ -68,21 +68,34 @@ public class OllamaAIAdapter implements AIAnalysisPort {
    * Creates a fallback response when Ollama is unavailable.
    *
    * @param reason the reason for unavailability
-   * @param durationMs the elapsed time in milliseconds
-   * @return an AnalysisResult with fallback=true
+   * @param promptVersion the prompt version from the request
+   * @return a DocumentAnalysisResult with fallback=true
    */
-  AnalysisResult createFallbackResult(String reason, long durationMs) {
+  DocumentAnalysisResult createFallbackResult(String reason, String promptVersion) {
     String fallbackMessage =
         "AI analysis unavailable. Reason: " + (reason != null ? reason : "unknown");
 
-    return new AnalysisResult(fallbackMessage, 0.0, List.of(), true, durationMs);
+    return new DocumentAnalysisResult(
+        fallbackMessage,
+        "unavailable",
+        List.of(),
+        List.of(),
+        List.of(),
+        0.0,
+        "ollama-fallback:" + promptVersion,
+        true);
   }
 
-  /** Builds a prompt string from the analysis request. */
-  private String buildPrompt(AnalysisRequest request) {
+  /** Builds a prompt string from the document analysis request. */
+  private String buildPrompt(DocumentAnalysisRequest request) {
     return String.format(
-        "Analyze the following text (model: %s, prompt version: %s):\n\n%s",
-        request.model(), request.promptVersion(), request.inputText());
+        "Analyze the following document (tenant: %s, document: %s, schema: %s, prompt version:"
+            + " %s):\n\n%s",
+        request.tenantId(),
+        request.documentId(),
+        request.outputSchema(),
+        request.promptVersion(),
+        request.extractedText());
   }
 
   /** Returns the configured timeout duration. */
