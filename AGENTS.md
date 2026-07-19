@@ -39,7 +39,7 @@ presentation → application → domain ← infrastructure
 
 ```
 atlasops-ai/
-├── backend/            # Gradle multi-project (14 módulos)
+├── backend/            # Gradle multi-project (18 módulos)
 ├── frontend/           # React/Next.js SPA
 ├── infra/              # Docker Compose, scripts, monitoring
 ├── docs/               # ADRs, runbooks, diagramas
@@ -62,33 +62,71 @@ atlasops-ai/
 | `customers`     | Cadastro e gestão de clientes por tenant                                                                                                             |
 | `documents`     | Upload, armazenamento (MinIO) e gestão de documentos                                                                                                 |
 | `requests`      | Solicitações de serviço e workflow de aprovações                                                                                                     |
-| `pipeline`      | Pipeline de processamento de documentos e automações                                                                                                 |
-| `tasks`         | Gestão de tarefas internas e atribuições                                                                                                             |
-| `workflows`     | Engine de workflows configuráveis por tenant                                                                                                         |
+| `approvals`     | Fluxos de aprovação, tracking de decisões e event sourcing de estados                                                                                |
+| `activities`    | Registro de atividades e timeline de eventos por entidade                                                                                            |
+| `notifications` | Envio de notificações multi-canal e gerenciamento de preferências                                                                                    |
+| `integrations`  | Conectores com sistemas externos, webhooks e MCP integration                                                                                         |
+| `search`        | Busca unificada cross-entity com fallback OpenSearch/PostgreSQL                                                                                      |
+| `imports`       | Importação de dados em lote com tracking de progresso                                                                                                |
+| `operations`    | Operações administrativas, monitoramento e health checks do sistema                                                                                  |
 | `ai`            | Integração Spring AI, RAG pipeline, análise com Ollama + pgvector                                                                                    |
 | `analytics`     | Dashboards, relatórios e métricas de negócio                                                                                                         |
 | `audit`         | Log de auditoria, rastreabilidade de ações                                                                                                           |
 | `app-boot`      | Ponto de entrada Spring Boot, agrega módulos, configuração de infraestrutura                                                                         |
+| `worker`        | Processo assíncrono separado para processamento pesado (documentos, IA, imports, notificações)                                                       |
+
+### Worker Process
+
+O Worker Process é uma aplicação Spring Boot independente responsável por executar processamento assíncrono pesado que não deve competir com a API principal por thread pool e memória. Ele consome tarefas de filas Redis e opera sobre os mesmos dados (PostgreSQL, MinIO) que o backend API, mas em processo isolado.
+
+**Responsabilidades:**
+
+- Processamento e extração de texto de documentos enviados via upload (PDF, DOCX, imagens)
+- Análise de documentos via IA local (Ollama + RAG pipeline com pgvector)
+- Geração de previews e thumbnails de documentos armazenados no MinIO
+- Execução de importações de dados em lote com tracking de progresso e rollback parcial
+- Envio de notificações multi-canal (email via MailHog em dev, push, in-app)
+- Dispatch de webhooks outbound para integrações externas com retry e DLQ
+- Projeções especializadas para bases de dados secundárias (OpenSearch, MongoDB, Neo4j, TimescaleDB, ClickHouse, EventStoreDB)
+
+**Comando de execução:**
+
+```bash
+./gradlew :backend:worker:bootRun
+```
+
+**Relação com o backend API:**
+
+O Worker opera como um processo completamente separado do backend API (`app-boot`). Enquanto o `app-boot` serve requisições HTTP síncronas (REST API), o Worker consome mensagens de filas Redis e executa operações de longa duração. Ambos compartilham a mesma base de dados PostgreSQL, o mesmo bucket MinIO e a mesma instância Redis, mas rodam em JVMs distintas. Essa separação garante que operações pesadas (análise de IA, imports massivos) não degradem a latência da API para os usuários finais.
 
 ---
 
 ## Comandos Disponíveis
 
-| Comando                 | Descrição                                                                                                                                   |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| `make bootstrap`        | Setup completo de ambiente novo (verifica Java 21+, Docker 24+, portas livres, instala deps, gera .env, inicia compose, executa migrations) |
-| `make verify`           | Execução sequencial de todos os quality gates: format-check → lint → compile → unit tests → spotbugs → build                                |
-| `make test-unit`        | Executa apenas testes unitários (JUnit 5 + jqwik)                                                                                           |
-| `make test-integration` | Executa testes de integração (requer Docker Compose ativo)                                                                                  |
-| `make build`            | Compilação e empacotamento de todos os módulos                                                                                              |
-| `make compose-up`       | Inicia infraestrutura local (PostgreSQL, Redis, MinIO, Ollama, Prometheus, Grafana, Loki, MailHog)                                          |
-| `make compose-down`     | Para infraestrutura local                                                                                                                   |
-| `make compose-reset`    | Remove volumes, recria containers do zero e executa migrations                                                                              |
-| `make migrate`          | Executa migrations de banco de dados (Flyway)                                                                                               |
-| `make seed`             | Popula dados de demonstração (idempotente — seguro rodar várias vezes)                                                                      |
-| `make format`           | Formata código com Spotless                                                                                                                 |
-| `make lint`             | Executa verificações de lint (Checkstyle + SpotBugs)                                                                                        |
-| `make doctor`           | Diagnóstico completo do ambiente (Java, Docker, portas, env vars, conectividade)                                                            |
+| Comando                       | Descrição                                                                                                                                   |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `make bootstrap`              | Setup completo de ambiente novo (verifica Java 21+, Docker 24+, portas livres, instala deps, gera .env, inicia compose, executa migrations) |
+| `make verify`                 | Execução sequencial de todos os quality gates: format-check → lint → compile → unit tests → spotbugs → build                                |
+| `make test-unit`              | Executa apenas testes unitários (JUnit 5 + jqwik)                                                                                           |
+| `make test-integration`       | Executa testes de integração (requer Docker Compose ativo)                                                                                  |
+| `make build`                  | Compilação e empacotamento de todos os módulos                                                                                              |
+| `make compose-up`             | Inicia infraestrutura local (PostgreSQL, Redis, MinIO, Ollama, Prometheus, Grafana, Loki, MailHog)                                          |
+| `make compose-down`           | Para infraestrutura local                                                                                                                   |
+| `make compose-reset`          | Remove volumes, recria containers do zero e executa migrations                                                                              |
+| `make migrate`                | Executa migrations de banco de dados (Flyway)                                                                                               |
+| `make seed`                   | Popula dados de demonstração (idempotente — seguro rodar várias vezes)                                                                      |
+| `make format`                 | Formata código com Spotless                                                                                                                 |
+| `make lint`                   | Executa verificações de lint (Checkstyle + SpotBugs)                                                                                        |
+| `make doctor`                 | Diagnóstico completo do ambiente (Java, Docker, portas, env vars, conectividade)                                                            |
+| `make compose-core`           | Inicia serviços core via Docker Compose profile (PostgreSQL, Redis, MinIO, Backend API, Worker)                                             |
+| `make compose-advanced`       | Inicia core + serviços avançados (OpenSearch, MongoDB, Neo4j)                                                                               |
+| `make compose-analytics`      | Inicia core + serviços de analytics (TimescaleDB, ClickHouse)                                                                               |
+| `make compose-event-sourcing` | Inicia core + event sourcing (EventStoreDB)                                                                                                 |
+| `make compose-observability`  | Inicia core + observabilidade (Prometheus, Grafana, Loki, Tempo, MailHog)                                                                   |
+| `make compose-all`            | Inicia todos os serviços (todos os profiles)                                                                                                |
+| `make test-functional`        | Executa testes funcionais Playwright (headless)                                                                                             |
+| `make test-load-smoke`        | Executa teste de carga smoke com k6 (max 5 VUs, 60s)                                                                                        |
+| `make test-load`              | Executa teste de carga médio com k6 (20 VUs, 2min)                                                                                          |
 
 ---
 
