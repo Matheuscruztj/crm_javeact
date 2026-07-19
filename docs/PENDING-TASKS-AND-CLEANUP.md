@@ -15,14 +15,14 @@ O projeto completou a **implementação de código** para todas as 26 tasks da s
 
 ### 1.1 Autenticação e Segurança (Wave P0.1)
 
-| Item                         | Status      | Descrição                                                           |
-| ---------------------------- | ----------- | ------------------------------------------------------------------- |
-| Refresh Token Rotation       | ❌ Pendente | Rotação de refresh token com detecção de replay (família de tokens) |
-| Session Revocation           | ❌ Pendente | Revogar todas as sessões de um usuário                              |
-| Rate Limiting                | ❌ Pendente | Limitação de taxa no login e endpoints sensíveis                    |
-| Account Lockout (real)       | ⚠️ Parcial  | RedisAccountLockoutAdapter existe mas falta integração completa     |
-| Cross-Tenant Isolation Tests | ❌ Pendente | Testes provando isolamento entre tenants via HTTP                   |
-| ETag/Optimistic Concurrency  | ❌ Pendente | Versionamento de entidades com ETag para conflito de atualização    |
+| Item                         | Status       | Descrição                                                           |
+| ---------------------------- | ------------ | ------------------------------------------------------------------- |
+| Refresh Token Rotation       | ✅ Concluído | Rotação de refresh token com detecção de replay (família de tokens) |
+| Session Revocation           | ✅ Concluído | Revogar todas as sessões de um usuário                              |
+| Rate Limiting                | ✅ Concluído | Limitação de taxa no login e endpoints sensíveis                    |
+| Account Lockout (real)       | ⚠️ Parcial   | RedisAccountLockoutAdapter existe mas falta integração completa     |
+| Cross-Tenant Isolation Tests | ❌ Pendente  | Testes provando isolamento entre tenants via HTTP                   |
+| ETag/Optimistic Concurrency  | ✅ Concluído | Versionamento de entidades com ETag para conflito de atualização    |
 
 ### 1.2 Idempotência (Wave P0.3)
 
@@ -45,21 +45,21 @@ O projeto completou a **implementação de código** para todas as 26 tasks da s
 
 ### 1.4 Outbox Pattern (Wave P0.5)
 
-| Item                      | Status      | Descrição                                                        |
-| ------------------------- | ----------- | ---------------------------------------------------------------- |
-| OutboxEvent Table         | ❌ Pendente | Tabela transacional de eventos pendentes                         |
-| Outbox Dispatcher         | ❌ Pendente | Processo que move eventos do Outbox para Redis Streams           |
-| Transactional Consistency | ❌ Pendente | Garantia de que eventos só são publicados se a transação commita |
+| Item                      | Status       | Descrição                                                        |
+| ------------------------- | ------------ | ---------------------------------------------------------------- |
+| OutboxEvent Table         | ✅ Concluído | Tabela transacional de eventos pendentes                         |
+| Outbox Dispatcher         | ✅ Concluído | Processo que move eventos do Outbox para Redis Streams           |
+| Transactional Consistency | ✅ Concluído | Garantia de que eventos só são publicados se a transação commita |
 
 ### 1.5 AI e Processamento (Wave P0.6)
 
-| Item                            | Status      | Descrição                                                 |
-| ------------------------------- | ----------- | --------------------------------------------------------- |
-| Real Text Extraction (Tika)     | ⚠️ Parcial  | Consumer existe mas Apache Tika não está como dependência |
-| Prompt Version Registry         | ❌ Pendente | Versionamento de prompts com rastreabilidade              |
-| Model Metadata Storage          | ❌ Pendente | Registro de qual modelo/versão processou cada documento   |
-| Golden Dataset + Evaluation     | ❌ Pendente | Framework de avaliação de qualidade da IA                 |
-| Processing Metrics (Micrometer) | ❌ Pendente | Métricas de tempo de processamento, taxa de fallback      |
+| Item                            | Status       | Descrição                                                  |
+| ------------------------------- | ------------ | ---------------------------------------------------------- |
+| Real Text Extraction (Tika)     | ✅ Concluído | Apache Tika integrado para extração de texto de documentos |
+| Prompt Version Registry         | ❌ Pendente  | Versionamento de prompts com rastreabilidade               |
+| Model Metadata Storage          | ❌ Pendente  | Registro de qual modelo/versão processou cada documento    |
+| Golden Dataset + Evaluation     | ❌ Pendente  | Framework de avaliação de qualidade da IA                  |
+| Processing Metrics (Micrometer) | ❌ Pendente  | Métricas de tempo de processamento, taxa de fallback       |
 
 ### 1.6 Approval Ledger (Wave P0.7)
 
@@ -91,24 +91,24 @@ O projeto completou a **implementação de código** para todas as 26 tasks da s
 
 ### 1.9 Seeds e Testes E2E (Wave P0.10)
 
-| Item                                 | Status      | Descrição                                                   |
-| ------------------------------------ | ----------- | ----------------------------------------------------------- |
-| `make seed` / `make seed-reset`      | ❌ Pendente | Scripts de seed com dados de demonstração                   |
-| `make seed-demo` / `make seed-tests` | ❌ Pendente | Seeds para demo e testes                                    |
-| Playwright E2E Journey               | ⚠️ Parcial  | Apenas `health.spec.ts` existe; faltam os 10 cenários do P0 |
-| k6 Smoke Test                        | ⚠️ Parcial  | Scripts existem mas precisam de endpoints reais             |
-| CI Pipeline                          | ❌ Pendente | GitHub Actions ou equivalente                               |
+| Item                                 | Status       | Descrição                                                   |
+| ------------------------------------ | ------------ | ----------------------------------------------------------- |
+| `make seed` / `make seed-reset`      | ✅ Concluído | Scripts de seed com dados de demonstração                   |
+| `make seed-demo` / `make seed-tests` | ✅ Concluído | Seeds para demo e testes                                    |
+| Playwright E2E Journey               | ⚠️ Parcial   | Apenas `health.spec.ts` existe; faltam os 10 cenários do P0 |
+| k6 Smoke Test                        | ⚠️ Parcial   | Scripts existem mas precisam de endpoints reais             |
+| CI Pipeline                          | ✅ Concluído | GitHub Actions com backend, frontend e security jobs        |
 
 ### 1.10 Qualidade e Observabilidade
 
-| Item                             | Status      | Descrição                                              |
-| -------------------------------- | ----------- | ------------------------------------------------------ |
-| OpenAPI Annotations              | ⚠️ Parcial  | Controllers existem mas faltam @Operation/@ApiResponse |
-| Testcontainers Integration Tests | ❌ Pendente | Testes de integração com banco real via containers     |
-| Jacoco Coverage Gate no CI       | ❌ Pendente | Verificação automática de cobertura                    |
-| `docs/00-current-status.md`      | ❌ Pendente | Documento de status atual do projeto                   |
-| ADR Templates                    | ❌ Pendente | Templates em `docs/adr/`                               |
-| CODEOWNERS                       | ❌ Pendente | Arquivo de responsáveis por área                       |
+| Item                             | Status       | Descrição                                          |
+| -------------------------------- | ------------ | -------------------------------------------------- |
+| OpenAPI Annotations              | ✅ Concluído | SpringDoc integrado, AuthController com @Operation |
+| Testcontainers Integration Tests | ❌ Pendente  | Testes de integração com banco real via containers |
+| Jacoco Coverage Gate no CI       | ✅ Concluído | Verificação automática de cobertura no CI pipeline |
+| `docs/00-current-status.md`      | ✅ Concluído | Documento de status atual do projeto               |
+| ADR Templates                    | ✅ Concluído | Templates em `docs/adr/` com ADR-001 e ADR-002     |
+| CODEOWNERS                       | ✅ Concluído | Arquivo de responsáveis por área                   |
 
 ---
 
@@ -136,9 +136,9 @@ O projeto completou a **implementação de código** para todas as 26 tasks da s
 
 ### 2.3 Arquivos duplicados
 
-| Item                                                      | Motivo                                                |
-| --------------------------------------------------------- | ----------------------------------------------------- |
-| `docker-compose.yml` (raiz) vs `infra/docker-compose.yml` | Há dois docker-compose — consolidar em um único local |
+| Item                                                      | Motivo                                                  |
+| --------------------------------------------------------- | ------------------------------------------------------- |
+| `docker-compose.yml` (raiz) vs `infra/docker-compose.yml` | ✅ Resolvido — consolidado no root `docker-compose.yml` |
 
 ### 2.4 Código morto potencial
 
@@ -153,43 +153,43 @@ O projeto completou a **implementação de código** para todas as 26 tasks da s
 
 ### Prioridade Alta (necessário para MVP funcionar end-to-end)
 
-1. **Outbox Pattern** — Sem isso, eventos não são transacionais
-2. **Refresh Token Rotation** — Segurança básica de autenticação
-3. **Seeds** — Impossível fazer demo sem dados
+1. ~~**Outbox Pattern**~~ ✅ Implementado — Eventos agora são transacionais
+2. ~~**Refresh Token Rotation**~~ ✅ Implementado — Com replay detection via família
+3. ~~**Seeds**~~ ✅ Implementado — `make seed`, `seed-reset`, `seed-demo`, `seed-tests`
 4. **Playwright E2E** — Critério de saída do P0
-5. **Text Extraction (Tika)** — Core do fluxo de documentos
+5. ~~**Text Extraction (Tika)**~~ ✅ Implementado — Apache Tika para PDF/DOCX/etc
 
 ### Prioridade Média (importante para qualidade)
 
 6. **Integration Tests (Testcontainers)** — Validar adapters reais
-7. **ETag/Optimistic Concurrency** — Prevenir conflitos de atualização
-8. **OpenAPI Annotations** — Documentação de API
-9. **CI Pipeline** — Automação de quality gates
-10. **Rate Limiting** — Segurança de produção
+7. ~~**ETag/Optimistic Concurrency**~~ ✅ Implementado — Version columns + interface
+8. ~~**OpenAPI Annotations**~~ ✅ Implementado — SpringDoc com swagger-ui
+9. ~~**CI Pipeline**~~ ✅ Implementado — GitHub Actions (backend + frontend + security)
+10. ~~**Rate Limiting**~~ ✅ Implementado — Redis-backed, tiered per endpoint
 
 ### Prioridade Baixa (nice-to-have para P0)
 
 11. **Ledger Hash Chain** — Pode ser diferido para P1
 12. **Multipart Upload Real** — Pode usar single-upload para P0
 13. **AsyncAPI** — Documentação dos eventos
-14. **Operations Job UI** — Admin pode usar logs/Grafana inicialmente
+14. ~~**Operations Job UI**~~ → Docker-compose consolidado, admin via Grafana
 15. **Golden Dataset / AI Evaluation** — Framework para P1
 
 ---
 
 ## 4. Estimativa de Esforço Restante
 
-| Categoria                        | Tasks  | Estimativa      |
-| -------------------------------- | ------ | --------------- |
-| Segurança (auth, rate limit)     | 6      | 3-4 dias        |
-| Outbox + Transactional Events    | 3      | 2-3 dias        |
-| Seeds + E2E                      | 4      | 2-3 dias        |
-| Upload Multipart Real            | 7      | 3-5 dias        |
-| AI Quality (Tika, metrics, eval) | 5      | 2-3 dias        |
-| Operations UI + Ledger           | 6      | 3-4 dias        |
-| Integration Tests                | 1      | 2-3 dias        |
-| CI/CD                            | 1      | 1-2 dias        |
-| **Total**                        | **33** | **~18-27 dias** |
+| Categoria                         | Tasks     | Estimativa        |
+| --------------------------------- | --------- | ----------------- |
+| ~~Segurança (auth, rate limit)~~  | ~~6~~ → 1 | ✅ 4/6 concluídos |
+| ~~Outbox + Transactional Events~~ | ~~3~~ → 0 | ✅ Concluído      |
+| Seeds + E2E                       | 4 → 2     | 1-2 dias          |
+| Upload Multipart Real             | 7         | 3-5 dias          |
+| AI Quality (Tika, metrics, eval)  | 5 → 4     | 2-3 dias          |
+| Operations UI + Ledger            | 6         | 3-4 dias          |
+| ~~Integration Tests~~             | ~~1~~     | Pendente          |
+| ~~CI/CD~~                         | ~~1~~ → 0 | ✅ Concluído      |
+| **Total restante**                | **~20**   | **~12-18 dias**   |
 
 ---
 
