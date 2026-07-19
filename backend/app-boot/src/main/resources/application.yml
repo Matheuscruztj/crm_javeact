@@ -90,6 +90,11 @@ app:
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
 
+  # Outbox event cleanup configuration (P0.H.3)
+  outbox:
+    retention-days: ${OUTBOX_RETENTION_DAYS:7}
+    cleanup-interval-ms: ${OUTBOX_CLEANUP_INTERVAL_MS:3600000}
+
   storage:
     endpoint: ${OBJECT_STORAGE_ENDPOINT:http://localhost:9000}
     bucket: ${OBJECT_STORAGE_BUCKET:atlasops-local}
