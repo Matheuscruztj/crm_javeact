@@ -231,6 +231,67 @@ compose-reset: ## Remove volumes and recreate infrastructure from scratch
 	@echo "==> Infrastructure reset complete!"
 
 # ============================================================================
+# Docker Compose Profiles
+# ============================================================================
+
+.PHONY: compose-core
+compose-core: ## Start core services (PostgreSQL, Redis, MinIO, Backend API, Worker)
+	docker compose -f $(COMPOSE_FILE) --profile core up -d
+
+.PHONY: compose-advanced
+compose-advanced: ## Start core + advanced services (OpenSearch, MongoDB, Neo4j)
+	docker compose -f $(COMPOSE_FILE) --profile advanced up -d
+
+.PHONY: compose-analytics
+compose-analytics: ## Start core + analytics services (TimescaleDB, ClickHouse)
+	docker compose -f $(COMPOSE_FILE) --profile analytics up -d
+
+.PHONY: compose-event-sourcing
+compose-event-sourcing: ## Start core + event sourcing services (EventStoreDB)
+	docker compose -f $(COMPOSE_FILE) --profile event-sourcing up -d
+
+.PHONY: compose-observability
+compose-observability: ## Start core + observability services (Prometheus, Grafana, Loki, Tempo, MailHog)
+	docker compose -f $(COMPOSE_FILE) --profile observability up -d
+
+.PHONY: compose-all
+compose-all: ## Start all services (all profiles)
+	docker compose -f $(COMPOSE_FILE) --profile core --profile advanced --profile analytics --profile event-sourcing --profile observability up -d
+
+# ============================================================================
+# Test Infrastructure (Functional + Load)
+# ============================================================================
+
+.PHONY: test-functional
+test-functional: ## Run Playwright functional tests (headless)
+	cd tests/functional && npx playwright test
+
+.PHONY: test-functional-headed
+test-functional-headed: ## Run Playwright functional tests (headed browser)
+	cd tests/functional && npx playwright test --headed
+
+.PHONY: test-functional-report
+test-functional-report: ## Generate and open Playwright HTML report
+	cd tests/functional && npx playwright test --reporter=html || true
+	@echo "Report generated at tests/functional/playwright-report/"
+	cd tests/functional && npx playwright show-report ./playwright-report
+
+.PHONY: test-load-smoke
+test-load-smoke: ## Run k6 smoke load test (max 5 VUs, 60s)
+	k6 run tests/load/smoke.js
+
+.PHONY: test-load
+test-load: ## Run k6 average load test (20 VUs, 2min)
+	k6 run tests/load/average.js
+
+.PHONY: test-load-report
+test-load-report: ## Run k6 load test and generate HTML report in tests/load/reports/
+	@mkdir -p tests/load/reports
+	k6 run --out json=tests/load/reports/results.json tests/load/average.js
+	@echo "JSON results saved to tests/load/reports/results.json"
+	@echo "To generate HTML report, use: k6-reporter or import results.json into Grafana"
+
+# ============================================================================
 # Database
 # ============================================================================
 

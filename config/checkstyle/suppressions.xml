@@ -8,8 +8,9 @@
     <suppress files="[\\/]test[\\/]" checks=".*"/>
     <suppress files="[\\/]integrationTest[\\/]" checks=".*"/>
 
-    <!-- Suppress HideUtilityClassConstructor for Spring Boot main class -->
+    <!-- Suppress HideUtilityClassConstructor for Spring Boot main classes -->
     <suppress files="AtlasOpsApplication\.java" checks="HideUtilityClassConstructor"/>
+    <suppress files="WorkerApplication\.java" checks="HideUtilityClassConstructor"/>
 
     <!-- Suppress package-info.java file length (they are short) -->
     <suppress files="package-info\.java" checks="FileLength"/>

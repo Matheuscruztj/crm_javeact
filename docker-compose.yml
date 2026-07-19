@@ -1,0 +1,448 @@
+# =============================================================================
+# AtlasOps AI — Docker Compose with Profiles
+# =============================================================================
+# Profiles:
+#   core           - PostgreSQL (pgvector+PostGIS), Redis, MinIO, Backend API, Worker
+#   advanced       - core + OpenSearch, MongoDB, Neo4j
+#   analytics      - core + TimescaleDB, ClickHouse
+#   event-sourcing - core + EventStoreDB
+#   observability  - core + Prometheus, Grafana, Loki, Tempo, MailHog
+#
+# Usage:
+#   docker compose --profile core up -d
+#   docker compose --profile advanced up -d
+#   docker compose --profile analytics --profile observability up -d
+#   docker compose --profile core --profile advanced --profile analytics --profile event-sourcing --profile observability up -d
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # CORE SERVICES (no profiles — start with any profile)
+  # ===========================================================================
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    # Includes pgvector extension; PostGIS can be added via init scripts
+    container_name: atlasops-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-atlasops}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-atlasops_local}
+      POSTGRES_DB: ${POSTGRES_DB:-atlasops}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - atlasops-pgdata:/var/lib/postgresql/data
+      - ./infra/init-db:/docker-entrypoint-initdb.d
+      - ./infra/seed:/seed:ro
+    networks:
+      - atlasops-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-atlasops} -d ${POSTGRES_DB:-atlasops}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  redis:
+    image: redis:7-alpine
+    container_name: atlasops-redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - atlasops-redisdata:/data
+    networks:
+      - atlasops-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  minio:
+    image: minio/minio:latest
+    container_name: atlasops-minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    command: server /data --console-address ":9001"
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - atlasops-miniodata:/data
+    networks:
+      - atlasops-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  backend-api:
+    build:
+      context: ./backend/app-boot
+      dockerfile: Dockerfile
+    image: atlasops/backend-api:latest
+    container_name: atlasops-backend-api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-atlasops}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-atlasops}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-atlasops_local}
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    networks:
+      - atlasops-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  worker:
+    build:
+      context: ./backend/worker
+      dockerfile: Dockerfile
+    image: atlasops/worker:latest
+    container_name: atlasops-worker
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-atlasops}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-atlasops}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-atlasops_local}
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+    networks:
+      - atlasops-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  # ===========================================================================
+  # ADVANCED PROFILE — OpenSearch, MongoDB, Neo4j
+  # ===========================================================================
+
+  opensearch:
+    image: opensearchproject/opensearch:2
+    container_name: atlasops-opensearch
+    profiles: ["advanced"]
+    environment:
+      discovery.type: single-node
+      DISABLE_SECURITY_PLUGIN: "true"
+      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "${OPENSEARCH_PORT:-9200}:9200"
+      - "${OPENSEARCH_PERF_PORT:-9600}:9600"
+    volumes:
+      - atlasops-opensearchdata:/usr/share/opensearch/data
+    networks:
+      - atlasops-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  mongodb:
+    image: mongo:7
+    container_name: atlasops-mongodb
+    profiles: ["advanced"]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-atlasops}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-atlasops_local}
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
+      - atlasops-mongodata:/data/db
+    networks:
+      - atlasops-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  neo4j:
+    image: neo4j:5
+    container_name: atlasops-neo4j
+    profiles: ["advanced"]
+    environment:
+      NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-atlasops_local}
+    ports:
+      - "${NEO4J_HTTP_PORT:-7474}:7474"
+      - "${NEO4J_BOLT_PORT:-7687}:7687"
+    volumes:
+      - atlasops-neo4jdata:/data
+    networks:
+      - atlasops-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7474"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  # ===========================================================================
+  # ANALYTICS PROFILE — TimescaleDB, ClickHouse
+  # ===========================================================================
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: atlasops-timescaledb
+    profiles: ["analytics"]
+    environment:
+      POSTGRES_USER: ${TIMESCALE_USER:-atlasops}
+      POSTGRES_PASSWORD: ${TIMESCALE_PASSWORD:-atlasops_local}
+      POSTGRES_DB: ${TIMESCALE_DB:-atlasops_timeseries}
+    ports:
+      - "${TIMESCALE_PORT:-5433}:5432"
+    volumes:
+      - atlasops-timescaledata:/var/lib/postgresql/data
+    networks:
+      - atlasops-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${TIMESCALE_USER:-atlasops} -d ${TIMESCALE_DB:-atlasops_timeseries}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: atlasops-clickhouse
+    profiles: ["analytics"]
+    environment:
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-atlasops}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-atlasops_local}
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB:-atlasops_analytics}
+    ports:
+      - "${CLICKHOUSE_HTTP_PORT:-8123}:8123"
+      - "${CLICKHOUSE_NATIVE_PORT:-9009}:9000"
+    volumes:
+      - atlasops-clickhousedata:/var/lib/clickhouse
+    networks:
+      - atlasops-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  # ===========================================================================
+  # EVENT-SOURCING PROFILE — EventStoreDB
+  # ===========================================================================
+
+  eventstoredb:
+    image: eventstore/eventstore:latest
+    container_name: atlasops-eventstoredb
+    profiles: ["event-sourcing"]
+    environment:
+      EVENTSTORE_INSECURE: "true"
+      EVENTSTORE_CLUSTER_SIZE: 1
+      EVENTSTORE_RUN_PROJECTIONS: All
+      EVENTSTORE_START_STANDARD_PROJECTIONS: "true"
+      EVENTSTORE_MEM_DB: "false"
+    ports:
+      - "${EVENTSTORE_HTTP_PORT:-2113}:2113"
+      - "${EVENTSTORE_TCP_PORT:-1113}:1113"
+    volumes:
+      - atlasops-eventstoredata:/var/lib/eventstore
+    networks:
+      - atlasops-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:2113/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  # ===========================================================================
+  # OBSERVABILITY PROFILE — Prometheus, Grafana, Loki, Tempo, MailHog
+  # ===========================================================================
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: atlasops-prometheus
+    profiles: ["observability"]
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./infra/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - atlasops-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: atlasops-grafana
+    profiles: ["observability"]
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    volumes:
+      - atlasops-grafanadata:/var/lib/grafana
+      - ./infra/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    networks:
+      - atlasops-network
+    depends_on:
+      prometheus:
+        condition: service_healthy
+      loki:
+        condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  loki:
+    image: grafana/loki:latest
+    container_name: atlasops-loki
+    profiles: ["observability"]
+    command: -config.file=/etc/loki/loki-config.yml
+    ports:
+      - "${LOKI_PORT:-3100}:3100"
+    volumes:
+      - ./infra/monitoring/loki-config.yml:/etc/loki/loki-config.yml:ro
+    networks:
+      - atlasops-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3100/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  tempo:
+    image: grafana/tempo:latest
+    container_name: atlasops-tempo
+    profiles: ["observability"]
+    command: -config.file=/etc/tempo/tempo-config.yml
+    ports:
+      - "${TEMPO_PORT:-3200}:3200"
+      - "${TEMPO_OTLP_GRPC_PORT:-4317}:4317"
+      - "${TEMPO_OTLP_HTTP_PORT:-4318}:4318"
+    volumes:
+      - atlasops-tempodata:/var/tempo
+    networks:
+      - atlasops-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3200/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: atlasops-mailhog
+    profiles: ["observability"]
+    ports:
+      - "${MAILHOG_PORT:-8025}:8025"
+      - "${MAILHOG_SMTP_PORT:-1025}:1025"
+    networks:
+      - atlasops-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8025"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+
+networks:
+  atlasops-network:
+    driver: bridge
+    name: atlasops-network
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+
+volumes:
+  atlasops-pgdata:
+    name: atlasops-pgdata
+  atlasops-redisdata:
+    name: atlasops-redisdata
+  atlasops-miniodata:
+    name: atlasops-miniodata
+  atlasops-opensearchdata:
+    name: atlasops-opensearchdata
+  atlasops-mongodata:
+    name: atlasops-mongodata
+  atlasops-neo4jdata:
+    name: atlasops-neo4jdata
+  atlasops-timescaledata:
+    name: atlasops-timescaledata
+  atlasops-clickhousedata:
+    name: atlasops-clickhousedata
+  atlasops-eventstoredata:
+    name: atlasops-eventstoredata
+  atlasops-grafanadata:
+    name: atlasops-grafanadata
+  atlasops-tempodata:
+    name: atlasops-tempodata

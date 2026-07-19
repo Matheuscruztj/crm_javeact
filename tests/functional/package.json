@@ -1,0 +1,12 @@
+{
+  "name": "@atlasops/functional-tests",
+  "private": true,
+  "scripts": {
+    "test": "playwright test --config=playwright.config.ts",
+    "test:headed": "playwright test --config=playwright.config.ts --headed",
+    "test:report": "playwright show-report ./playwright-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0"
+  }
+}

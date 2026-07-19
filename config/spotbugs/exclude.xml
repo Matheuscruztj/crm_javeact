@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- Exclude EI/EI2 warnings for records - Java records intentionally store/return references directly -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP,EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!-- Exclude CT_CONSTRUCTOR_THROW for domain validation in constructors -->
+    <Match>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+        <Package name="~com\.atlasops\..*\.domain"/>
+    </Match>
+
+    <!-- Exclude format string suggestions (using \n is fine in non-console output) -->
+    <Match>
+        <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
+    </Match>
+
+    <!-- Exclude return value ignored in test code (common in assertThrows patterns) -->
+    <Match>
+        <Bug code="RV"/>
+        <Source name="~.*Test\.java"/>
+    </Match>
+
+    <!-- Exclude possible null pointer warnings for Path operations -->
+    <Match>
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE"/>
+        <Class name="com.atlasops.shared.sdd.SpecValidator"/>
+    </Match>
+</FindBugsFilter>
