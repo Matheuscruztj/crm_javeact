@@ -37,6 +37,9 @@ dependencies {
     // Jakarta Validation for request DTOs
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
+    // OpenAPI annotations
+    compileOnly("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+
     // Spring Data Redis for refresh tokens and lockout
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 

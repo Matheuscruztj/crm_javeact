@@ -100,3 +100,11 @@ logging:
     com.atlasops: INFO
     org.springframework.security: WARN
     org.hibernate.SQL: WARN
+
+# SpringDoc / OpenAPI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
