@@ -14,12 +14,18 @@ dependencyManagement {
 dependencies {
     // Inter-module
     api(project(":backend:shared-kernel"))
-    implementation(project(":backend:auth"))
 
     // Spring Data JPA for persistence adapters
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework:spring-context")
+
+    // Security - bcrypt password hashing
+    implementation("org.springframework.security:spring-security-crypto")
 
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.mockito:mockito-core")
+    testImplementation("com.fasterxml.jackson.core:jackson-databind")
+    testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 }
