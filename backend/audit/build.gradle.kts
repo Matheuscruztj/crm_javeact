@@ -15,10 +15,29 @@ dependencies {
     // Inter-module
     api(project(":backend:shared-kernel"))
 
-    // Spring Data JPA for persistence adapters
+    // Spring Data Commons for Pageable/Page types in ports
+    implementation("org.springframework.data:spring-data-commons")
+
+    // Spring Data JPA for infrastructure adapter
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework:spring-context")
+
+    // Spring Web for REST controller
+    implementation("org.springframework.boot:spring-boot-starter-web")
+
+    // Spring AOP for audit aspect
+    implementation("org.springframework.boot:spring-boot-starter-aop")
+
+    // Jackson for JSON handling in aspect
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+
+    // Logging (used in use cases for retry/error logging)
+    implementation("org.slf4j:slf4j-api")
 
     // Testing
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.assertj:assertj-core")
+    testImplementation("org.mockito:mockito-core")
+    testImplementation("org.mockito:mockito-junit-jupiter")
+    testImplementation("net.jqwik:jqwik:1.9.2")
+    testRuntimeOnly("ch.qos.logback:logback-classic")
 }
