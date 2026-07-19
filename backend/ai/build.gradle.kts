@@ -26,6 +26,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework:spring-context")
 
+    // Apache Tika for text extraction from PDF, DOCX, images, etc.
+    implementation("org.apache.tika:tika-core:2.9.1")
+    implementation("org.apache.tika:tika-parsers-standard-package:2.9.1")
+
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
