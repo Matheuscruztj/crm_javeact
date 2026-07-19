@@ -156,8 +156,9 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: OWASP Dependency Check
-        run: ./gradlew dependencyCheckAnalyze || true
-        # Non-blocking for now; will be made blocking once all vulnerabilities are resolved
+        run: ./gradlew dependencyCheckAnalyze
+        # Blocking: fails build if any dependency has CVSS >= 9.0 (CRITICAL)
+        # Add false positives to config/dependency-check/suppression.xml with justification
 
       - name: Upload dependency check report
         uses: actions/upload-artifact@v4
