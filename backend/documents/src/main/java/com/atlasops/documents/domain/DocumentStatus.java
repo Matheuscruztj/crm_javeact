@@ -51,7 +51,7 @@ public enum DocumentStatus {
           PENDING_UPLOAD, Set.of(UPLOADED, UPLOAD_FAILED),
           UPLOADED, Set.of(TEXT_EXTRACTED, PROCESSING_FAILED),
           TEXT_EXTRACTED, Set.of(ANALYZED, PROCESSING_FAILED),
-          ANALYZED, Set.of(),
+          ANALYZED, Set.of(UPLOADED),       // reprocess: allow re-sending to worker
           UPLOAD_FAILED, Set.of(),
-          PROCESSING_FAILED, Set.of());
+          PROCESSING_FAILED, Set.of(UPLOADED)); // reprocess: allow retry
 }

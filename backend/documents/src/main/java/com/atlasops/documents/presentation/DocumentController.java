@@ -7,6 +7,7 @@ import com.atlasops.documents.application.InitiateUploadResult;
 import com.atlasops.documents.application.InitiateUploadUseCase;
 import com.atlasops.documents.application.RegisterDocumentMetadataCommand;
 import com.atlasops.documents.application.RegisterDocumentMetadataUseCase;
+import com.atlasops.documents.application.ReprocessDocumentUseCase;
 import com.atlasops.documents.domain.Document;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -38,14 +39,17 @@ public class DocumentController {
   private final RegisterDocumentMetadataUseCase registerDocumentMetadataUseCase;
   private final InitiateUploadUseCase initiateUploadUseCase;
   private final ConfirmUploadUseCase confirmUploadUseCase;
+  private final ReprocessDocumentUseCase reprocessDocumentUseCase;
 
   public DocumentController(
       RegisterDocumentMetadataUseCase registerDocumentMetadataUseCase,
       InitiateUploadUseCase initiateUploadUseCase,
-      ConfirmUploadUseCase confirmUploadUseCase) {
+      ConfirmUploadUseCase confirmUploadUseCase,
+      ReprocessDocumentUseCase reprocessDocumentUseCase) {
     this.registerDocumentMetadataUseCase = registerDocumentMetadataUseCase;
     this.initiateUploadUseCase = initiateUploadUseCase;
     this.confirmUploadUseCase = confirmUploadUseCase;
+    this.reprocessDocumentUseCase = reprocessDocumentUseCase;
   }
 
   /**
@@ -111,6 +115,24 @@ public class DocumentController {
     var command = new ConfirmUploadCommand(id, request.storagePath(), tenantId, correlationId);
     Document updated = confirmUploadUseCase.execute(command);
 
+    return ResponseEntity.ok(DocumentResponse.from(updated));
+  }
+
+  /**
+   * Triggers reprocessing of a document through the AI pipeline.
+   * Only eligible for documents in ANALYZED or PROCESSING_FAILED status.
+   *
+   * @param tenantId the tenant identifier from header
+   * @param id the document identifier
+   * @return 200 OK with the updated document (status reset to UPLOADED)
+   */
+  @PostMapping("/{id}/reprocess")
+  public ResponseEntity<DocumentResponse> reprocess(
+      @RequestHeader("X-Tenant-ID") String tenantId,
+      @RequestHeader(value = "X-Correlation-ID", required = false) String correlationId,
+      @PathVariable String id) {
+
+    Document updated = reprocessDocumentUseCase.execute(id, tenantId, correlationId);
     return ResponseEntity.ok(DocumentResponse.from(updated));
   }
 }

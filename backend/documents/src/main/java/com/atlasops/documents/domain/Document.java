@@ -219,6 +219,33 @@ public final class Document extends AggregateRoot<String> {
     this.updatedAt = now;
   }
 
+  /**
+   * Marks the document for reprocessing, transitioning from ANALYZED or PROCESSING_FAILED
+   * back to UPLOADED so the worker re-processes it.
+   *
+   * <p>Clears the previous analysis result and re-publishes the {@link DocumentUploadedEvent}
+   * so the worker picks it up again.
+   *
+   * @param correlationId the correlation ID for tracing
+   * @param now current timestamp
+   * @throws IllegalStateException if the document is not in ANALYZED or PROCESSING_FAILED status
+   */
+  public void reprocess(String correlationId, Instant now) {
+    Objects.requireNonNull(now, "Timestamp must not be null");
+    assertTransition(DocumentStatus.UPLOADED);
+    this.analysisResult = null;
+    this.status = DocumentStatus.UPLOADED;
+    this.updatedAt = now;
+    registerEvent(
+        new DocumentUploadedEvent(
+            getId(),
+            tenantId.getValue(),
+            contentType.getMimeType(),
+            filename,
+            storagePath,
+            correlationId));
+  }
+
   private void assertTransition(DocumentStatus target) {
     if (!this.status.canTransitionTo(target)) {
       throw new IllegalStateException("Cannot transition from " + this.status + " to " + target);
