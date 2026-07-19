@@ -34,7 +34,7 @@
 
 ### Scopes comuns
 
-- Módulos: `auth`, `tenants`, `users`, `customers`, `documents`, `requests`, `pipeline`, `tasks`, `workflows`, `ai`, `analytics`, `audit`, `app-boot`, `shared-kernel`
+- Módulos: `auth`, `tenants`, `users`, `customers`, `documents`, `requests`, `approvals`, `activities`, `notifications`, `integrations`, `search`, `imports`, `operations`, `ai`, `analytics`, `audit`, `app-boot`, `shared-kernel`, `worker`
 - Infraestrutura: `docker`, `gradle`, `infra`, `monitoring`
 - Documentação: `docs`, `adr`, `steering`
 - Tooling: `deps`, `ci`, `makefile`
