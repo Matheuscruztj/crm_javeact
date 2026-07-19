@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 SHELL := /bin/bash
 
-COMPOSE_FILE := infra/docker-compose.yml
+COMPOSE_FILE := docker-compose.yml
 GRADLEW := ./gradlew
 
 # ============================================================================
