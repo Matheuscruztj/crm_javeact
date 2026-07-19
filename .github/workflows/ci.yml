@@ -1,0 +1,167 @@
+name: CI — Quality Gates
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  JAVA_VERSION: "21"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true"
+
+jobs:
+  # ==========================================================================
+  # Backend Quality Gates
+  # ==========================================================================
+  backend:
+    name: Backend (Build + Test + Lint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: atlasops
+          POSTGRES_PASSWORD: atlasops_ci
+          POSTGRES_DB: atlasops
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U atlasops"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: "gradle"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Check formatting (Spotless)
+        run: ./gradlew spotlessCheck
+
+      - name: Lint (Checkstyle)
+        run: ./gradlew checkstyleMain
+
+      - name: Compile
+        run: ./gradlew compileJava
+
+      - name: Unit tests
+        run: ./gradlew test
+        env:
+          DATABASE_URL: jdbc:postgresql://localhost:5432/atlasops
+          POSTGRES_USER: atlasops
+          POSTGRES_PASSWORD: atlasops_ci
+          REDIS_URL: redis://localhost:6379
+
+      - name: SpotBugs
+        run: ./gradlew spotbugsMain
+
+      - name: Build (package)
+        run: ./gradlew build -x test
+
+      - name: Jacoco coverage report
+        run: ./gradlew jacocoTestReport
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: "**/build/reports/jacoco/"
+          retention-days: 7
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: "**/build/reports/tests/"
+          retention-days: 7
+
+  # ==========================================================================
+  # Frontend Quality Gates
+  # ==========================================================================
+  frontend:
+    name: Frontend (Lint + Build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
+
+  # ==========================================================================
+  # Security Checks
+  # ==========================================================================
+  security:
+    name: Security (Dependency Check)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: "gradle"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: OWASP Dependency Check
+        run: ./gradlew dependencyCheckAnalyze || true
+        # Non-blocking for now; will be made blocking once all vulnerabilities are resolved
+
+      - name: Upload dependency check report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: "**/build/reports/dependency-check*"
+          retention-days: 7
