@@ -3,6 +3,7 @@ package com.atlasops.requests.presentation;
 import com.atlasops.requests.application.AddCommentUseCase;
 import com.atlasops.requests.application.AssignAnalystUseCase;
 import com.atlasops.requests.application.CreateRequestUseCase;
+import com.atlasops.requests.application.GetRequestStatusHistoryUseCase;
 import com.atlasops.requests.application.GetRequestUseCase;
 import com.atlasops.requests.application.ListCommentsUseCase;
 import com.atlasops.requests.application.ListRequestsUseCase;
@@ -11,6 +12,7 @@ import com.atlasops.requests.application.TransitionRequestStatusUseCase;
 import com.atlasops.requests.domain.Comment;
 import com.atlasops.requests.domain.RequestPriority;
 import com.atlasops.requests.domain.RequestStatus;
+import com.atlasops.requests.domain.RequestStatusHistory;
 import com.atlasops.requests.domain.ServiceRequest;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -53,6 +55,7 @@ public class RequestController {
   private final AssignAnalystUseCase assignAnalystUseCase;
   private final AddCommentUseCase addCommentUseCase;
   private final ListCommentsUseCase listCommentsUseCase;
+  private final GetRequestStatusHistoryUseCase getRequestStatusHistoryUseCase;
 
   public RequestController(
       CreateRequestUseCase createRequestUseCase,
@@ -61,7 +64,8 @@ public class RequestController {
       TransitionRequestStatusUseCase transitionRequestStatusUseCase,
       AssignAnalystUseCase assignAnalystUseCase,
       AddCommentUseCase addCommentUseCase,
-      ListCommentsUseCase listCommentsUseCase) {
+      ListCommentsUseCase listCommentsUseCase,
+      GetRequestStatusHistoryUseCase getRequestStatusHistoryUseCase) {
     this.createRequestUseCase = createRequestUseCase;
     this.getRequestUseCase = getRequestUseCase;
     this.listRequestsUseCase = listRequestsUseCase;
@@ -69,6 +73,7 @@ public class RequestController {
     this.assignAnalystUseCase = assignAnalystUseCase;
     this.addCommentUseCase = addCommentUseCase;
     this.listCommentsUseCase = listCommentsUseCase;
+    this.getRequestStatusHistoryUseCase = getRequestStatusHistoryUseCase;
   }
 
   /**
@@ -228,6 +233,25 @@ public class RequestController {
 
     List<Comment> comments = listCommentsUseCase.execute(id, tenantId);
     List<CommentResponse> response = comments.stream().map(CommentResponse::from).toList();
+
+    return ResponseEntity.ok(response);
+  }
+
+  /**
+   * Returns the status transition history for a service request.
+   *
+   * @param tenantId the tenant identifier from header
+   * @param id the request identifier
+   * @return 200 OK with the list of status history records, oldest first
+   */
+  @GetMapping("/{id}/history")
+  public ResponseEntity<List<StatusHistoryResponse>> getHistory(
+      @RequestHeader("X-Tenant-ID") String tenantId, @PathVariable String id) {
+
+    List<RequestStatusHistory> history = getRequestStatusHistoryUseCase.execute(id, tenantId);
+    List<StatusHistoryResponse> response = history.stream()
+        .map(StatusHistoryResponse::from)
+        .toList();
 
     return ResponseEntity.ok(response);
   }
