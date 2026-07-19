@@ -308,3 +308,25 @@ seed: ## Populate demo data (idempotent — safe to run multiple times)
 		-f /seed/seed.sql \
 		2>&1 | tail -5
 	@echo "==> Seed complete!"
+
+.PHONY: seed-reset
+seed-reset: ## Reset seed data (truncate then re-seed)
+	@echo "==> Resetting seed data..."
+	@docker compose -f $(COMPOSE_FILE) exec -T postgres \
+		psql -U $${POSTGRES_USER:-atlasops} -d $${POSTGRES_DB:-atlasops} \
+		-c "TRUNCATE app.documents, app.customers, app.users, app.roles, app.tenants CASCADE;" \
+		2>&1 | tail -3
+	@$(MAKE) seed
+	@echo "==> Seed reset complete!"
+
+.PHONY: seed-demo
+seed-demo: seed ## Alias for 'seed' — populate demo data
+
+.PHONY: seed-tests
+seed-tests: ## Populate minimal test data (tenants + users only)
+	@echo "==> Seeding test data..."
+	@docker compose -f $(COMPOSE_FILE) exec -T postgres \
+		psql -U $${POSTGRES_USER:-atlasops} -d $${POSTGRES_DB:-atlasops} \
+		-f /seed/seed-tests.sql \
+		2>&1 | tail -5
+	@echo "==> Test seed complete!"
