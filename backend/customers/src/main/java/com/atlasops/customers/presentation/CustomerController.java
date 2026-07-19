@@ -1,5 +1,6 @@
 package com.atlasops.customers.presentation;
 
+import com.atlasops.customers.application.ActivateCustomerUseCase;
 import com.atlasops.customers.application.AssociateClientUserUseCase;
 import com.atlasops.customers.application.CreateCustomerCommand;
 import com.atlasops.customers.application.CreateCustomerUseCase;
@@ -55,6 +56,7 @@ public class CustomerController {
   private final ListCustomersUseCase listCustomersUseCase;
   private final UpdateCustomerUseCase updateCustomerUseCase;
   private final DeactivateCustomerUseCase deactivateCustomerUseCase;
+  private final ActivateCustomerUseCase activateCustomerUseCase;
   private final SearchCustomersUseCase searchCustomersUseCase;
   private final FindCustomersByRadiusUseCase findCustomersByRadiusUseCase;
   private final AssociateClientUserUseCase associateClientUserUseCase;
@@ -65,6 +67,7 @@ public class CustomerController {
       ListCustomersUseCase listCustomersUseCase,
       UpdateCustomerUseCase updateCustomerUseCase,
       DeactivateCustomerUseCase deactivateCustomerUseCase,
+      ActivateCustomerUseCase activateCustomerUseCase,
       SearchCustomersUseCase searchCustomersUseCase,
       FindCustomersByRadiusUseCase findCustomersByRadiusUseCase,
       AssociateClientUserUseCase associateClientUserUseCase) {
@@ -73,6 +76,7 @@ public class CustomerController {
     this.listCustomersUseCase = listCustomersUseCase;
     this.updateCustomerUseCase = updateCustomerUseCase;
     this.deactivateCustomerUseCase = deactivateCustomerUseCase;
+    this.activateCustomerUseCase = activateCustomerUseCase;
     this.searchCustomersUseCase = searchCustomersUseCase;
     this.findCustomersByRadiusUseCase = findCustomersByRadiusUseCase;
     this.associateClientUserUseCase = associateClientUserUseCase;
@@ -189,6 +193,21 @@ public class CustomerController {
 
     Customer deactivated = deactivateCustomerUseCase.execute(id, tenantId);
     return ResponseEntity.ok(CustomerResponse.from(deactivated));
+  }
+
+  /**
+   * Activates a previously deactivated customer.
+   *
+   * @param tenantId the tenant identifier from header
+   * @param id the customer identifier
+   * @return 200 OK with the activated customer representation
+   */
+  @PatchMapping("/{id}/activate")
+  public ResponseEntity<CustomerResponse> activate(
+      @RequestHeader("X-Tenant-ID") String tenantId, @PathVariable String id) {
+
+    Customer activated = activateCustomerUseCase.execute(id, tenantId);
+    return ResponseEntity.ok(CustomerResponse.from(activated));
   }
 
   /**
