@@ -1,0 +1,68 @@
+# =============================================================================
+# AtlasOps AI — CODEOWNERS
+# =============================================================================
+# Each line defines ownership for files/directories.
+# The last matching pattern takes precedence.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# =============================================================================
+
+# Default owner for everything
+*                                       @atlasops/core-team
+
+# ---- Governance & Security (requires explicit approval) ----
+AGENTS.md                               @atlasops/tech-leads
+CODEOWNERS                              @atlasops/tech-leads
+.env.example                            @atlasops/tech-leads
+settings.gradle.kts                     @atlasops/tech-leads
+gradle.properties                       @atlasops/tech-leads
+
+# ---- Backend Modules ----
+backend/shared-kernel/                  @atlasops/backend-team
+backend/auth/                           @atlasops/backend-team @atlasops/security-team
+backend/tenants/                        @atlasops/backend-team
+backend/users/                          @atlasops/backend-team
+backend/customers/                      @atlasops/backend-team
+backend/documents/                      @atlasops/backend-team
+backend/requests/                       @atlasops/backend-team
+backend/approvals/                      @atlasops/backend-team
+backend/activities/                     @atlasops/backend-team
+backend/notifications/                  @atlasops/backend-team
+backend/integrations/                   @atlasops/backend-team
+backend/search/                         @atlasops/backend-team
+backend/imports/                        @atlasops/backend-team
+backend/operations/                     @atlasops/backend-team
+backend/ai/                             @atlasops/ai-team
+backend/analytics/                      @atlasops/backend-team
+backend/audit/                          @atlasops/backend-team @atlasops/security-team
+backend/app-boot/                       @atlasops/backend-team
+backend/worker/                         @atlasops/backend-team
+
+# ---- Security-sensitive files ----
+backend/auth/src/main/java/**/infrastructure/   @atlasops/security-team
+backend/app-boot/src/main/java/**/security/     @atlasops/security-team
+
+# ---- Database Migrations ----
+backend/app-boot/src/main/resources/db/migration/   @atlasops/backend-team @atlasops/tech-leads
+
+# ---- Frontend ----
+frontend/                               @atlasops/frontend-team
+
+# ---- Infrastructure ----
+infra/                                  @atlasops/devops-team
+infra/docker-compose.yml                @atlasops/devops-team @atlasops/tech-leads
+infra/monitoring/                       @atlasops/devops-team
+
+# ---- CI/CD ----
+.github/                                @atlasops/devops-team
+
+# ---- Documentation ----
+docs/                                   @atlasops/core-team
+docs/adr/                               @atlasops/tech-leads
+
+# ---- Steering & Specs ----
+.kiro/steering/                         @atlasops/tech-leads
+.kiro/specs/                            @atlasops/core-team
+
+# ---- Build Configuration ----
+build.gradle.kts                        @atlasops/backend-team
+Makefile                                @atlasops/devops-team
