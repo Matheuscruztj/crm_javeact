@@ -1,0 +1,35 @@
+# Configuration override for Testcontainers integration tests
+# Database and Redis URLs are overridden by @DynamicPropertySource in AbstractIntegrationTest
+
+server:
+  port: 0
+
+spring:
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  flyway:
+    enabled: false
+
+  security:
+    jwt:
+      issuer: atlasops-integration-test
+      audience: atlasops-api-test
+      secret: integration-test-secret-key-min-32-chars
+      expiration: 300
+
+app:
+  storage:
+    endpoint: http://localhost:9000
+    bucket: atlasops-test
+    access-key: minioadmin
+    secret-key: minioadmin
+    region: us-east-1
+
+logging:
+  level:
+    root: WARN
+    com.atlasops: DEBUG
+    org.testcontainers: INFO

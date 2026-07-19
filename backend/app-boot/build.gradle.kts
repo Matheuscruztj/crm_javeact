@@ -56,3 +56,22 @@ dependencies {
     // Architecture testing
     testImplementation("com.tngtech.archunit:archunit-junit5:${property("archunitVersion")}")
 }
+
+// Separate integration tests using JUnit 5 tags
+tasks.named<Test>("test") {
+    useJUnitPlatform {
+        excludeTags("integration")
+    }
+}
+
+tasks.register<Test>("integrationTest") {
+    description = "Runs integration tests with Testcontainers"
+    group = "verification"
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+    useJUnitPlatform {
+        includeTags("integration")
+    }
+    shouldRunAfter(tasks.named("test"))
+    jvmArgs("-Dtestcontainers.reuse.enable=true")
+}
