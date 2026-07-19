@@ -6,10 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import org.slf4j.MDC;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
@@ -18,53 +16,44 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * <p>Behavior:
  *
  * <ul>
- *   <li>If the incoming request contains an {@code X-Correlation-ID} header, that value is reused.
- *   <li>Otherwise, a new UUID v4 is generated.
+ *   <li>If the incoming request contains an {@code X-Correlation-ID} header with a valid UUID
+ *       value, that value is reused.
+ *   <li>If the header is absent, blank, or not a valid UUID format, a new UUID v4 is generated.
  *   <li>The correlation ID is placed in the MDC as {@code correlationId} for structured logging.
- *   <li>The correlation ID is also set as {@code traceId} in the MDC if no external tracing is
- *       active.
  *   <li>The correlation ID is added to the response as {@code X-Correlation-ID} header.
- *   <li>The MDC is cleaned after the request completes.
  * </ul>
  *
- * <p>Validates: Requirements 3.11, 11.4, 11.5
+ * <p>Validates: Requirements 27.1, 27.2, 27.3, 27.5
  */
-@Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorrelationIdFilter extends OncePerRequestFilter {
 
   public static final String CORRELATION_ID_HEADER = "X-Correlation-ID";
   public static final String MDC_CORRELATION_ID_KEY = "correlationId";
-  public static final String MDC_TRACE_ID_KEY = "traceId";
+
+  private static final Pattern UUID_PATTERN =
+      Pattern.compile(
+          "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
 
   @Override
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
 
-    try {
-      String correlationId = extractOrGenerate(request);
+    String correlationId = extractOrGenerate(request);
 
-      MDC.put(MDC_CORRELATION_ID_KEY, correlationId);
+    MDC.put(MDC_CORRELATION_ID_KEY, correlationId);
+    response.setHeader(CORRELATION_ID_HEADER, correlationId);
 
-      // Set traceId from MDC if not already set by a distributed tracing system
-      if (MDC.get(MDC_TRACE_ID_KEY) == null) {
-        MDC.put(MDC_TRACE_ID_KEY, correlationId);
-      }
-
-      response.setHeader(CORRELATION_ID_HEADER, correlationId);
-
-      filterChain.doFilter(request, response);
-    } finally {
-      MDC.remove(MDC_CORRELATION_ID_KEY);
-      MDC.remove(MDC_TRACE_ID_KEY);
-    }
+    filterChain.doFilter(request, response);
   }
 
   private String extractOrGenerate(HttpServletRequest request) {
     String headerValue = request.getHeader(CORRELATION_ID_HEADER);
     if (headerValue != null && !headerValue.isBlank()) {
-      return headerValue.trim();
+      String trimmed = headerValue.trim();
+      if (UUID_PATTERN.matcher(trimmed).matches()) {
+        return trimmed;
+      }
     }
     return UUID.randomUUID().toString();
   }

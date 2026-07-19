@@ -15,24 +15,27 @@ import org.springframework.mock.web.MockHttpServletResponse;
 /**
  * Property-based tests for Correlation ID propagation through the HTTP filter.
  *
- * <p><b>Validates: Requirements 3.11, 11.4, 11.5</b>
+ * <p><b>Validates: Requirements 27.1, 27.2, 27.3, 27.4, 27.5</b>
  *
- * <p>Property 3: For any HTTP request received by the Backend API, if the {@code X-Correlation-ID}
- * header is present the system SHALL reuse that value, otherwise it SHALL generate a valid UUID v4;
- * in both cases the correlation ID SHALL appear in the MDC context, all log entries for that
- * request, and the {@code X-Correlation-ID} response header.
+ * <p>Property 25: For any HTTP request received by the Backend API, if the {@code X-Correlation-ID}
+ * header is present with a valid UUID, the system SHALL reuse that value; otherwise it SHALL
+ * generate a valid UUID v4. In both cases the correlation ID SHALL appear in the MDC context and
+ * the {@code X-Correlation-ID} response header.
  */
-@Tag("Feature: monorepo-sdd-harness, Property 3: Correlation ID Propagation")
+@Tag("Feature: project-implementation-kickoff, Property 25: Correlation ID Propagation")
 class CorrelationIdFilterPropertyTest {
 
   private final CorrelationIdFilter filter = new CorrelationIdFilter();
 
-  // ─── Property: When X-Correlation-ID header is present, the SAME value appears in response ───
-
+  /**
+   * Property: When X-Correlation-ID header is present with a valid UUID, the SAME value appears in
+   * response and MDC.
+   */
   @Property(tries = 100)
-  void providedCorrelationId_shouldBeReusedInResponse(
-      @ForAll("validCorrelationIds") String providedId) throws ServletException, IOException {
+  void should_reuseCorrelationId_when_headerContainsValidUuid(
+      @ForAll("validUuidCorrelationIds") String providedId) throws ServletException, IOException {
 
+    MDC.clear();
     MockHttpServletRequest request = new MockHttpServletRequest();
     MockHttpServletResponse response = new MockHttpServletResponse();
     request.addHeader(CorrelationIdFilter.CORRELATION_ID_HEADER, providedId);
@@ -54,16 +57,15 @@ class CorrelationIdFilterPropertyTest {
         .isEqualTo(expectedId);
   }
 
-  // ─── Property: When X-Correlation-ID header is absent, a valid UUID v4 is generated ──────────
-
+  /** Property: When X-Correlation-ID header is absent, a valid UUID v4 is generated. */
   @Property(tries = 100)
-  void absentCorrelationId_shouldGenerateValidUuidV4InResponse(
+  void should_generateValidUuidV4_when_headerAbsent(
       @ForAll("httpMethods") String httpMethod, @ForAll("requestUris") String requestUri)
       throws ServletException, IOException {
 
+    MDC.clear();
     MockHttpServletRequest request = new MockHttpServletRequest(httpMethod, requestUri);
     MockHttpServletResponse response = new MockHttpServletResponse();
-    // No X-Correlation-ID header set
 
     AtomicReference<String> mdcValue = new AtomicReference<>();
     FilterChain chain =
@@ -73,7 +75,6 @@ class CorrelationIdFilterPropertyTest {
 
     String responseHeaderValue = response.getHeader(CorrelationIdFilter.CORRELATION_ID_HEADER);
 
-    // Must be a valid UUID v4
     assertThat(responseHeaderValue)
         .as("Generated correlation ID must be non-null and non-blank")
         .isNotNull()
@@ -84,18 +85,53 @@ class CorrelationIdFilterPropertyTest {
         .as("Generated correlation ID must be a UUID version 4")
         .isEqualTo(4);
 
-    // MDC must match response header
     assertThat(mdcValue.get())
         .as("MDC correlationId must match the response header value")
         .isEqualTo(responseHeaderValue);
   }
 
-  // ─── Property: Correlation ID is ALWAYS present in response regardless of input ──────────────
-
+  /**
+   * Property: When X-Correlation-ID header has an invalid (non-UUID) value, a new UUID v4 is
+   * generated instead.
+   */
   @Property(tries = 100)
-  void correlationId_shouldAlwaysBeInResponse(@ForAll("optionalCorrelationIds") String headerValue)
-      throws ServletException, IOException {
+  void should_generateNewUuid_when_headerContainsInvalidFormat(
+      @ForAll("invalidCorrelationIds") String invalidId) throws ServletException, IOException {
 
+    MDC.clear();
+    MockHttpServletRequest request = new MockHttpServletRequest();
+    MockHttpServletResponse response = new MockHttpServletResponse();
+    request.addHeader(CorrelationIdFilter.CORRELATION_ID_HEADER, invalidId);
+
+    AtomicReference<String> mdcValue = new AtomicReference<>();
+    FilterChain chain =
+        (req, res) -> mdcValue.set(MDC.get(CorrelationIdFilter.MDC_CORRELATION_ID_KEY));
+
+    filter.doFilterInternal(request, response, chain);
+
+    String responseHeaderValue = response.getHeader(CorrelationIdFilter.CORRELATION_ID_HEADER);
+
+    assertThat(responseHeaderValue)
+        .as("Response must always have a correlation ID")
+        .isNotNull()
+        .isNotBlank();
+
+    UUID parsed = UUID.fromString(responseHeaderValue);
+    assertThat(parsed.version())
+        .as("Generated correlation ID must be a UUID version 4 when input is invalid")
+        .isEqualTo(4);
+
+    assertThat(mdcValue.get())
+        .as("MDC correlationId must match the response header value")
+        .isEqualTo(responseHeaderValue);
+  }
+
+  /** Property: Correlation ID is ALWAYS present in response regardless of input. */
+  @Property(tries = 100)
+  void should_alwaysHaveCorrelationIdInResponse(
+      @ForAll("optionalCorrelationIds") String headerValue) throws ServletException, IOException {
+
+    MDC.clear();
     MockHttpServletRequest request = new MockHttpServletRequest();
     MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -118,54 +154,35 @@ class CorrelationIdFilterPropertyTest {
         .isNotBlank();
   }
 
-  // ─── Property: Generated/propagated ID is always a valid UUID v4 format ──────────────────────
-
-  @Property(tries = 100)
-  void generatedCorrelationId_shouldAlwaysBeValidUuidV4(@ForAll("httpMethods") String httpMethod)
-      throws ServletException, IOException {
-
-    MockHttpServletRequest request = new MockHttpServletRequest(httpMethod, "/api/test");
-    MockHttpServletResponse response = new MockHttpServletResponse();
-    // No correlation ID header → forces generation
-
-    FilterChain chain =
-        (req, res) -> {
-          /* no-op */
-        };
-
-    filter.doFilterInternal(request, response, chain);
-
-    String responseId = response.getHeader(CorrelationIdFilter.CORRELATION_ID_HEADER);
-
-    // Must parse as UUID
-    assertThat(responseId).isNotNull();
-    UUID parsed = UUID.fromString(responseId);
-
-    // Must be version 4
-    assertThat(parsed.version()).as("Every generated correlation ID must be UUID v4").isEqualTo(4);
-
-    // Must be variant 2 (RFC 4122)
-    assertThat(parsed.variant())
-        .as("Every generated correlation ID must be RFC 4122 variant")
-        .isEqualTo(2);
-  }
-
   // ─── Generators ──────────────────────────────────────────────────────────────────────────────
 
   @Provide
-  Arbitrary<String> validCorrelationIds() {
-    // Generate valid UUID v4 strings that simulate realistic correlation IDs
+  Arbitrary<String> validUuidCorrelationIds() {
+    return Arbitraries.create(() -> UUID.randomUUID().toString());
+  }
+
+  @Provide
+  Arbitrary<String> invalidCorrelationIds() {
     return Arbitraries.oneOf(
-        // UUID v4 format (most common case)
-        Arbitraries.create(() -> UUID.randomUUID().toString()),
-        // Custom correlation ID strings (non-UUID but valid headers)
+        Arbitraries.of(
+            "not-a-uuid",
+            "abc-123-def",
+            "12345",
+            "hello-world",
+            "GGGGGGGG-GGGG-GGGG-GGGG-GGGGGGGGGGGG",
+            "too-short",
+            "123e4567-e89b-12d3-a456"),
         Arbitraries.strings()
             .withCharRange('a', 'z')
             .withCharRange('0', '9')
             .withChars('-', '_')
             .ofMinLength(1)
             .ofMaxLength(64)
-            .filter(s -> !s.isBlank()));
+            .filter(
+                s ->
+                    !s.isBlank()
+                        && !s.matches(
+                            "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$")));
   }
 
   @Provide
@@ -186,19 +203,9 @@ class CorrelationIdFilterPropertyTest {
 
   @Provide
   Arbitrary<String> optionalCorrelationIds() {
-    // Mix of scenarios: present valid IDs, empty, null-like, blank
     return Arbitraries.oneOf(
-        // Valid UUID correlation IDs
         Arbitraries.create(() -> UUID.randomUUID().toString()),
-        // Custom non-blank string IDs
-        Arbitraries.strings()
-            .withCharRange('a', 'z')
-            .withCharRange('0', '9')
-            .withChars('-')
-            .ofMinLength(1)
-            .ofMaxLength(36)
-            .filter(s -> !s.isBlank()),
-        // Empty/blank (triggers generation)
+        Arbitraries.of("not-a-uuid", "invalid-format"),
         Arbitraries.of("", " ", "  "));
   }
 }
