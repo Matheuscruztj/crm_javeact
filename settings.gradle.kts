@@ -8,11 +8,16 @@ include(
     "backend:customers",
     "backend:documents",
     "backend:requests",
-    "backend:pipeline",
-    "backend:tasks",
-    "backend:workflows",
+    "backend:approvals",
+    "backend:activities",
+    "backend:notifications",
+    "backend:integrations",
+    "backend:search",
+    "backend:imports",
+    "backend:operations",
     "backend:ai",
     "backend:analytics",
     "backend:audit",
-    "backend:app-boot"
+    "backend:app-boot",
+    "backend:worker"
 )
