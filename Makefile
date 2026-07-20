@@ -488,3 +488,13 @@ restore:
 ## Validate restore without applying: make restore-validate BACKUP_ID=20260720120000
 restore-validate:
 	@bash infra/scripts/restore.sh $(BACKUP_ID) --dry-run
+
+## ─────────────────────────────────────────────────────────────────────────────
+## Performance / Load Tests (P3.4)
+## ─────────────────────────────────────────────────────────────────────────────
+
+.PHONY: test-load-stress
+
+## Stress test: 200 VUs, 10min ramp-up (P3.4)
+test-load-stress:
+	k6 run infra/k6/stress.js
