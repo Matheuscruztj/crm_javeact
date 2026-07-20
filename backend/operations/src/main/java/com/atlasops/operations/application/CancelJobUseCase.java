@@ -3,7 +3,7 @@ package com.atlasops.operations.application;
 import com.atlasops.operations.domain.Job;
 import com.atlasops.operations.domain.ports.JobRepository;
 import com.atlasops.shared.domain.exceptions.ResourceNotFoundException;
-import com.atlasops.shared.ports.Clock;
+import com.atlasops.shared.domain.ports.Clock;
 import java.util.Objects;
 
 /**
