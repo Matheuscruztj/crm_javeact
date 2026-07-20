@@ -26,4 +26,27 @@ test.describe("Security: Cross-tenant access denial", () => {
     // API should return 401 for unauthenticated requests
     expect(response?.status()).toBe(401);
   });
+
+  test("should return 401 when accessing documents without token", async ({
+    page,
+  }) => {
+    const response = await page.request.get("/api/v1/documents");
+    expect(response.status()).toBe(401);
+  });
+
+  test("should return 401 when accessing approvals without token", async ({
+    page,
+  }) => {
+    const response = await page.request.get("/api/v1/approvals");
+    expect(response.status()).toBe(401);
+  });
+
+  test("should return 401 when accessing analytics without token", async ({
+    page,
+  }) => {
+    const response = await page.request.get(
+      "/api/v1/analytics/dashboard",
+    );
+    expect(response.status()).toBe(401);
+  });
 });

@@ -28,4 +28,37 @@ test.describe("ADMIN: Activity feed and dashboard", () => {
     await page.goto("/admin/analytics");
     await expect(page).not.toHaveURL(/login/);
   });
+
+  test("should show activity feed page after admin login", async ({
+    adminLogin,
+    page,
+  }) => {
+    await page.goto("/admin/activities");
+    await expect(page).not.toHaveURL(/login/);
+    await expect(page).toHaveURL(/activities/);
+  });
+
+  test("should show operations page after admin login", async ({
+    adminLogin,
+    page,
+  }) => {
+    await page.goto("/admin/operations");
+    await expect(page).not.toHaveURL(/login/);
+  });
+
+  test("should show audit page after admin login", async ({
+    adminLogin,
+    page,
+  }) => {
+    await page.goto("/admin/audit");
+    await expect(page).not.toHaveURL(/login/);
+  });
+
+  test("should show settings page after admin login", async ({
+    adminLogin,
+    page,
+  }) => {
+    await page.goto("/admin/settings");
+    await expect(page).not.toHaveURL(/login/);
+  });
 });

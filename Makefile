@@ -498,3 +498,18 @@ restore-validate:
 ## Stress test: 200 VUs, 10min ramp-up (P3.4)
 test-load-stress:
 	k6 run infra/k6/stress.js
+
+## ─────────────────────────────────────────────────────────────────────────────
+## Ledger Verification (P2.5, P3.13)
+## ─────────────────────────────────────────────────────────────────────────────
+
+.PHONY: verify-ledger
+
+## Verify the approval and audit ledger hash chain integrity
+verify-ledger:
+	@echo "Verifying ledger integrity..."
+	@curl -sf -H "Authorization: Bearer $${ADMIN_TOKEN}" \
+	  -H "X-Tenant-ID: $${TENANT_ID}" \
+	  http://localhost:8080/api/v1/audit/ledger/verify 2>/dev/null \
+	  | python3 -c "import sys,json; d=json.load(sys.stdin); print('Ledger valid:', d.get('integrityValid', False))" \
+	  2>/dev/null || echo "API not available — run 'make compose-up' first"
