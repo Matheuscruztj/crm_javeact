@@ -14,6 +14,9 @@ dependencyManagement {
 dependencies {
     api(project(":backend:shared-kernel"))
 
+    // Spring context (for component scanning)
+    implementation("org.springframework:spring-context")
+
     // Testing
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.assertj:assertj-core:${property("assertjVersion")}")

@@ -19,21 +19,21 @@ class DashboardSummaryTest {
     @Test
     void should_createDashboardSummary_when_allFieldsValid() {
         Map<MetricName, Double> metrics = Map.of(
-                MetricName.TOTAL_CUSTOMERS, 10.0,
-                MetricName.TOTAL_REQUESTS, 25.0);
+                MetricName.CUSTOMER_COUNT, 10.0,
+                MetricName.REQUEST_COUNT, 25.0);
 
         DashboardSummary summary = new DashboardSummary("tenant-alpha", metrics, NOW);
 
         assertThat(summary.tenantId()).isEqualTo("tenant-alpha");
-        assertThat(summary.get(MetricName.TOTAL_CUSTOMERS)).isEqualTo(10.0);
-        assertThat(summary.get(MetricName.TOTAL_REQUESTS)).isEqualTo(25.0);
+        assertThat(summary.get(MetricName.CUSTOMER_COUNT)).isEqualTo(10.0);
+        assertThat(summary.get(MetricName.REQUEST_COUNT)).isEqualTo(25.0);
     }
 
     @Test
     void should_returnZero_when_metricNotPresent() {
         DashboardSummary summary = new DashboardSummary("tenant-alpha", Map.of(), NOW);
 
-        assertThat(summary.get(MetricName.TOTAL_CUSTOMERS)).isEqualTo(0.0);
+        assertThat(summary.get(MetricName.CUSTOMER_COUNT)).isEqualTo(0.0);
     }
 
     @Test
@@ -51,11 +51,11 @@ class DashboardSummaryTest {
     @Test
     void should_beImmutable_when_originalMapMutated() {
         java.util.HashMap<MetricName, Double> mutableMap = new java.util.HashMap<>();
-        mutableMap.put(MetricName.TOTAL_CUSTOMERS, 5.0);
+        mutableMap.put(MetricName.CUSTOMER_COUNT, 5.0);
 
         DashboardSummary summary = new DashboardSummary("tenant-alpha", mutableMap, NOW);
-        mutableMap.put(MetricName.TOTAL_REQUESTS, 99.0);
+        mutableMap.put(MetricName.REQUEST_COUNT, 99.0);
 
-        assertThat(summary.get(MetricName.TOTAL_REQUESTS)).isEqualTo(0.0);
+        assertThat(summary.get(MetricName.REQUEST_COUNT)).isEqualTo(0.0);
     }
 }

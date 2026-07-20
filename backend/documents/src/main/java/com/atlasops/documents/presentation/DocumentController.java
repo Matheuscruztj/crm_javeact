@@ -11,13 +11,20 @@ import com.atlasops.documents.application.ReprocessDocumentUseCase;
 import com.atlasops.documents.domain.Document;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.time.Duration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
 /**
  * REST controller for document management operations.
@@ -40,16 +47,22 @@ public class DocumentController {
   private final InitiateUploadUseCase initiateUploadUseCase;
   private final ConfirmUploadUseCase confirmUploadUseCase;
   private final ReprocessDocumentUseCase reprocessDocumentUseCase;
+  private final S3Presigner s3Presigner;
+  private final String bucketName;
 
   public DocumentController(
       RegisterDocumentMetadataUseCase registerDocumentMetadataUseCase,
       InitiateUploadUseCase initiateUploadUseCase,
       ConfirmUploadUseCase confirmUploadUseCase,
-      ReprocessDocumentUseCase reprocessDocumentUseCase) {
+      ReprocessDocumentUseCase reprocessDocumentUseCase,
+      S3Presigner s3Presigner,
+      @Value("${app.storage.bucket:atlasops-local}") String bucketName) {
     this.registerDocumentMetadataUseCase = registerDocumentMetadataUseCase;
     this.initiateUploadUseCase = initiateUploadUseCase;
     this.confirmUploadUseCase = confirmUploadUseCase;
     this.reprocessDocumentUseCase = reprocessDocumentUseCase;
+    this.s3Presigner = s3Presigner;
+    this.bucketName = bucketName;
   }
 
   /**

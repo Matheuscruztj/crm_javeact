@@ -31,6 +31,9 @@ dependencies {
     // Jakarta Validation for request DTOs
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
+    // Spring Data Redis for SSE event store
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
     // Jackson for JSON serialization
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")

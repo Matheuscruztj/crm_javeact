@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
 
 /**
  * CSV import adapter providing schema inference and row-level validation.
@@ -27,13 +26,13 @@ import org.slf4j.LoggerFactory;
  */
 public class CsvImportAdapter implements ImportPort {
 
-  private static final Logger log = LoggerFactory.getLogger(CsvImportAdapter.class);
+  private static final Logger log = Logger.getLogger(CsvImportAdapter.class.getName());
   private static final int PREVIEW_ROWS = 5;
 
   @Override
   public ImportJob startImport(ImportRequest request) {
     String jobId = UUID.randomUUID().toString();
-    log.info("Starting CSV import job {} for tenant {}", jobId, request.tenantId());
+      log.info("Starting CSV import job " + jobId + " for tenant " + request.tenantId());
     return new ImportJob(jobId, "PENDING", -1, 0);
   }
 
@@ -55,7 +54,7 @@ public class CsvImportAdapter implements ImportPort {
           .filter(s -> !s.isEmpty())
           .toList();
     } catch (IOException e) {
-      log.warn("Failed to infer CSV schema: {}", e.getMessage());
+      log.warning("Failed to infer CSV schema: " + e.getMessage());
       return List.of();
     }
   }
@@ -89,7 +88,7 @@ public class CsvImportAdapter implements ImportPort {
         }
       }
     } catch (IOException e) {
-      log.warn("Failed to generate CSV preview: {}", e.getMessage());
+      log.warning("Failed to generate CSV preview: " + e.getMessage());
     }
     return rows;
   }

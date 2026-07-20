@@ -37,14 +37,14 @@ class GetDashboardUseCaseTest {
     void should_returnDashboard_when_tenantIdIsValid() {
         DashboardSummary expected = new DashboardSummary(
                 "tenant-alpha",
-                Map.of(MetricName.TOTAL_CUSTOMERS, 5.0),
+                Map.of(MetricName.CUSTOMER_COUNT, 5.0),
                 NOW);
         when(metricsAggregator.computeDashboard("tenant-alpha")).thenReturn(expected);
 
         DashboardSummary result = useCase.execute("tenant-alpha");
 
         assertThat(result.tenantId()).isEqualTo("tenant-alpha");
-        assertThat(result.get(MetricName.TOTAL_CUSTOMERS)).isEqualTo(5.0);
+        assertThat(result.get(MetricName.CUSTOMER_COUNT)).isEqualTo(5.0);
         verify(metricsAggregator).computeDashboard("tenant-alpha");
     }
 

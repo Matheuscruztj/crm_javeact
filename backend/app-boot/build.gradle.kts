@@ -75,7 +75,9 @@ tasks.named<Test>("test") {
     }
 }
 
-tasks.register<Test>("integrationTest") {
+// Override the root integrationTest task for app-boot to use src/test (not src/integrationTest)
+// since integration tests in app-boot live in src/test with @Tag("integration")
+tasks.named<Test>("integrationTest") {
     description = "Runs integration tests with Testcontainers"
     group = "verification"
     testClassesDirs = sourceSets["test"].output.classesDirs

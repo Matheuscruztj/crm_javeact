@@ -57,8 +57,8 @@ public class EvaluateRagQualityUseCase {
     for (GoldenExample example : examples) {
       try {
         DocumentAnalysisRequest request = new DocumentAnalysisRequest(
-            "golden-eval", tenantId, example.getQuery(), "text/plain",
-            promptVersion, "{}");
+            tenantId, "golden-eval", example.getQuery().isBlank() ? "evaluation query" : example.getQuery(),
+            "analysis:v1", "{}");
 
         DocumentAnalysisResult aiResult = documentAnalysisPort.analyze(request);
         double similarity = cosineSimilarity(example.getExpectedAnswer(), aiResult.summary());

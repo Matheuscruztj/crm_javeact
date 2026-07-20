@@ -24,7 +24,7 @@ class EvaluateRagQualityUseCaseTest {
 
   private static final Instant NOW = Instant.parse("2025-01-15T10:00:00Z");
   private static final String TENANT_ID = "tenant-alpha";
-  private static final String PROMPT_VERSION = "v1.0";
+  private static final String PROMPT_VERSION = "analysis:v1";
 
   private GoldenDatasetRepository goldenDatasetRepository;
   private DocumentAnalysisPort documentAnalysisPort;

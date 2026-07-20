@@ -20,6 +20,10 @@ dependencies {
     // Spring Web for REST controllers
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework:spring-context")
+    // Spring Data Redis for cache adapter
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    // Jackson for JSON serialization
+    implementation("com.fasterxml.jackson.core:jackson-databind")
 
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")

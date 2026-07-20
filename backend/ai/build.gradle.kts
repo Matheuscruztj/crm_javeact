@@ -25,6 +25,8 @@ dependencies {
     // Spring Data JPA for persistence adapters
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework:spring-context")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 
     // Apache Tika for text extraction from PDF, DOCX, images, etc.
     implementation("org.apache.tika:tika-core:2.9.1")

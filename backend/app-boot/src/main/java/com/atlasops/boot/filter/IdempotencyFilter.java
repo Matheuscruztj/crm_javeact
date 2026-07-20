@@ -45,6 +45,11 @@ public class IdempotencyFilter extends OncePerRequestFilter {
     this.redisTemplate = redisTemplate;
   }
 
+  /** Secondary constructor for compatibility with FilterRegistrationConfig. */
+  public IdempotencyFilter(StringRedisTemplate redisTemplate, com.fasterxml.jackson.databind.ObjectMapper ignoredMapper) {
+    this.redisTemplate = redisTemplate;
+  }
+
   @Override
   protected void doFilterInternal(
       HttpServletRequest request,
