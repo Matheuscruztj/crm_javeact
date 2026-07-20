@@ -100,7 +100,16 @@ public class TenantAuthorizationFilter extends OncePerRequestFilter {
       return;
     }
 
-    chain.doFilter(request, response);
+    // P0.R.1: Populate MDC with tenantId and actorId for structured logging
+    MDC.put("tenantId", requestedTenantId);
+    MDC.put("actorId", principal.userId());
+
+    try {
+      chain.doFilter(request, response);
+    } finally {
+      MDC.remove("tenantId");
+      MDC.remove("actorId");
+    }
   }
 
   private boolean isExcluded(String path) {
