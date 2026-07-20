@@ -252,7 +252,7 @@ subprojects {
         isIgnoreFailures = false
         maxWarnings = 0
         // Use configuration caching
-        configDirectory.set(rootProject.file("config/checkstyle"))
+        configDirectory.set(rootProject.file("backend/config/checkstyle"))
     }
     
     // Run checkstyle only on main sources (skip tests for speed)
@@ -266,7 +266,7 @@ subprojects {
     configure<com.github.spotbugs.snom.SpotBugsExtension> {
         effort.set(com.github.spotbugs.snom.Effort.MAX)
         reportLevel.set(com.github.spotbugs.snom.Confidence.MEDIUM)
-        excludeFilter.set(rootProject.file("config/spotbugs/exclude.xml"))
+        excludeFilter.set(rootProject.file("backend/config/spotbugs/exclude.xml"))
     }
     
     // Use HTML reports only (faster than XML)
@@ -306,8 +306,8 @@ subprojects {
         failBuildOnCVSS = 9.0f
         format = org.owasp.dependencycheck.reporting.ReportGenerator.Format.HTML.toString()
         outputDirectory = "${project.layout.buildDirectory.get()}/reports/dependency-check"
-        // Suppress false positives (add to config/dependency-check/suppression.xml)
-        val suppressionFile = rootProject.file("config/dependency-check/suppression.xml")
+        // Suppress false positives (add to backend/config/dependency-check/suppression.xml)
+        val suppressionFile = rootProject.file("backend/config/dependency-check/suppression.xml")
         if (suppressionFile.exists()) {
             suppressionFiles = listOf(suppressionFile.absolutePath)
         }
