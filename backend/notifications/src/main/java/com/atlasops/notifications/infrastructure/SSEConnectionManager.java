@@ -99,10 +99,11 @@ public class SSEConnectionManager implements SSEConnectionPort {
   }
 
   /**
-   * Replays missed events for a reconnecting user since the given lastEventId. (P0.E.2)
-   * Currently a no-op placeholder — full event persistence requires an event store.
+   * Replays missed events for a reconnecting user since the given lastEventId. (P0.H.2)
+   * Queries the Redis event store for events since lastEventId and sends them.
    *
    * @param userId the reconnecting user
+   * @param tenantId the tenant context
    * @param lastEventId the last event ID received by the client
    * @param emitter the new emitter to send replayed events to
    */
