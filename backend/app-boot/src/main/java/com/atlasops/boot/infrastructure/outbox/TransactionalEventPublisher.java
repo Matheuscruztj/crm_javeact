@@ -54,8 +54,9 @@ public class TransactionalEventPublisher implements EventPublisher {
 
   @Override
   public void publish(DomainEvent event) {
-    String eventType = event.getClass().getSimpleName();
-    String streamName = EVENT_STREAM_MAPPING.getOrDefault(eventType, DEFAULT_STREAM);
+    String eventType = event.getEventType(); // versioned: "customer.created.v1"
+    String legacyType = event.getClass().getSimpleName(); // used for stream routing lookup
+    String streamName = EVENT_STREAM_MAPPING.getOrDefault(legacyType, DEFAULT_STREAM);
     String correlationId = resolveCorrelationId(event);
 
     try {

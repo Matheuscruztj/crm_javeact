@@ -1,5 +1,7 @@
 package com.atlasops.worker.infrastructure.redis;
 
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Range;
@@ -24,7 +27,11 @@ import org.springframework.stereotype.Component;
 
 /**
  * Redis Streams consumer infrastructure with XREADGROUP, XACK, XAUTOCLAIM support. Implements
- * configurable consumer groups, batch consumption, and reconnection with exponential backoff.
+ * configurable consumer groups, batch consumption, reconnection with exponential backoff,
+ * and Prometheus lag metrics per stream.
+ *
+ * <p>Lag metric: {@code atlasops.stream.lag} (gauge) per stream key, exposed in Prometheus.
+ * Validates: P0.P.1 — Redis Streams lag metrics exposed in Prometheus.
  */
 @Component
 public class RedisStreamConsumer {
@@ -33,25 +40,38 @@ public class RedisStreamConsumer {
 
   private final StringRedisTemplate redisTemplate;
   private final StreamConsumerConfig config;
+  private final MeterRegistry meterRegistry;
   private final Map<String, MessageHandler> handlers = new ConcurrentHashMap<>();
   private final Map<String, Thread> consumerThreads = new ConcurrentHashMap<>();
+  private final Map<String, AtomicLong> lagCounters = new ConcurrentHashMap<>();
   private final AtomicBoolean running = new AtomicBoolean(false);
   private final ExecutorService executor;
 
-  public RedisStreamConsumer(StringRedisTemplate redisTemplate, StreamConsumerConfig config) {
+  public RedisStreamConsumer(
+      StringRedisTemplate redisTemplate,
+      StreamConsumerConfig config,
+      MeterRegistry meterRegistry) {
     this.redisTemplate = redisTemplate;
     this.config = config;
+    this.meterRegistry = meterRegistry;
     this.executor = Executors.newCachedThreadPool();
   }
 
   /**
-   * Registers a handler for a specific stream.
+   * Registers a handler for a specific stream and creates a Prometheus lag gauge.
    *
    * @param streamKey the Redis stream key
    * @param handler the message handler
    */
   public void registerHandler(String streamKey, MessageHandler handler) {
     handlers.put(streamKey, handler);
+    AtomicLong lagCounter = new AtomicLong(0L);
+    lagCounters.put(streamKey, lagCounter);
+    Gauge.builder("atlasops.stream.lag", lagCounter, AtomicLong::get)
+        .description("Number of pending (unacknowledged) messages in the consumer group")
+        .tag("stream", streamKey)
+        .tag("group", config.groupName())
+        .register(meterRegistry);
     log.info("Registered handler for stream: {}", streamKey);
   }
 
@@ -208,15 +228,34 @@ public class RedisStreamConsumer {
       try {
         handler.handle(message);
         redisTemplate.opsForStream().acknowledge(streamKey, config.groupName(), record.getId());
+        // Update lag metric after successful processing
+        AtomicLong lag = lagCounters.get(streamKey);
+        if (lag != null) lag.decrementAndGet();
         log.debug(
             "Processed and acknowledged message {} from stream '{}'", record.getId(), streamKey);
       } catch (Exception e) {
+        // Increment lag on failure (message stays unacknowledged)
+        AtomicLong lag = lagCounters.get(streamKey);
+        if (lag != null) lag.incrementAndGet();
         log.error(
             "Failed to process message {} from stream '{}': {}",
             record.getId(),
             streamKey,
             e.getMessage());
         // Don't ACK - message will be reprocessed via pending claims
+      }
+    }
+    // Refresh lag from actual pending count periodically
+    AtomicLong lag = lagCounters.get(streamKey);
+    if (lag != null) {
+      try {
+        PendingMessages pending = redisTemplate.opsForStream()
+            .pending(streamKey, config.groupName(), Range.unbounded(), 1);
+        if (pending != null) {
+          lag.set(pending.getTotalDeliveryCount());
+        }
+      } catch (Exception ignored) {
+        // Non-critical — lag metric may be stale
       }
     }
   }

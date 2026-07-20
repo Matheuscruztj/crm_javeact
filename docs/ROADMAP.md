@@ -985,9 +985,9 @@ commit: feat(shared-kernel): implement Redis distributed lock utility (P0.O.2)
 
 **Critério de Aceite:**
 
-- [ ] Apenas um processo completa upload simultâneo
-- [ ] Lock expira automaticamente se processo crashar
-- [ ] Fencing token previne writes desatualizados
+- [x] Apenas um processo completa upload simultâneo
+- [x] Lock expira automaticamente se processo crashar
+- [x] Fencing token previne writes desatualizados
 
 ---
 
@@ -1013,9 +1013,9 @@ commit: feat(async): implement Redis Streams consumer groups for domain events
 
 **Critério de Aceite:**
 
-- [ ] Eventos publicados no outbox chegam aos consumers via Redis Streams
-- [ ] Mensagem falhada 5x vai para DLQ
-- [ ] Lag visível em métricas
+- [x] Eventos publicados no outbox chegam aos consumers via Redis Streams
+- [x] Mensagem falhada 5x vai para DLQ
+- [x] Lag visível em métricas
 
 ---
 
@@ -1035,9 +1035,9 @@ commit: feat(events): implement domain events for core modules
 
 **Critério de Aceite:**
 
-- [ ] Eventos emitidos em cada operação de domínio
-- [ ] Correlation ID propagado em toda a chain
-- [ ] Eventos versionados (`event.type.vN`)
+- [x] Eventos emitidos em cada operação de domínio
+- [x] Correlation ID propagado em toda a chain
+- [x] Eventos versionados (`event.type.vN`)
 
 ---
 
