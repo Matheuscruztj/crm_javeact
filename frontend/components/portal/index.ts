@@ -1,3 +1,4 @@
 // Portal-specific components
-// This directory contains components used exclusively in the client portal.
-export {};
+// Components used exclusively in the client portal.
+export { RequestStatusBadge } from "./request-status-badge";
+export { DocumentStatusBadge } from "./document-status-badge";

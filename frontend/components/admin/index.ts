@@ -1,3 +1,4 @@
 // Admin-specific components
-// This directory contains components used exclusively in the admin application.
-export {};
+// Components used exclusively in the admin portal.
+export { CustomerStatusBadge } from "./customer-status-badge";
+export { JobStatusBadge } from "./job-status-badge";
