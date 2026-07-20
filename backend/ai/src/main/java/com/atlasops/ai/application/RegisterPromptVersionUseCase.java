@@ -2,8 +2,8 @@ package com.atlasops.ai.application;
 
 import com.atlasops.ai.domain.PromptTemplate;
 import com.atlasops.ai.domain.ports.PromptTemplateRepository;
-import com.atlasops.shared.ports.Clock;
-import com.atlasops.shared.ports.IdGenerator;
+import com.atlasops.shared.domain.ports.Clock;
+import com.atlasops.shared.domain.ports.IdGenerator;
 import java.util.List;
 import java.util.Objects;
 
