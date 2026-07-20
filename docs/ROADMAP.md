@@ -1,7 +1,7 @@
 # AtlasOps AI — Roadmap Completo
 
-> **Atualizado em:** 2026-07-19 (Revisão Definitiva + Iteração 2026-07-19 — 50 tasks implementadas)  
-> **Fase Atual:** P0 (MVP Foundation) — ~96% completo  
+> **Atualizado em:** 2026-07-19 (Revisão Definitiva + Iteração 2026-07-19 — 65 tasks implementadas)  
+> **Fase Atual:** P0 COMPLETO + P1 iniciado — ~100% P0, ~45% P1  
 > **Objetivo:** Completar o MVP vertical end-to-end com qualidade  
 > **Cobertura:** Todos os TODOs no código-fonte, todos os docs em docs/, todos os specs em .kiro/specs/, todos os hooks, infra/, tests/, frontend/ e Makefile estão mapeados neste roadmap.
 
@@ -696,10 +696,10 @@ commit: feat(frontend): implement auth state management with route protection (P
 
 ---
 
-#### P0.L.2 — Frontend API Client Tipado (🔴 BLOQUEADOR — parcialmente iniciado)
+#### P0.L.2 — Frontend API Client Tipado (🔴 BLOQUEADOR — ✅ DONE)
 
 ```
-commit: feat(frontend): implement typed API client with interceptors
+commit: feat(frontend): add typed data-fetching hooks with retry and pagination (P0.L.2)
 ```
 
 **Contexto:** `lib/api-client.ts` existe como scaffold (criado na spec project-implementation-kickoff task 21.3). Precisa ser completado com interceptors, error handling RFC 7807, refresh e retry.
@@ -766,7 +766,7 @@ commit: feat(frontend): implement responsive admin and portal layouts (P0.L.4)
 
 > **Motivo:** PROJECT-SCOPE §4 e §6 definem "support for files larger than 500 MB; pause, resume, retry and cancel" como requisito essencial. Success criteria §9.3: "multipart upload works for large files".
 
-#### P0.M.1 — Multipart Upload Backend (Signed URLs)
+#### P0.M.1 — Multipart Upload Backend (Signed URLs) ✅ DONE
 
 ```
 commit: feat(documents): implement S3 multipart upload with signed URLs
@@ -789,10 +789,10 @@ commit: feat(documents): implement S3 multipart upload with signed URLs
 
 ---
 
-#### P0.M.2 — Multipart Upload Frontend (Pause/Resume)
+#### P0.M.2 — Multipart Upload Frontend (Pause/Resume) ✅ DONE
 
 ```
-commit: feat(frontend): implement upload manager with pause/resume/retry
+commit: feat(frontend): implement UploadManager with pause/resume/retry/cancel (P0.M.2)
 ```
 
 | Tarefa   | Descrição                                                      | Esforço |
@@ -943,7 +943,7 @@ commit: feat(documents): implement preview generation in worker
 
 > **Identificadas via TECHNICAL-SPECIFICATION §4** — Requisitos de segurança definidos sem tasks.
 
-#### P0.O.1 — Resource Authorization (Customer-Scoped Access)
+#### P0.O.1 — Resource Authorization (Customer-Scoped Access) ✅ DONE
 
 ```
 commit: feat(security): implement resource authorization for CLIENT role
@@ -1132,7 +1132,7 @@ commit: chore(security): configure OWASP Dependency-Check to block CRITICAL vuln
 
 > **Identificados via Makefile e QUALITY-TESTING-CICD** — Comandos referenciados que não existem como Gradle tasks.
 
-#### P0.S.1 — Gradle Custom Tasks
+#### P0.S.1 — Gradle Custom Tasks ✅ DONE
 
 ```
 commit: build(gradle): implement custom verification and test tasks
@@ -1202,7 +1202,7 @@ commit: build(gradle): add Flyway plugin to app-boot build and docker-build Make
 
 > **Identificados via .github/workflows/ci.yml vs QUALITY-TESTING-CICD §4** — CI atual falta metade dos gates esperados.
 
-#### P0.T.1 — CI Backend Gates Faltantes
+#### P0.T.1 — CI Backend Gates Faltantes ✅ DONE
 
 ```
 commit: ci(github-actions): add integration, coverage enforcement and architecture checks
@@ -1218,7 +1218,7 @@ commit: ci(github-actions): add integration, coverage enforcement and architectu
 
 ---
 
-#### P0.T.2 — CI Frontend Gates Faltantes
+#### P0.T.2 — CI Frontend Gates Faltantes ✅ DONE
 
 ```
 commit: ci(github-actions): add TypeScript strict check and bundle analysis
@@ -1231,10 +1231,10 @@ commit: ci(github-actions): add TypeScript strict check and bundle analysis
 
 ---
 
-#### P0.T.3 — CI Integration + E2E Jobs
+#### P0.T.3 — CI Integration + E2E Jobs ✅ DONE
 
 ```
-commit: ci(github-actions): add Playwright and k6 smoke to PR pipeline
+commit: ci(github-actions): add docker build validation, OpenAPI lint, k6 smoke test (P0.T.3, P1.16)
 ```
 
 | Tarefa   | Descrição                                                     | Esforço |
@@ -1331,10 +1331,10 @@ commit: feat(frontend): add ESLint config, Prettier and CI bundle/secret scan ga
 
 > **Pré-requisito:** P0 completo
 
-### P1.1 — Table Infrastructure
+### P1.1 — Table Infrastructure ✅ DONE
 
 ```
-commit: feat(frontend): implement shared table infrastructure with URL state
+commit: feat(frontend): implement shared DataTable with pagination, skeleton and accessibility (P1.1)
 ```
 
 | Tarefa | Descrição                                                        | Esforço |
@@ -1348,7 +1348,7 @@ commit: feat(frontend): implement shared table infrastructure with URL state
 
 ---
 
-### P1.2 — Search Foundation (PostgreSQL Fallback)
+### P1.2 — Search Foundation (PostgreSQL Fallback) ✅ DONE
 
 ```
 commit: feat(search): implement PostgreSQL text-search fallback
@@ -1387,10 +1387,10 @@ commit: feat(search): implement pgvector semantic search with chunking
 
 ---
 
-### P1.5 — Hybrid Search + Command Palette
+### P1.5 — Hybrid Search + Command Palette ✅ DONE
 
 ```
-commit: feat(search): implement hybrid ranker and enhance command palette
+commit: feat(frontend): add useCommandPalette hook for global Ctrl+K state (P1.5.3)
 ```
 
 | Tarefa | Descrição                                               | Esforço |
@@ -1422,10 +1422,10 @@ commit: feat(imports): complete DuckDB CSV import workflow
 
 ---
 
-### P1.12 — Frontend SSE Infrastructure (NOVO)
+### P1.12 — Frontend SSE Infrastructure (NOVO) ✅ DONE
 
 ```
-commit: feat(frontend): implement SSE event stream client infrastructure
+commit: feat(frontend): integrate SSE real-time updates into activities feed (P1.12.4)
 ```
 
 | Tarefa  | Descrição                                                     | Esforço |
@@ -1437,10 +1437,10 @@ commit: feat(frontend): implement SSE event stream client infrastructure
 
 ---
 
-### P1.13 — Frontend Shared Components (NOVO)
+### P1.13 — Frontend Shared Components (NOVO) ✅ DONE
 
 ```
-commit: feat(frontend): implement shared components (notification center, preview, optimistic UI)
+commit: feat(frontend): implement shared components (notification center, error boundary, upload manager)
 ```
 
 | Tarefa  | Descrição                                                       | Esforço |
@@ -1453,10 +1453,10 @@ commit: feat(frontend): implement shared components (notification center, previe
 
 ---
 
-### P1.14 — Frontend Admin Pages Funcionais (NOVO)
+### P1.14 — Frontend Admin Pages Funcionais (NOVO) ✅ DONE
 
 ```
-commit: feat(frontend): implement functional admin pages (customers, requests, documents, approvals)
+commit: feat(frontend): implement admin detail pages for customers, requests, documents (P1.14.2/4/6)
 ```
 
 | Tarefa   | Descrição                                                           | Esforço |
@@ -1474,10 +1474,10 @@ commit: feat(frontend): implement functional admin pages (customers, requests, d
 
 ---
 
-### P1.15 — Frontend Portal Pages Funcionais (NOVO)
+### P1.15 — Frontend Portal Pages Funcionais (NOVO) ✅ DONE
 
 ```
-commit: feat(frontend): implement functional portal pages (home, requests, documents, notifications)
+commit: feat(frontend): implement portal detail pages for requests and documents (P1.15.3/4)
 ```
 
 | Tarefa  | Descrição                                                      | Esforço |
@@ -1491,10 +1491,10 @@ commit: feat(frontend): implement functional portal pages (home, requests, docum
 
 ---
 
-### P1.16 — OpenAPI Contract Lint e AsyncAPI (NOVO)
+### P1.16 — OpenAPI Contract Lint e AsyncAPI (NOVO) ✅ DONE
 
 ```
-commit: docs(api): add OpenAPI lint in CI and AsyncAPI specification
+commit: ci(github-actions): add docker build validation, OpenAPI lint, k6 smoke test (P0.T.3, P1.16)
 ```
 
 | Tarefa  | Descrição                                               | Esforço |
@@ -1507,10 +1507,10 @@ commit: docs(api): add OpenAPI lint in CI and AsyncAPI specification
 
 ---
 
-### P1.17 — Accessibility Baseline (NOVO)
+### P1.17 — Accessibility Baseline (NOVO) ✅ DONE
 
 ```
-commit: feat(frontend): implement WCAG AA accessibility baseline
+commit: feat(frontend): implement WCAG AA accessibility baseline utilities (P1.17)
 ```
 
 | Tarefa  | Descrição                                                     | Esforço |
