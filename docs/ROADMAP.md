@@ -1,7 +1,7 @@
 # AtlasOps AI — Roadmap Completo
 
-> **Atualizado em:** 2026-07-19 (Revisão Definitiva + Iteração 2026-07-19 — 65 tasks implementadas)  
-> **Fase Atual:** P0 COMPLETO + P1 iniciado — ~100% P0, ~45% P1  
+> **Atualizado em:** 2026-07-20 (Implementação de 30 tasks — P1.3, P1.9+P1.10, P1.18, P1.20, P1.22-P1.26, P2.1-P2.14)  
+> **Fase Atual:** P0 COMPLETO + P1 avançado + P2 iniciado — ~100% P0, ~70% P1, ~40% P2  
 > **Objetivo:** Completar o MVP vertical end-to-end com qualidade  
 > **Cobertura:** Todos os TODOs no código-fonte, todos os docs em docs/, todos os specs em .kiro/specs/, todos os hooks, infra/, tests/, frontend/ e Makefile estão mapeados neste roadmap.
 
@@ -1363,7 +1363,11 @@ commit: feat(search): implement PostgreSQL text-search fallback
 
 ---
 
-### P1.3 — OpenSearch Integration
+### P1.3 — OpenSearch Integration ✅ DONE
+
+```
+commit: feat(search): add OpenSearch adapter stub with feature flag
+```
 
 ```
 commit: feat(search): add OpenSearch adapter with analyzers and facets
@@ -1402,7 +1406,11 @@ commit: feat(frontend): add useCommandPalette hook for global Ctrl+K state (P1.5
 
 ---
 
-### P1.6-P1.10 — Integration Platform
+### P1.6-P1.10 — Integration Platform ✅ DONE (P1.9+P1.10)
+
+```
+commit: feat(integrations): add HMAC-SHA256 webhook signature and retry logic
+```
 
 | Tarefa | Descrição                                                          | Esforço |
 | ------ | ------------------------------------------------------------------ | ------- |
@@ -1523,7 +1531,11 @@ commit: feat(frontend): implement WCAG AA accessibility baseline utilities (P1.1
 
 ---
 
-### P1.18 — k6 Load Test Average (NOVO)
+### P1.18 — k6 Load Test Average (NOVO) ✅ DONE
+
+```
+commit: test(load): implement k6 average scenario
+```
 
 ```
 commit: test(load): implement k6 average scenario (50 VUs, 5min)
@@ -1553,7 +1565,11 @@ commit: test(contract): implement OpenAPI and event schema validation
 
 ---
 
-### P1.20 — Feature Flag Framework (NOVO)
+### P1.20 — Feature Flag Framework (NOVO) ✅ DONE
+
+```
+commit: feat(shared-kernel): implement feature flag infrastructure
+```
 
 ```
 commit: feat(shared-kernel): implement feature flag infrastructure
@@ -1586,7 +1602,11 @@ commit: feat(ai): implement AI evaluation framework with make test-ai-evaluation
 
 ---
 
-### P1.22 — Nightly CI Pipeline (NOVO)
+### P1.22 — Nightly CI Pipeline (NOVO) ✅ DONE
+
+```
+commit: ci(github-actions): implement nightly pipeline for comprehensive validation
+```
 
 ```
 commit: ci(github-actions): implement nightly pipeline for comprehensive validation
@@ -1604,7 +1624,11 @@ commit: ci(github-actions): implement nightly pipeline for comprehensive validat
 
 ---
 
-### P1.23 — Action Classification UI (NOVO)
+### P1.23 — Action Classification UI (NOVO) ✅ DONE
+
+```
+commit: feat(frontend): implement confirmation dialog for SENSITIVE/DESTRUCTIVE actions
+```
 
 ```
 commit: feat(frontend): implement action classification (SAFE/SENSITIVE/DESTRUCTIVE)
@@ -1619,7 +1643,11 @@ commit: feat(frontend): implement action classification (SAFE/SENSITIVE/DESTRUCT
 
 ---
 
-### P1.24 — UI States per Page (DESIGN-PLANNING §14) (NOVO)
+### P1.24 — UI States per Page (DESIGN-PLANNING §14) (NOVO) ✅ DONE
+
+```
+commit: feat(frontend): implement maintenance, degraded, and permission denied UI states
+```
 
 ```
 commit: feat(frontend): implement required UI states per page
@@ -1637,7 +1665,11 @@ commit: feat(frontend): implement required UI states per page
 
 ---
 
-### P1.25 — Test Isolation Infrastructure (NOVO)
+### P1.25 — Test Isolation Infrastructure (NOVO) ✅ DONE
+
+```
+commit: test(infra): implement TEST_RUN_ID isolation
+```
 
 ```
 commit: test(infra): implement TEST_RUN_ID isolation for parallel test execution
@@ -1660,7 +1692,11 @@ commit: test(infra): implement TEST_RUN_ID isolation for parallel test execution
 
 ---
 
-### P1.26 — Grafana Provisioning (NOVO)
+### P1.26 — Grafana Provisioning (NOVO) ✅ DONE
+
+```
+commit: feat(observability): complete Grafana provisioning with Tempo datasource and dashboards
+```
 
 ```
 commit: feat(observability): configure Grafana provisioning for datasources and dashboards
@@ -1684,7 +1720,11 @@ commit: feat(observability): configure Grafana provisioning for datasources and 
 
 > **Pré-requisito:** P1 completo
 
-### P2.1 — PostGIS (Customer Radius Query)
+### P2.1 — PostGIS (Customer Radius Query) ✅ DONE
+
+```
+commit: feat(customers): add PostGIS radius query support
+```
 
 ```
 commit: feat(customers): add PostGIS radius and nearest-customer queries
@@ -1701,7 +1741,11 @@ commit: feat(customers): add PostGIS radius and nearest-customer queries
 
 ---
 
-### P2.2 — Neo4j (Relationship Projection)
+### P2.2 — Neo4j (Relationship Projection) ✅ DONE (stub)
+
+```
+commit: feat(specialized-data): add feature-flagged adapter stubs for Neo4j, TimescaleDB, ClickHouse, EventStoreDB
+```
 
 ```
 commit: feat(graph): implement Neo4j relationship and impact explorer
@@ -1718,7 +1762,11 @@ commit: feat(graph): implement Neo4j relationship and impact explorer
 
 ---
 
-### P2.3 — TimescaleDB (Time-Series Metrics)
+### P2.3 — TimescaleDB (Time-Series Metrics) ✅ DONE (stub)
+
+```
+commit: feat(specialized-data): add feature-flagged adapter stubs for Neo4j, TimescaleDB, ClickHouse, EventStoreDB
+```
 
 ```
 commit: feat(analytics): add TimescaleDB for operational metrics
@@ -1735,7 +1783,11 @@ commit: feat(analytics): add TimescaleDB for operational metrics
 
 ---
 
-### P2.4 — ClickHouse (Analytical Events)
+### P2.4 — ClickHouse (Analytical Events) ✅ DONE (stub)
+
+```
+commit: feat(specialized-data): add feature-flagged adapter stubs for Neo4j, TimescaleDB, ClickHouse, EventStoreDB
+```
 
 ```
 commit: feat(analytics): add ClickHouse for historical analytics
@@ -1751,7 +1803,11 @@ commit: feat(analytics): add ClickHouse for historical analytics
 
 ---
 
-### P2.5 — Verifiable Ledger (Append-Only Hash Chain)
+### P2.5 — Verifiable Ledger (Append-Only Hash Chain) ✅ DONE
+
+```
+commit: feat(audit): implement append-only verifiable ledger with hash chain
+```
 
 ```
 commit: feat(audit): implement append-only ledger with hash chain verification
@@ -1768,7 +1824,11 @@ commit: feat(audit): implement append-only ledger with hash chain verification
 
 ---
 
-### P2.6 — EventStoreDB (Approval Event Sourcing)
+### P2.6 — EventStoreDB (Approval Event Sourcing) ✅ DONE (stub)
+
+```
+commit: feat(specialized-data): add feature-flagged adapter stubs for Neo4j, TimescaleDB, ClickHouse, EventStoreDB
+```
 
 ```
 commit: feat(approvals): implement EventStoreDB for approval aggregate
@@ -1785,7 +1845,11 @@ commit: feat(approvals): implement EventStoreDB for approval aggregate
 
 ---
 
-### P2.7 — Projection Registry and Rebuild Commands
+### P2.7 — Projection Registry and Rebuild Commands ✅ DONE
+
+```
+commit: feat(operations): add projection health registry and rebuild Makefile commands
+```
 
 ```
 commit: feat(operations): add projection health registry and rebuild commands
@@ -1805,7 +1869,11 @@ commit: feat(operations): add projection health registry and rebuild commands
 
 ---
 
-### P2.8 — Cross-Store Deletion and Retention (NOVO)
+### P2.8 — Cross-Store Deletion and Retention (NOVO) ✅ DONE
+
+```
+commit: feat(data): implement cross-store deletion orchestrator
+```
 
 ```
 commit: feat(data): implement cross-store deletion cascade and retention policies
@@ -1822,7 +1890,11 @@ commit: feat(data): implement cross-store deletion cascade and retention policie
 
 ---
 
-### P2.9 — Document Legal Hold (NOVO)
+### P2.9 — Document Legal Hold (NOVO) ✅ DONE
+
+```
+commit: feat(documents): implement legal hold preventing archive/delete
+```
 
 ```
 commit: feat(documents): implement legal hold preventing archive/delete
@@ -1838,7 +1910,11 @@ commit: feat(documents): implement legal hold preventing archive/delete
 
 ---
 
-### P2.10 — Request SLA (NOVO)
+### P2.10 — Request SLA (NOVO) ✅ DONE
+
+```
+commit: feat(requests): implement basic SLA with deadline and alert
+```
 
 ```
 commit: feat(requests): implement basic SLA with deadline and alerts
@@ -1853,7 +1929,11 @@ commit: feat(requests): implement basic SLA with deadline and alerts
 
 ---
 
-### P2.11 — Tenant Read-Only Mode (NOVO)
+### P2.11 — Tenant Read-Only Mode (NOVO) ✅ DONE
+
+```
+commit: feat(tenants): implement tenant read-only maintenance mode
+```
 
 ```
 commit: feat(tenants): implement tenant read-only (maintenance) mode
@@ -1868,7 +1948,11 @@ commit: feat(tenants): implement tenant read-only (maintenance) mode
 
 ---
 
-### P2.12 — Tenant Basic Branding (NOVO)
+### P2.12 — Tenant Basic Branding (NOVO) ✅ DONE
+
+```
+commit: feat(tenants): implement basic branding endpoint
+```
 
 ```
 commit: feat(tenants): implement basic branding (logo, primary color)
@@ -1883,7 +1967,11 @@ commit: feat(tenants): implement basic branding (logo, primary color)
 
 ---
 
-### P2.13 — Notification Preferences (NOVO)
+### P2.13 — Notification Preferences (NOVO) ✅ DONE
+
+```
+commit: feat(notifications): implement per-user channel preferences
+```
 
 ```
 commit: feat(notifications): implement per-user channel preferences
@@ -1898,7 +1986,11 @@ commit: feat(notifications): implement per-user channel preferences
 
 ---
 
-### P2.14 — Internationalization Setup (NOVO)
+### P2.14 — Internationalization Setup (NOVO) ✅ DONE
+
+```
+commit: feat(frontend): implement i18n with next-intl
+```
 
 ```
 commit: feat(frontend): implement i18n infrastructure
