@@ -1,0 +1,35 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "back": "Back"
+  },
+  "nav": {
+    "customers": "Customers",
+    "requests": "Requests",
+    "documents": "Documents",
+    "approvals": "Approvals",
+    "operations": "Operations",
+    "search": "Search",
+    "dashboard": "Dashboard"
+  },
+  "customers": {
+    "title": "Customers",
+    "create": "New Customer",
+    "empty": "No customers found"
+  },
+  "requests": {
+    "title": "Requests",
+    "create": "New Request",
+    "empty": "No requests found"
+  },
+  "documents": {
+    "title": "Documents",
+    "upload": "Upload",
+    "empty": "No documents found"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "common": {
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "confirm": "Confirmar",
+    "back": "Voltar"
+  },
+  "nav": {
+    "customers": "Clientes",
+    "requests": "Solicitações",
+    "documents": "Documentos",
+    "approvals": "Aprovações",
+    "operations": "Operações",
+    "search": "Buscar",
+    "dashboard": "Painel"
+  },
+  "customers": {
+    "title": "Clientes",
+    "create": "Novo Cliente",
+    "empty": "Nenhum cliente encontrado"
+  },
+  "requests": {
+    "title": "Solicitações",
+    "create": "Nova Solicitação",
+    "empty": "Nenhuma solicitação encontrada"
+  },
+  "documents": {
+    "title": "Documentos",
+    "upload": "Enviar",
+    "empty": "Nenhum documento encontrado"
+  }
+}
