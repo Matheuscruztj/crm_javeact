@@ -414,6 +414,18 @@ projection-status: ## Query current projection status from database
 		-c "SELECT name, status, last_processed_position, last_run_at FROM projection_status ORDER BY name;" \
 		2>&1 || echo "projection_status table not found — ensure migrations have run"
 
+.PHONY: rebuild-search-index
+rebuild-search-index: ## Trigger rebuild of search index projection
+	./gradlew :backend:app-boot:bootRun --args="--rebuild-projection=search-index" 2>&1 | head -20 || echo "Rebuild triggered"
+
+.PHONY: rebuild-vector-index
+rebuild-vector-index: ## Trigger rebuild of vector index projection
+	./gradlew :backend:app-boot:bootRun --args="--rebuild-projection=vector-index" 2>&1 | head -20 || echo "Rebuild triggered"
+
+.PHONY: rebuild-analytics
+rebuild-analytics: ## Trigger rebuild of analytics projection
+	./gradlew :backend:app-boot:bootRun --args="--rebuild-projection=analytics" 2>&1 | head -20 || echo "Rebuild triggered"
+
 .PHONY: verify-specs
 verify-specs: ## Validate completeness of spec files in .kiro/specs/
 	@echo "==> Verifying spec completeness in .kiro/specs/..."
