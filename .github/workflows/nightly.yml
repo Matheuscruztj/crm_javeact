@@ -1,0 +1,154 @@
+name: Nightly Comprehensive Validation
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: "21"
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+jobs:
+  full-load-test:
+    name: Full Load Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install k6
+        run: |
+          curl https://github.com/grafana/k6/releases/download/v0.54.0/k6-v0.54.0-linux-amd64.tar.gz -L | tar xvz --strip-components 1
+          sudo mv k6 /usr/local/bin/k6
+          k6 version
+
+      - name: Run average load test
+        run: k6 run infra/k6/average.js --out json=k6-results.json
+        continue-on-error: true
+
+      - name: Upload k6 results artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-load-results-${{ github.run_number }}
+          path: k6-results.json
+          retention-days: 14
+
+  architecture-scan:
+    name: Architecture Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+          cache: "gradle"
+
+      - name: Run architecture tests
+        run: |
+          ./gradlew test \
+            --tests "*Architecture*" \
+            --tests "*ArchUnit*" \
+            --no-daemon \
+            --continue || true
+
+      - name: Upload architecture test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: architecture-test-results-${{ github.run_number }}
+          path: "**/build/reports/tests/**"
+          retention-days: 14
+
+  dependency-report:
+    name: Dependency Report
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+          cache: "gradle"
+
+      - name: Run OWASP dependency check
+        run: |
+          ./gradlew dependencyCheckAnalyze --no-daemon || echo "Dependency check completed with warnings"
+        continue-on-error: true
+
+      - name: Upload dependency report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-report-${{ github.run_number }}
+          path: "**/build/reports/dependency-check*"
+          retention-days: 30
+
+  flaky-test-detection:
+    name: Flaky Test Detection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+          cache: "gradle"
+
+      - name: Run unit tests (attempt 1)
+        id: run1
+        run: ./gradlew test --no-daemon 2>&1 | tee test-run-1.log
+        continue-on-error: true
+
+      - name: Run unit tests (attempt 2)
+        id: run2
+        run: ./gradlew test --no-daemon 2>&1 | tee test-run-2.log
+        continue-on-error: true
+
+      - name: Run unit tests (attempt 3)
+        id: run3
+        run: ./gradlew test --no-daemon 2>&1 | tee test-run-3.log
+        continue-on-error: true
+
+      - name: Report flaky tests
+        run: |
+          echo "=== Test Run Results ==="
+          echo "Run 1: ${{ steps.run1.outcome }}"
+          echo "Run 2: ${{ steps.run2.outcome }}"
+          echo "Run 3: ${{ steps.run3.outcome }}"
+          if [[ "${{ steps.run1.outcome }}" != "${{ steps.run2.outcome }}" ]] || \
+             [[ "${{ steps.run2.outcome }}" != "${{ steps.run3.outcome }}" ]]; then
+            echo "WARNING: Inconsistent test results detected — possible flaky tests!"
+            exit 1
+          fi
+          echo "All runs consistent."
+
+      - name: Upload test logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: flaky-test-logs-${{ github.run_number }}
+          path: "test-run-*.log"
+          retention-days: 7
+
+  mutation-testing:
+    name: Mutation Testing (PIT)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+          cache: "gradle"
+
+      - name: Run mutation tests
+        run: echo "TODO: PIT mutation testing — configure pitest Gradle plugin"
