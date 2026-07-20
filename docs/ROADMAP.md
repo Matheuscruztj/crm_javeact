@@ -465,9 +465,9 @@ commit: feat(security): wire JWT filter, add CORS config and TenantAuthorization
 
 **Critério de Aceite:**
 
-- [ ] Endpoints protegidos rejeitam requests sem token (401)
-- [ ] Token válido permite acesso
-- [ ] SecurityContext contém userId e tenantId
+- [x] Endpoints protegidos rejeitam requests sem token (401)
+- [x] Token válido permite acesso
+- [x] SecurityContext contém userId e tenantId
 
 ---
 
@@ -490,9 +490,9 @@ commit: feat(sse): implement Redis event store for Last-Event-ID replay (P0.H.2)
 
 **Critério de Aceite:**
 
-- [ ] Cliente reconecta e recebe eventos perdidos
-- [ ] Eventos entregues na ordem (sequential IDs)
-- [ ] Performance não degrada
+- [x] Cliente reconecta e recebe eventos perdidos
+- [x] Eventos entregues na ordem (sequential IDs)
+- [x] Performance não degrada
 
 **⚠️ Dependência:** Pré-requisito para P0.E.2 estar completo
 
@@ -515,9 +515,9 @@ commit: feat(observability): implement automatic cleanup of published outbox eve
 
 **Critério de Aceite:**
 
-- [ ] Eventos PUBLISHED antigos removidos automaticamente
-- [ ] PENDING e FAILED preservados (para debug)
-- [ ] Job não impacta performance
+- [x] Eventos PUBLISHED antigos removidos automaticamente
+- [x] PENDING e FAILED preservados (para debug)
+- [x] Job não impacta performance
 
 ---
 
