@@ -608,9 +608,9 @@ commit: feat(security): wire JWT filter, add CORS config and TenantAuthorization
 
 **Critério de Aceite:**
 
-- [ ] Frontend pode fazer requests para API sem erros CORS
-- [ ] Origens não-permitidas são bloqueadas
-- [ ] Preflight (OPTIONS) retorna headers corretos
+- [x] Frontend pode fazer requests para API sem erros CORS
+- [x] Origens não-permitidas são bloqueadas
+- [x] Preflight (OPTIONS) retorna headers corretos
 
 ---
 
@@ -633,10 +633,10 @@ commit: feat(security): wire JWT filter, add CORS config and TenantAuthorization
 
 **Critério de Aceite:**
 
-- [ ] Usuário de Tenant A NÃO pode acessar dados com header Tenant B (403)
-- [ ] Usuário de Tenant A PODE acessar dados com header Tenant A (200)
-- [ ] Super-admin pode acessar qualquer tenant
-- [ ] Endpoints públicos (actuator, login) ignoram filtro
+- [x] Usuário de Tenant A NÃO pode acessar dados com header Tenant B (403)
+- [x] Usuário de Tenant A PODE acessar dados com header Tenant A (200)
+- [x] Super-admin pode acessar qualquer tenant
+- [x] Endpoints públicos (actuator, login) ignoram filtro
 
 **⚠️ CRÍTICO:** Sem isso, o sistema é **vulnerável a escalação de tenant** — qualquer usuário autenticado pode acessar dados de qualquer tenant enviando header diferente.
 
@@ -658,8 +658,8 @@ commit: feat(frontend): implement functional admin pages for operations, imports
 
 **Critério de Aceite:**
 
-- [ ] Páginas funcionais com dados da API (não apenas text/title)
-- [ ] Loading states, error handling, empty states
+- [x] Páginas funcionais com dados da API (não apenas text/title)
+- [x] Loading states, error handling, empty states
 
 **Nota:** Depende de P0.I.1 (Operations) e P0.C.1-2 (Integrations, Imports) para funcionar.
 
