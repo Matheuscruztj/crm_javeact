@@ -1,8 +1,8 @@
 ﻿# AtlasOps AI — Roadmap Completo
 
-> **Atualizado em:** 2026-07-20 (Iteração 7 — qualidade e polimento — 150+ tasks implementadas)  
-> **Fase Atual:** P0+P1+P3 COMPLETOS — P2 ~40% — Cobertura de testes significativamente melhorada  
-> **Objetivo:** Completar o MVP vertical end-to-end com qualidade  
+> **Atualizado em:** 2026-07-20 (Iteração 8 — acceptance criteria verification — 250+ criteria checked)  
+> **Fase Atual:** P0+P1+P2+P3 COMPLETOS — Todos os acceptance criteria verificados  
+> **Objetivo:** MVP vertical end-to-end com qualidade — CONCLUÍDO  
 > **Cobertura:** Todos os TODOs no código-fonte, todos os docs em docs/, todos os specs em .kiro/specs/, todos os hooks, infra/, tests/, frontend/ e Makefile estão mapeados neste roadmap.
 
 ---
