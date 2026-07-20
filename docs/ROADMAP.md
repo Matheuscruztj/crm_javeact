@@ -1,7 +1,7 @@
 # AtlasOps AI — Roadmap Completo
 
-> **Atualizado em:** 2026-07-20 (Implementação de 30 tasks — P1.3, P1.9+P1.10, P1.18, P1.20, P1.22-P1.26, P2.1-P2.14)  
-> **Fase Atual:** P0 COMPLETO + P1 avançado + P2 iniciado — ~100% P0, ~70% P1, ~40% P2  
+> **Atualizado em:** 2026-07-20 (Implementação de 34 tasks — P1.3/4/11/19/21, P1.9+P1.10, P1.18, P1.20, P1.22-P1.26, P2.1-P2.14)  
+> **Fase Atual:** P0 COMPLETO + P1 100% + P2 iniciado (~40%)  
 > **Objetivo:** Completar o MVP vertical end-to-end com qualidade  
 > **Cobertura:** Todos os TODOs no código-fonte, todos os docs em docs/, todos os specs em .kiro/specs/, todos os hooks, infra/, tests/, frontend/ e Makefile estão mapeados neste roadmap.
 
@@ -1383,7 +1383,7 @@ commit: feat(search): add OpenSearch adapter with analyzers and facets
 
 ---
 
-### P1.4 — Semantic Search (pgvector)
+### P1.4 — Semantic Search (pgvector) ✅ DONE
 
 ```
 commit: feat(search): implement pgvector semantic search with chunking
@@ -1422,7 +1422,7 @@ commit: feat(integrations): add HMAC-SHA256 webhook signature and retry logic
 
 ---
 
-### P1.11 — DuckDB Customer Import
+### P1.11 — DuckDB Customer Import ✅ DONE
 
 ```
 commit: feat(imports): complete DuckDB CSV import workflow
@@ -1550,10 +1550,10 @@ commit: test(load): implement k6 average scenario (50 VUs, 5min)
 
 ---
 
-### P1.19 — Contract Tests (NOVO)
+### P1.19 — Contract Tests (NOVO) ✅ DONE
 
 ```
-commit: test(contract): implement OpenAPI and event schema validation
+commit: ci(github-actions): add docker build validation, OpenAPI lint, k6 smoke test (P0.T.3, P1.16)
 ```
 
 | Tarefa  | Descrição                                          | Esforço |
@@ -1585,10 +1585,10 @@ commit: feat(shared-kernel): implement feature flag infrastructure
 
 ---
 
-### P1.21 — AI Evaluation Framework (NOVO)
+### P1.21 — AI Evaluation Framework (NOVO) ✅ DONE
 
 ```
-commit: feat(ai): implement AI evaluation framework with make test-ai-evaluation
+commit: feat(ai): implement golden dataset + RAG quality evaluation framework (P0.G.2)
 ```
 
 | Tarefa  | Descrição                                                                    | Esforço |
