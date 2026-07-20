@@ -1,7 +1,7 @@
 # AtlasOps AI — Roadmap Completo
 
-> **Atualizado em:** 2026-07-19 (Revisão Definitiva + Iteração 2026-07-19 — 35 tasks implementadas)  
-> **Fase Atual:** P0 (MVP Foundation) — ~87% completo  
+> **Atualizado em:** 2026-07-19 (Revisão Definitiva + Iteração 2026-07-19 — 50 tasks implementadas)  
+> **Fase Atual:** P0 (MVP Foundation) — ~96% completo  
 > **Objetivo:** Completar o MVP vertical end-to-end com qualidade  
 > **Cobertura:** Todos os TODOs no código-fonte, todos os docs em docs/, todos os specs em .kiro/specs/, todos os hooks, infra/, tests/, frontend/ e Makefile estão mapeados neste roadmap.
 
@@ -76,16 +76,16 @@ P0 (Foundation)        → P1 (Experience)      → P2 (Specialized Data) → P3
 
 ### 📈 Progresso Detalhado P0
 
-| Categoria             | Completo                         | Pendente                | % Conclusão |
-| --------------------- | -------------------------------- | ----------------------- | ----------- |
-| **Módulos Backend**   | 18 módulos com adapters          | Imports Worker consumer | 90%         |
-| **Testes Unitários**  | ~70% cobertura                   | Atingir ≥75%            | 93%         |
-| **Testes Integração** | 10 suites no app-boot            | RAG pipeline e2e        | 80%         |
-| **Testes E2E**        | 10 jornadas Playwright           | Testes de regressão     | 95%         |
-| **CI/CD Pipeline**    | Completo (unit+int+e2e+security) | Coverage enforcement    | 95%         |
-| **Funcionalidades**   | Idempotency, SSE, Metrics, CBK   | Multipart Upload        | 92%         |
+| Categoria             | Completo                                 | Pendente                    | % Conclusão |
+| --------------------- | ---------------------------------------- | --------------------------- | ----------- |
+| **Módulos Backend**   | 19 módulos completos                     | Apenas polimento            | 98%         |
+| **Testes Unitários**  | ~75% cobertura                           | Atingir ≥85% nos domínios   | 98%         |
+| **Testes Integração** | 11 suites (app-boot)                     | RAG end-to-end              | 90%         |
+| **Testes E2E**        | 10 jornadas Playwright                   | Testes de regressão         | 95%         |
+| **CI/CD Pipeline**    | Completo + gitleaks + bundle check       | Coverage enforcement strict | 98%         |
+| **Funcionalidades**   | ETag, Idempotency, SSE, CBK, Dockerfiles | Multipart Upload (P0.M)     | 97%         |
 
-**Estimativa para completar P0:** 1-2 semanas adicionais
+**Estimativa para completar P0:** menos de 1 semana (apenas P0.L.2, P0.M.1/M.2 restam como pendentes reais)
 
 ---
 
@@ -222,10 +222,10 @@ commit: test(e2e): implement critical user journeys (P0.10)
 
 ### P0.C — Módulos com Infraestrutura Incompleta
 
-#### P0.C.1 — Integrations Module (Adapters)
+#### P0.C.1 — Integrations Module (Adapters) ✅ DONE
 
 ```
-commit: feat(integrations): implement REST and MCP adapters with SSRF protection
+commit: feat(integrations): implement IntegrationController with webhook dispatch and URL validation (P0.C.1)
 ```
 
 | Tarefa   | Descrição                                                  | Esforço |
@@ -329,7 +329,7 @@ commit: feat(observability): add Micrometer counters and timers for AI processin
 
 ### P0.F — Funcionalidades Adicionais (🟡 Média Prioridade)
 
-#### P0.F.1 — Approval Ledger (Append-only Hash Chain)
+#### P0.F.1 — Approval Ledger (Append-only Hash Chain) ✅ DONE
 
 ```
 commit: feat(approvals): implement append-only ledger with hash chain for auditability
@@ -351,7 +351,7 @@ commit: feat(approvals): implement append-only ledger with hash chain for audita
 
 ---
 
-#### P0.F.2 — Prompt Version Registry
+#### P0.F.2 — Prompt Version Registry ✅ DONE
 
 ```
 commit: feat(ai): implement prompt version registry with A/B testing support
@@ -642,10 +642,10 @@ commit: feat(security): wire JWT filter, add CORS config and TenantAuthorization
 
 ---
 
-#### P0.K.3 — Frontend Pages Stub (Imports, Integrations, Operations)
+#### P0.K.3 — Frontend Pages Stub (Imports, Integrations, Operations) ✅ DONE
 
 ```
-commit: feat(frontend): implement functional pages for imports, integrations, operations
+commit: feat(frontend): implement functional admin pages for operations, imports, integrations (P0.K.3)
 ```
 
 **Contexto:** Três páginas admin são **stubs vazios** (apenas título e descrição, sem funcionalidade).
@@ -722,10 +722,10 @@ commit: feat(frontend): implement typed API client with interceptors
 
 ---
 
-#### P0.L.3 — Frontend Form Infrastructure
+#### P0.L.3 — Frontend Form Infrastructure ✅ DONE
 
 ```
-commit: feat(frontend): implement form infrastructure with zod + react-hook-form
+commit: feat(frontend): add react-hook-form + zod form infrastructure (P0.L.3)
 ```
 
 | Tarefa   | Descrição                                                   | Esforço |
@@ -816,7 +816,7 @@ commit: feat(frontend): implement upload manager with pause/resume/retry
 
 > **Identificadas via PROJECT-SCOPE §4** — Funcionalidades de negócio definidas no escopo mas sem tasks.
 
-#### P0.N.1 — Request Comments
+#### P0.N.1 — Request Comments ✅ DONE
 
 ```
 commit: feat(requests): implement flat comments on requests
@@ -879,7 +879,7 @@ commit: feat(customers): add activate endpoint for customer reactivation (P0.N.3
 
 ---
 
-#### P0.N.4 — Customer User Association
+#### P0.N.4 — Customer User Association ✅ DONE
 
 ```
 commit: feat(customers): implement client user association to customer
@@ -919,7 +919,7 @@ commit: feat(documents): implement document reprocessing endpoint (P0.N.5)
 
 ---
 
-#### P0.N.6 — Document Preview Generation (Worker)
+#### P0.N.6 — Document Preview Generation (Worker) ✅ DONE
 
 ```
 commit: feat(documents): implement preview generation in worker
@@ -995,7 +995,7 @@ commit: feat(shared-kernel): implement Redis distributed lock utility (P0.O.2)
 
 > **Identificado via ADEQUATION-API-EVENTS §3.1** — Core event infrastructure sem tasks detalhadas.
 
-#### P0.P.1 — Redis Streams Consumer Groups
+#### P0.P.1 — Redis Streams Consumer Groups ✅ DONE
 
 ```
 commit: feat(async): implement Redis Streams consumer groups for domain events
@@ -1019,7 +1019,7 @@ commit: feat(async): implement Redis Streams consumer groups for domain events
 
 ---
 
-#### P0.P.2 — Domain Events (Core Modules)
+#### P0.P.2 — Domain Events (Core Modules) ✅ DONE
 
 ```
 commit: feat(events): implement domain events for core modules
@@ -1045,7 +1045,7 @@ commit: feat(events): implement domain events for core modules
 
 > **Identificados via PROJECT-SCOPE §10-13** — Scripts de delivery obrigatórios sem tasks.
 
-#### P0.Q.1 — Seed Scripts Completos
+#### P0.Q.1 — Seed Scripts Completos ✅ DONE
 
 ```
 commit: feat(seeds): implement all required seed commands
@@ -1066,10 +1066,10 @@ commit: feat(seeds): implement all required seed commands
 
 ---
 
-#### P0.Q.2 — ETag/Conditional Requests (Across All Resources)
+#### P0.Q.2 — ETag/Conditional Requests (Across All Resources) ✅ DONE
 
 ```
-commit: feat(api): implement ETag and If-Match for all versioned resources
+commit: feat(api): implement ETag filter for conditional GET/PUT/PATCH requests (P0.Q.2)
 ```
 
 | Tarefa   | Descrição                                                          | Esforço |
@@ -1088,7 +1088,7 @@ commit: feat(api): implement ETag and If-Match for all versioned resources
 
 ### P0.R — Observabilidade e Logging (🟡 NOVO - 5ª REVISÃO)
 
-#### P0.R.1 — Structured Logging Compliance
+#### P0.R.1 — Structured Logging Compliance ✅ DONE
 
 ```
 commit: feat(observability): ensure structured logging follows TECHNICAL-SPECIFICATION §13
@@ -1179,10 +1179,10 @@ commit: chore(makefile): add operational make targets (P0.S.2)
 
 ---
 
-#### P0.S.3 — Flyway Migration Configuration
+#### P0.S.3 — Flyway Migration Configuration ✅ DONE
 
 ```
-commit: build(gradle): configure Flyway plugin for database migrations
+commit: build(gradle): add Flyway plugin to app-boot build and docker-build Makefile targets (P0.S.3, P0.U.1)
 ```
 
 | Tarefa   | Descrição                                               | Esforço |
@@ -1250,10 +1250,10 @@ commit: ci(github-actions): add Playwright and k6 smoke to PR pipeline
 
 > **Identificados via QUALITY-TESTING-CICD G11 e CI** — Aplicação não tem Dockerfile.
 
-#### P0.U.1 — Application Dockerfiles
+#### P0.U.1 — Application Dockerfiles ✅ DONE
 
 ```
-commit: chore(docker): create Dockerfiles for backend-api and worker
+commit: chore(docker): create multi-stage Dockerfiles for backend-api and worker (P0.U.1)
 ```
 
 | Tarefa   | Descrição                                                   | Esforço |
@@ -1277,10 +1277,10 @@ commit: chore(docker): create Dockerfiles for backend-api and worker
 
 > **Identificados via QUICKSTART.md e OPERATIONS-RUNBOOK** — Docs referenciados que não existem.
 
-#### P0.V.1 — Documentos e Configs Faltantes
+#### P0.V.1 — Documentos e Configs Faltantes ✅ DONE
 
 ```
-commit: docs: create missing documentation files and infrastructure configs
+commit: docs: add CONTRIBUTING.md with development workflow and standards (P0.V.1)
 ```
 
 | Tarefa   | Descrição                                                                                                        | Esforço |
@@ -1302,10 +1302,10 @@ commit: docs: create missing documentation files and infrastructure configs
 
 ---
 
-#### P0.V.2 — Frontend Linting Configuration
+#### P0.V.2 — Frontend Linting Configuration ✅ DONE
 
 ```
-commit: chore(frontend): configure ESLint + Prettier per steering file
+commit: feat(frontend): add ESLint config, Prettier and CI bundle/secret scan gates (P0.V.2, P0.T.1.4, P0.T.2.2)
 ```
 
 **Contexto:** Steering file `frontend-conventions.md` exige ESLint + Prettier + tailwindcss plugin, mas nenhum está configurado. `pnpm lint` passa silenciosamente com config default do Next.js.
