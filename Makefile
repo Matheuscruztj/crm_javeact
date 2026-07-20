@@ -513,3 +513,13 @@ verify-ledger:
 	  http://localhost:8080/api/v1/audit/ledger/verify 2>/dev/null \
 	  | python3 -c "import sys,json; d=json.load(sys.stdin); print('Ledger valid:', d.get('integrityValid', False))" \
 	  2>/dev/null || echo "API not available — run 'make compose-up' first"
+
+## ─────────────────────────────────────────────────────────────────────────────
+## Tenant Data Portability (P3.3.5)
+## ─────────────────────────────────────────────────────────────────────────────
+
+.PHONY: tenant-export
+
+## Export all data for a tenant: make tenant-export TENANT_ID=tenant-alpha
+tenant-export:
+	@bash infra/scripts/tenant-export.sh $(TENANT_ID)
