@@ -1,126 +1,173 @@
 "use client";
 
-/**
- * Customer detail page: info, users, requests, activate/deactivate.
- * Validates: P1.14.2 — /admin/customers/[id]
- */
-
-import { use } from "react";
-import Link from "next/link";
-import { useCustomer, useRequests } from "@/hooks/use-api";
-import { useMutation } from "@/hooks/use-api";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { api } from "@/lib/api-client";
 import { getApiErrorMessage } from "@/lib/form-utils";
-import { DataTable, type Column } from "@/components/shared/data-table";
 
-interface ServiceRequest { id: string; title: string; status: string; priority: string; createdAt: string; }
+interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  status: "ACTIVE" | "INACTIVE";
+  tenantId: string;
+  createdAt: string;
+}
 
-const requestColumns: Column<ServiceRequest>[] = [
-  { key: "title", header: "Title" },
-  { key: "status", header: "Status", render: (r) => (
-    <span className="rounded-full bg-muted px-2 py-0.5 text-xs">{r.status}</span>
-  )},
-  { key: "priority", header: "Priority" },
-  { key: "createdAt", header: "Created", render: (r) => new Date(r.createdAt).toLocaleDateString() },
-];
+interface Request {
+  id: string;
+  title: string;
+  status: string;
+  priority: string;
+  createdAt: string;
+}
 
-export default function CustomerDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
-  const { data: customer, loading, error, refetch } = useCustomer(id);
-  const { data: requestsData, loading: reqLoading } = useRequests(0);
-  const activateMutation = useMutation(`/customers/${id}/activate`, "post");
-  const deactivateMutation = useMutation(`/customers/${id}/deactivate`, "post");
+interface AssociatedUser {
+  userId: string;
+  email: string;
+  role: string;
+}
 
-  const handleToggle = async () => {
-    try {
-      if (customer?.status === "ACTIVE") {
-        await deactivateMutation.mutate({});
-      } else {
-        await activateMutation.mutate({});
+/**
+ * Admin customer detail page.
+ * Shows customer info, associated users, and linked requests.
+ * Validates: P1.14.2 — /admin/customers/[id] detail (task 39)
+ */
+export default function CustomerDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+
+  const [customer, setCustomer] = useState<Customer | null>(null);
+  const [requests, setRequests] = useState<Request[]>([]);
+  const [users, setUsers] = useState<AssociatedUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [tab, setTab] = useState<"info" | "requests" | "users">("info");
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        const [cust, reqs] = await Promise.all([
+          api.get<Customer>(`/customers/${id}`),
+          api.get<{ content: Request[] }>(`/requests?customerId=${id}&size=20`),
+        ]);
+        setCustomer(cust);
+        setRequests(reqs.content ?? []);
+      } catch (err) {
+        setError(getApiErrorMessage(err));
+      } finally {
+        setLoading(false);
       }
-      refetch();
-    } catch {
-      /* handled by mutation */
+    };
+    void load();
+  }, [id]);
+
+  const handleActivate = async () => {
+    try {
+      await api.patch(`/customers/${id}/activate`, {});
+      setCustomer((c) => c ? { ...c, status: "ACTIVE" } : c);
+    } catch (err) {
+      setError(getApiErrorMessage(err));
     }
   };
 
-  if (loading) {
-    return (
-      <div className="p-6">
-        <div className="h-8 w-48 animate-pulse rounded bg-muted mb-4" aria-busy="true" />
-        <div className="h-4 w-96 animate-pulse rounded bg-muted" />
-      </div>
-    );
-  }
+  const handleDeactivate = async () => {
+    try {
+      await api.patch(`/customers/${id}/deactivate`, {});
+      setCustomer((c) => c ? { ...c, status: "INACTIVE" } : c);
+    } catch (err) {
+      setError(getApiErrorMessage(err));
+    }
+  };
 
-  if (error || !customer) {
-    return (
-      <div className="p-6" role="alert">
-        <p className="text-destructive">{getApiErrorMessage(error) || "Customer not found."}</p>
-        <Link href="/admin/customers" className="mt-2 inline-block text-sm text-primary hover:underline">
-          ← Back to customers
-        </Link>
-      </div>
-    );
-  }
+  if (loading) return <div className="p-6 text-muted-foreground" aria-busy="true">Loading...</div>;
+  if (error) return <div className="p-6 text-destructive" role="alert">{error}</div>;
+  if (!customer) return <div className="p-6">Customer not found.</div>;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="mb-6 flex items-start justify-between">
         <div>
-          <Link href="/admin/customers" className="text-sm text-muted-foreground hover:underline">
-            ← Customers
-          </Link>
-          <h1 className="mt-1 text-2xl font-bold">{customer.name}</h1>
+          <button onClick={() => router.back()} className="mb-2 text-sm text-muted-foreground hover:underline" aria-label="Go back">
+            ← Back
+          </button>
+          <h1 className="text-2xl font-bold">{customer.name}</h1>
           <p className="text-muted-foreground">{customer.email}</p>
         </div>
-        <button
-          onClick={handleToggle}
-          disabled={activateMutation.loading || deactivateMutation.loading}
-          className={`rounded-md px-4 py-2 text-sm font-medium disabled:opacity-50 ${
-            customer.status === "ACTIVE"
-              ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
-              : "bg-green-100 text-green-800 hover:bg-green-200"
-          }`}
-          aria-label={customer.status === "ACTIVE" ? "Deactivate customer" : "Activate customer"}
-        >
-          {customer.status === "ACTIVE" ? "Deactivate" : "Activate"}
-        </button>
-      </div>
-
-      {/* Info card */}
-      <div className="rounded-md border p-4 grid grid-cols-2 gap-4 text-sm">
-        <div>
-          <dt className="font-medium text-muted-foreground">Status</dt>
-          <dd>
-            <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-              customer.status === "ACTIVE" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-700"
-            }`}>
-              {customer.status}
-            </span>
-          </dd>
-        </div>
-        <div>
-          <dt className="font-medium text-muted-foreground">Created</dt>
-          <dd>{new Date(customer.createdAt).toLocaleDateString()}</dd>
+        <div className="flex items-center gap-2">
+          <span className={`rounded-full px-3 py-1 text-xs font-medium ${customer.status === "ACTIVE" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"}`}>
+            {customer.status}
+          </span>
+          {customer.status === "ACTIVE" ? (
+            <button onClick={handleDeactivate} className="rounded border px-3 py-1 text-xs hover:bg-destructive/10">
+              Deactivate
+            </button>
+          ) : (
+            <button onClick={handleActivate} className="rounded border px-3 py-1 text-xs hover:bg-green-50">
+              Activate
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Requests */}
-      <section aria-labelledby="requests-heading">
-        <h2 id="requests-heading" className="mb-3 font-semibold">Recent Requests</h2>
-        <DataTable
-          columns={requestColumns}
-          data={requestsData}
-          loading={reqLoading}
-          emptyMessage="No requests for this customer."
-          onRowClick={(r) => window.location.assign(`/admin/requests/${r.id}`)}
-        />
-      </section>
+      {/* Tabs */}
+      <div className="mb-4 flex gap-4 border-b">
+        {(["info", "requests", "users"] as const).map((t) => (
+          <button
+            key={t}
+            onClick={() => setTab(t)}
+            className={`pb-2 text-sm capitalize ${tab === t ? "border-b-2 border-primary font-medium" : "text-muted-foreground"}`}
+            aria-selected={tab === t}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab content */}
+      {tab === "info" && (
+        <dl className="grid gap-4 sm:grid-cols-2">
+          <div><dt className="text-xs text-muted-foreground">ID</dt><dd className="font-mono text-sm">{customer.id}</dd></div>
+          <div><dt className="text-xs text-muted-foreground">Tenant</dt><dd className="text-sm">{customer.tenantId}</dd></div>
+          <div><dt className="text-xs text-muted-foreground">Created</dt><dd className="text-sm">{new Date(customer.createdAt).toLocaleString()}</dd></div>
+        </dl>
+      )}
+
+      {tab === "requests" && (
+        <div>
+          {requests.length === 0 ? (
+            <p className="text-muted-foreground text-sm">No requests found.</p>
+          ) : (
+            <ul className="divide-y rounded border">
+              {requests.map((r) => (
+                <li key={r.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/25">
+                  <span className="text-sm">{r.title}</span>
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium bg-muted`}>{r.status}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      {tab === "users" && (
+        <div>
+          {users.length === 0 ? (
+            <p className="text-muted-foreground text-sm">No associated users.</p>
+          ) : (
+            <ul className="divide-y rounded border">
+              {users.map((u) => (
+                <li key={u.userId} className="flex justify-between px-4 py-3 text-sm">
+                  <span>{u.email}</span>
+                  <span className="text-muted-foreground">{u.role}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
     </div>
   );
 }

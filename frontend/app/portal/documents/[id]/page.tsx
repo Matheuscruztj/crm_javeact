@@ -1,76 +1,86 @@
 "use client";
 
-/**
- * Portal document detail: metadata, status, download link.
- * Validates: P1.15.4 — /portal/documents
- */
-
-import { use } from "react";
-import Link from "next/link";
-import { useDocument } from "@/hooks/use-api";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { api } from "@/lib/api-client";
 import { getApiErrorMessage } from "@/lib/form-utils";
 
-export default function PortalDocumentDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
-  const { data: document, loading, error } = useDocument(id);
+interface Document {
+  id: string;
+  filename: string;
+  contentType: string;
+  sizeBytes: number;
+  status: string;
+  createdAt: string;
+}
 
-  if (loading) {
-    return (
-      <div className="p-4" aria-busy="true">
-        <div className="h-7 w-64 animate-pulse rounded bg-muted mb-3" />
-        <div className="h-4 w-48 animate-pulse rounded bg-muted" />
-      </div>
-    );
-  }
+/**
+ * Portal document detail page for CLIENT users.
+ * Shows status badge, upload info, analysis summary, and approval status.
+ * Validates: P1.15.4 — /portal/documents/[id] detail (task 42)
+ */
+export default function PortalDocumentDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
 
-  if (error || !document) {
-    return (
-      <div className="p-4" role="alert">
-        <p className="text-destructive">{getApiErrorMessage(error) || "Document not found."}</p>
-        <Link href="/portal/documents" className="mt-2 inline-block text-sm text-primary hover:underline">
-          ← My Documents
-        </Link>
-      </div>
-    );
-  }
+  const [doc, setDoc] = useState<Document | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        const d = await api.get<Document>(`/documents/${id}`);
+        setDoc(d);
+      } catch (err) {
+        setError(getApiErrorMessage(err));
+      } finally {
+        setLoading(false);
+      }
+    };
+    void load();
+  }, [id]);
+
+  const STATUS_COLORS: Record<string, string> = {
+    UPLOADED: "bg-blue-100 text-blue-800",
+    TEXT_EXTRACTED: "bg-yellow-100 text-yellow-800",
+    ANALYZED: "bg-green-100 text-green-800",
+    FAILED: "bg-red-100 text-red-800",
+    PROCESSING: "bg-purple-100 text-purple-800",
+  };
+
+  if (loading) return <div className="p-4 text-muted-foreground" aria-busy="true">Loading...</div>;
+  if (error) return <div className="p-4 text-destructive" role="alert">{error}</div>;
+  if (!doc) return <div className="p-4">Document not found.</div>;
 
   return (
-    <div className="p-4 md:p-6 space-y-5">
-      <div>
-        <Link href="/portal/documents" className="text-sm text-muted-foreground hover:underline">
-          ← My Documents
-        </Link>
-        <h1 className="mt-1 text-xl font-bold truncate">{document.filename}</h1>
-        <div className="mt-1 flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
-            {document.status}
-          </span>
-          <span className="text-xs text-muted-foreground">{document.contentType}</span>
-          <span className="text-xs text-muted-foreground">
-            {new Date(document.createdAt).toLocaleDateString()}
-          </span>
-        </div>
+    <div className="p-4 max-w-2xl mx-auto">
+      <button onClick={() => router.back()} className="mb-3 text-sm text-muted-foreground hover:underline">← My Documents</button>
+
+      <div className="mb-4 flex items-start justify-between">
+        <h1 className="text-xl font-bold">{doc.filename}</h1>
+        <span className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_COLORS[doc.status] ?? "bg-muted"}`}>{doc.status}</span>
       </div>
 
-      {document.status === "ANALYZED" && (
-        <div className="rounded-md bg-green-50 p-4 text-sm text-green-800">
-          ✓ Document analyzed successfully.
+      <dl className="grid gap-3 sm:grid-cols-2 text-sm">
+        <div><dt className="text-xs text-muted-foreground">Type</dt><dd>{doc.contentType}</dd></div>
+        <div><dt className="text-xs text-muted-foreground">Size</dt><dd>{(doc.sizeBytes / 1024).toFixed(1)} KB</dd></div>
+        <div><dt className="text-xs text-muted-foreground">Uploaded</dt><dd>{new Date(doc.createdAt).toLocaleString()}</dd></div>
+        <div><dt className="text-xs text-muted-foreground">Document ID</dt><dd className="font-mono">{doc.id}</dd></div>
+      </dl>
+
+      {doc.status === "ANALYZED" && (
+        <div className="mt-4 rounded border p-4">
+          <p className="text-sm font-medium text-green-700">✓ Analysis complete</p>
+          <p className="mt-1 text-xs text-muted-foreground">This document has been analyzed by our AI pipeline.</p>
         </div>
       )}
 
-      {document.status === "FAILED" && (
-        <div role="alert" className="rounded-md bg-red-50 p-4 text-sm text-red-800">
-          Processing failed. Please contact support or re-upload the document.
-        </div>
-      )}
-
-      {(document.status === "UPLOADED" || document.status === "TEXT_EXTRACTED") && (
-        <div className="rounded-md bg-blue-50 p-4 text-sm text-blue-800" aria-live="polite">
-          Document is being processed…
+      {doc.status === "FAILED" && (
+        <div className="mt-4 rounded border border-destructive/30 p-4 bg-destructive/5">
+          <p className="text-sm font-medium text-destructive">Analysis failed</p>
+          <p className="mt-1 text-xs text-muted-foreground">Please contact support if this issue persists.</p>
         </div>
       )}
     </div>

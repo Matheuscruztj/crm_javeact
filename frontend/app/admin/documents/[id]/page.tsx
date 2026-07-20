@@ -1,125 +1,146 @@
 "use client";
 
-/**
- * Document detail page: metadata, AI analysis, preview, reprocess.
- * Validates: P1.14.6 — /admin/documents/[id]
- */
-
-import { use } from "react";
-import Link from "next/link";
-import { useDocument } from "@/hooks/use-api";
-import { useMutation } from "@/hooks/use-api";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { api } from "@/lib/api-client";
 import { getApiErrorMessage } from "@/lib/form-utils";
 
-const STATUS_COLORS: Record<string, string> = {
-  UPLOADED: "bg-blue-100 text-blue-800",
-  TEXT_EXTRACTED: "bg-yellow-100 text-yellow-800",
-  ANALYZED: "bg-green-100 text-green-800",
-  FAILED: "bg-red-100 text-red-800",
-  REPROCESSING: "bg-purple-100 text-purple-800",
-};
+interface Document {
+  id: string;
+  filename: string;
+  contentType: string;
+  sizeBytes: number;
+  status: "UPLOADED" | "TEXT_EXTRACTED" | "ANALYZED" | "FAILED" | "PROCESSING";
+  tenantId: string;
+  createdAt: string;
+  previewKey?: string;
+}
 
-export default function DocumentDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
-  const { data: document, loading, error, refetch } = useDocument(id);
-  const reprocessMutation = useMutation(`/documents/${id}/reprocess`, "post");
+interface AnalysisResult {
+  summary?: string;
+  category?: string;
+  confidenceScore?: number;
+  fallback?: boolean;
+  riskIndicators?: string[];
+}
+
+/**
+ * Admin document detail page.
+ * Shows metadata, AI analysis results, and approval status.
+ * Validates: P1.14.6 — /admin/documents/[id] detail (task 40)
+ */
+export default function DocumentDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+
+  const [doc, setDoc] = useState<Document | null>(null);
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [reprocessing, setReprocessing] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        const d = await api.get<Document>(`/documents/${id}`);
+        setDoc(d);
+        if (d.status === "ANALYZED") {
+          try {
+            const a = await api.get<AnalysisResult>(`/documents/${id}/analysis`);
+            setAnalysis(a);
+          } catch {
+            // analysis not available — not critical
+          }
+        }
+      } catch (err) {
+        setError(getApiErrorMessage(err));
+      } finally {
+        setLoading(false);
+      }
+    };
+    void load();
+  }, [id]);
 
   const handleReprocess = async () => {
     try {
-      await reprocessMutation.mutate({});
-      refetch();
-    } catch {
-      /* handled */
+      setReprocessing(true);
+      await api.post(`/documents/${id}/reprocess`, {});
+      setDoc((d) => d ? { ...d, status: "PROCESSING" } : d);
+    } catch (err) {
+      setError(getApiErrorMessage(err));
+    } finally {
+      setReprocessing(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="p-6" aria-busy="true">
-        <div className="h-8 w-64 animate-pulse rounded bg-muted mb-4" />
-        <div className="h-4 w-48 animate-pulse rounded bg-muted" />
-      </div>
-    );
-  }
+  const STATUS_COLORS: Record<string, string> = {
+    UPLOADED: "bg-blue-100 text-blue-800",
+    TEXT_EXTRACTED: "bg-yellow-100 text-yellow-800",
+    ANALYZED: "bg-green-100 text-green-800",
+    FAILED: "bg-red-100 text-red-800",
+    PROCESSING: "bg-purple-100 text-purple-800",
+  };
 
-  if (error || !document) {
-    return (
-      <div className="p-6" role="alert">
-        <p className="text-destructive">{getApiErrorMessage(error) || "Document not found."}</p>
-        <Link href="/admin/documents" className="mt-2 inline-block text-sm text-primary hover:underline">
-          ← Back to documents
-        </Link>
-      </div>
-    );
-  }
-
-  const canReprocess = document.status === "FAILED" || document.status === "ANALYZED";
+  if (loading) return <div className="p-6 text-muted-foreground" aria-busy="true">Loading...</div>;
+  if (error) return <div className="p-6 text-destructive" role="alert">{error}</div>;
+  if (!doc) return <div className="p-6">Document not found.</div>;
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <Link href="/admin/documents" className="text-sm text-muted-foreground hover:underline">
-            ← Documents
-          </Link>
-          <h1 className="mt-1 text-2xl font-bold truncate">{document.filename}</h1>
-          <div className="mt-1 flex items-center gap-2">
-            <span
-              className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                STATUS_COLORS[document.status] ?? "bg-muted text-muted-foreground"
-              }`}
-            >
-              {document.status}
-            </span>
-            <span className="text-xs text-muted-foreground">{document.contentType}</span>
-          </div>
-        </div>
-        {canReprocess && (
-          <button
-            onClick={handleReprocess}
-            disabled={reprocessMutation.loading}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-            aria-label="Reprocess document with AI"
-            aria-busy={reprocessMutation.loading}
-          >
-            {reprocessMutation.loading ? "Reprocessing…" : "Reprocess"}
-          </button>
-        )}
-      </div>
+    <div className="p-6 max-w-4xl mx-auto">
+      <button onClick={() => router.back()} className="mb-3 text-sm text-muted-foreground hover:underline">← Back</button>
 
-      {reprocessMutation.error && (
-        <div role="alert" className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-          {getApiErrorMessage(reprocessMutation.error)}
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">{doc.filename}</h1>
+          <p className="text-sm text-muted-foreground">{doc.contentType} · {(doc.sizeBytes / 1024).toFixed(1)} KB</p>
         </div>
-      )}
+        <div className="flex items-center gap-2">
+          <span className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_COLORS[doc.status] ?? "bg-muted"}`}>{doc.status}</span>
+          {(doc.status === "ANALYZED" || doc.status === "FAILED") && (
+            <button onClick={handleReprocess} disabled={reprocessing}
+              className="rounded border px-3 py-1 text-xs hover:bg-muted disabled:opacity-50">
+              {reprocessing ? "Reprocessing…" : "Reprocess"}
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Metadata */}
-      <div className="rounded-md border p-4 grid grid-cols-2 gap-4 text-sm">
-        <div>
-          <dt className="font-medium text-muted-foreground">Created</dt>
-          <dd>{new Date(document.createdAt).toLocaleDateString()}</dd>
-        </div>
-        <div>
-          <dt className="font-medium text-muted-foreground">Type</dt>
-          <dd>{document.contentType}</dd>
-        </div>
-      </div>
+      <section className="mb-6">
+        <h2 className="mb-2 text-sm font-semibold">Metadata</h2>
+        <dl className="grid gap-3 sm:grid-cols-2">
+          <div><dt className="text-xs text-muted-foreground">Document ID</dt><dd className="font-mono text-sm">{doc.id}</dd></div>
+          <div><dt className="text-xs text-muted-foreground">Tenant</dt><dd className="text-sm">{doc.tenantId}</dd></div>
+          <div><dt className="text-xs text-muted-foreground">Created</dt><dd className="text-sm">{new Date(doc.createdAt).toLocaleString()}</dd></div>
+        </dl>
+      </section>
 
-      {/* Processing status message */}
-      {document.status === "ANALYZED" && (
-        <div className="rounded-md bg-green-50 p-4 text-sm text-green-800">
-          ✓ Document has been analyzed by AI. View the approval for the analysis results.
-        </div>
-      )}
-      {document.status === "FAILED" && (
-        <div role="alert" className="rounded-md bg-red-50 p-4 text-sm text-red-800">
-          Document processing failed. Use the Reprocess button to retry AI analysis.
-        </div>
+      {/* AI Analysis */}
+      {analysis && (
+        <section className="rounded border p-4">
+          <h2 className="mb-3 text-sm font-semibold">AI Analysis</h2>
+          <dl className="space-y-2">
+            {analysis.summary && <div><dt className="text-xs text-muted-foreground">Summary</dt><dd className="text-sm">{analysis.summary}</dd></div>}
+            {analysis.category && <div><dt className="text-xs text-muted-foreground">Category</dt><dd className="text-sm">{analysis.category}</dd></div>}
+            {analysis.confidenceScore !== undefined && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Confidence</dt>
+                <dd className="text-sm">{(analysis.confidenceScore * 100).toFixed(1)}%{analysis.fallback && " (fallback)"}</dd>
+              </div>
+            )}
+            {analysis.riskIndicators && analysis.riskIndicators.length > 0 && (
+              <div>
+                <dt className="text-xs text-muted-foreground">Risk Indicators</dt>
+                <dd className="flex flex-wrap gap-1 mt-1">
+                  {analysis.riskIndicators.map((r) => (
+                    <span key={r} className="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-800">{r}</span>
+                  ))}
+                </dd>
+              </div>
+            )}
+          </dl>
+        </section>
       )}
     </div>
   );

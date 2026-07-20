@@ -1,112 +1,151 @@
 "use client";
 
-/**
- * Portal request detail: timeline, comments, documents.
- * Validates: P1.15.3 — /portal/requests/[id]
- */
-
-import { use, useState } from "react";
-import Link from "next/link";
-import { useRequest } from "@/hooks/use-api";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { api } from "@/lib/api-client";
 import { getApiErrorMessage } from "@/lib/form-utils";
 
-export default function PortalRequestDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
-  const { data: request, loading, error, refetch } = useRequest(id);
-  const [comment, setComment] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [commentError, setCommentError] = useState<string | null>(null);
+interface Request {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  priority: string;
+  createdAt: string;
+  slaDeadline?: string;
+}
+
+interface Comment {
+  id: string;
+  authorId: string;
+  content: string;
+  createdAt: string;
+}
+
+interface StatusHistory {
+  from: string;
+  to: string;
+  reason?: string;
+  changedAt: string;
+}
+
+/**
+ * Portal request detail page for CLIENT users.
+ * Shows description, status timeline, comments thread, and add comment form.
+ * Validates: P1.15.3 — /portal/requests/[id] detail (task 43)
+ */
+export default function PortalRequestDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+
+  const [request, setRequest] = useState<Request | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [history, setHistory] = useState<StatusHistory[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [tab, setTab] = useState<"overview" | "comments" | "timeline">("overview");
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true);
+        const [req, cmts, hist] = await Promise.all([
+          api.get<Request>(`/requests/${id}`),
+          api.get<{ content: Comment[] }>(`/requests/${id}/comments`),
+          api.get<StatusHistory[]>(`/requests/${id}/history`),
+        ]);
+        setRequest(req);
+        setComments(cmts.content ?? []);
+        setHistory(Array.isArray(hist) ? hist : []);
+      } catch (err) {
+        setError(getApiErrorMessage(err));
+      } finally {
+        setLoading(false);
+      }
+    };
+    void load();
+  }, [id]);
 
   const handleAddComment = async () => {
-    if (!comment.trim()) return;
-    setSubmitting(true);
-    setCommentError(null);
+    if (!newComment.trim()) return;
     try {
-      await api.post(`/requests/${id}/comments`, { text: comment });
-      setComment("");
-      refetch();
+      const c = await api.post<Comment>(`/requests/${id}/comments`, { content: newComment });
+      setComments((prev) => [...prev, c]);
+      setNewComment("");
     } catch (err) {
-      setCommentError(getApiErrorMessage(err));
-    } finally {
-      setSubmitting(false);
+      setError(getApiErrorMessage(err));
     }
   };
 
-  if (loading) {
-    return (
-      <div className="p-4" aria-busy="true">
-        <div className="h-7 w-56 animate-pulse rounded bg-muted mb-3" />
-        <div className="h-4 w-80 animate-pulse rounded bg-muted" />
-      </div>
-    );
-  }
-
-  if (error || !request) {
-    return (
-      <div className="p-4" role="alert">
-        <p className="text-destructive">{getApiErrorMessage(error) || "Request not found."}</p>
-        <Link href="/portal/requests" className="mt-2 inline-block text-sm text-primary hover:underline">
-          ← My Requests
-        </Link>
-      </div>
-    );
-  }
+  if (loading) return <div className="p-4 text-muted-foreground" aria-busy="true">Loading...</div>;
+  if (error) return <div className="p-4 text-destructive" role="alert">{error}</div>;
+  if (!request) return <div className="p-4">Request not found.</div>;
 
   return (
-    <div className="p-4 md:p-6 space-y-5">
-      <div>
-        <Link href="/portal/requests" className="text-sm text-muted-foreground hover:underline">
-          ← My Requests
-        </Link>
-        <h1 className="mt-1 text-xl font-bold">{request.title}</h1>
-        <div className="mt-1 flex flex-wrap gap-2">
-          <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
-            {request.status}
-          </span>
-          <span className="rounded-full bg-muted px-2 py-0.5 text-xs">
-            {request.priority}
-          </span>
-          <span className="text-xs text-muted-foreground">
-            {new Date(request.createdAt).toLocaleDateString()}
-          </span>
-        </div>
+    <div className="p-4 max-w-2xl mx-auto">
+      <button onClick={() => router.back()} className="mb-3 text-sm text-muted-foreground hover:underline">← My Requests</button>
+
+      <div className="mb-4">
+        <h1 className="text-xl font-bold">{request.title}</h1>
+        <span className="inline-block mt-1 rounded-full bg-muted px-3 py-0.5 text-xs">{request.status}</span>
       </div>
 
-      {/* Comments */}
-      <section aria-labelledby="comments-section">
-        <h2 id="comments-section" className="mb-3 font-semibold text-sm">Add Comment</h2>
-        <div className="space-y-2">
-          <label htmlFor="portal-comment" className="sr-only">Write a comment</label>
-          <textarea
-            id="portal-comment"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Write a comment…"
-            rows={3}
-            maxLength={2000}
-            className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none"
-            aria-describedby={commentError ? "portal-comment-error" : undefined}
-          />
-          {commentError && (
-            <p id="portal-comment-error" role="alert" className="text-xs text-destructive">
-              {commentError}
-            </p>
-          )}
-          <button
-            onClick={handleAddComment}
-            disabled={submitting || !comment.trim()}
-            className="w-full rounded-md bg-primary py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 sm:w-auto sm:px-6"
-            aria-busy={submitting}
-          >
-            {submitting ? "Posting…" : "Post Comment"}
+      <div className="mb-4 flex gap-3 border-b">
+        {(["overview", "comments", "timeline"] as const).map((t) => (
+          <button key={t} onClick={() => setTab(t)}
+            className={`pb-2 text-sm capitalize ${tab === t ? "border-b-2 border-primary font-medium" : "text-muted-foreground"}`}
+            aria-selected={tab === t}>
+            {t}
           </button>
+        ))}
+      </div>
+
+      {tab === "overview" && (
+        <div className="space-y-3">
+          <p className="text-sm">{request.description}</p>
+          <dl className="grid gap-2 sm:grid-cols-2 text-sm">
+            <div><dt className="text-xs text-muted-foreground">Priority</dt><dd>{request.priority}</dd></div>
+            <div><dt className="text-xs text-muted-foreground">Created</dt><dd>{new Date(request.createdAt).toLocaleDateString()}</dd></div>
+            {request.slaDeadline && <div><dt className="text-xs text-muted-foreground">Deadline</dt><dd>{new Date(request.slaDeadline).toLocaleDateString()}</dd></div>}
+          </dl>
         </div>
-      </section>
+      )}
+
+      {tab === "comments" && (
+        <div className="space-y-3">
+          {comments.length === 0 ? <p className="text-sm text-muted-foreground">No comments yet.</p> : (
+            <ul className="space-y-2">
+              {comments.map((c) => (
+                <li key={c.id} className="rounded border p-3">
+                  <p className="text-sm">{c.content}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{new Date(c.createdAt).toLocaleString()}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="flex gap-2 pt-2">
+            <input value={newComment} onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Write a comment..." className="flex-1 rounded border px-3 py-2 text-sm"
+              aria-label="New comment" />
+            <button onClick={handleAddComment} disabled={!newComment.trim()}
+              className="rounded bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-50">Send</button>
+          </div>
+        </div>
+      )}
+
+      {tab === "timeline" && (
+        <ol className="relative ml-3 border-l space-y-4">
+          {history.length === 0 ? <p className="pl-4 text-sm text-muted-foreground">No history yet.</p> : history.map((h, i) => (
+            <li key={i} className="ml-4">
+              <div className="absolute -left-1.5 h-3 w-3 rounded-full border bg-primary" />
+              <p className="text-sm font-medium">{h.from} → {h.to}</p>
+              {h.reason && <p className="text-xs text-muted-foreground">{h.reason}</p>}
+              <p className="text-xs text-muted-foreground">{new Date(h.changedAt).toLocaleString()}</p>
+            </li>
+          ))}
+        </ol>
+      )}
     </div>
   );
 }
