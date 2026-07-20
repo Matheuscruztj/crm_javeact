@@ -1687,8 +1687,8 @@ commit: test(infra): implement TEST_RUN_ID isolation for parallel test execution
 
 **Critério de Aceite:**
 
-- [ ] Testes paralelos não colidem em Redis keys
-- [ ] Cada run tem dados completamente isolados
+- [x] Testes paralelos não colidem em Redis keys
+- [x] Cada run tem dados completamente isolados
 
 ---
 
@@ -1711,8 +1711,8 @@ commit: feat(observability): configure Grafana provisioning for datasources and 
 
 **Critério de Aceite:**
 
-- [ ] Grafana inicia com datasources pré-configurados
-- [ ] Dashboards visíveis imediatamente após `make compose-observability`
+- [x] Grafana inicia com datasources pré-configurados
+- [x] Dashboards visíveis imediatamente após `make compose-observability`
 
 ---
 
