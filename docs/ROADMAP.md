@@ -1060,9 +1060,9 @@ commit: feat(seeds): implement all required seed commands
 
 **Critério de Aceite:**
 
-- [ ] `make seed-tests` gera dados para testes paralelos
-- [ ] `make seed-demo` cria cenário completo (PROJECT-SCOPE §10)
-- [ ] Seeds são re-executáveis sem duplicar dados
+- [x] `make seed-tests` gera dados para testes paralelos
+- [x] `make seed-demo` cria cenário completo (PROJECT-SCOPE §10)
+- [x] Seeds são re-executáveis sem duplicar dados
 
 ---
 
@@ -1081,8 +1081,8 @@ commit: feat(api): implement ETag filter for conditional GET/PUT/PATCH requests 
 
 **Critério de Aceite:**
 
-- [ ] Edição concorrente retorna 412 Precondition Failed
-- [ ] Clients recebem ETag em toda resposta GET de recurso versionado
+- [x] Edição concorrente retorna 412 Precondition Failed
+- [x] Clients recebem ETag em toda resposta GET de recurso versionado
 
 ---
 
@@ -1103,8 +1103,8 @@ commit: feat(observability): ensure structured logging follows TECHNICAL-SPECIFI
 
 **Critério de Aceite:**
 
-- [ ] Todos os logs incluem tenantId, correlationId e actorId quando disponíveis
-- [ ] Nenhum secret vaza em logs (validado por grep automatizado)
+- [x] Todos os logs incluem tenantId, correlationId e actorId quando disponíveis
+- [x] Nenhum secret vaza em logs (validado por grep automatizado)
 
 ---
 
@@ -1123,8 +1123,8 @@ commit: chore(security): configure OWASP Dependency-Check to block CRITICAL vuln
 
 **Critério de Aceite:**
 
-- [ ] Build falha se dependência com CVSS ≥ 9.0 detectada
-- [ ] Relatório HTML gerado para análise
+- [x] Build falha se dependência com CVSS ≥ 9.0 detectada
+- [x] Relatório HTML gerado para análise
 
 ---
 
