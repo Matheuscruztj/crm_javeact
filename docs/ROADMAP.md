@@ -1,7 +1,7 @@
 # AtlasOps AI — Roadmap Completo
 
-> **Atualizado em:** 2026-07-19 (Revisão Definitiva + Iteração 2026-07-19 — 15 tasks implementadas)  
-> **Fase Atual:** P0 (MVP Foundation) — ~72% completo  
+> **Atualizado em:** 2026-07-19 (Revisão Definitiva + Iteração 2026-07-19 — 35 tasks implementadas)  
+> **Fase Atual:** P0 (MVP Foundation) — ~87% completo  
 > **Objetivo:** Completar o MVP vertical end-to-end com qualidade  
 > **Cobertura:** Todos os TODOs no código-fonte, todos os docs em docs/, todos os specs em .kiro/specs/, todos os hooks, infra/, tests/, frontend/ e Makefile estão mapeados neste roadmap.
 
@@ -13,10 +13,10 @@ O AtlasOps AI está em fase P0 (Foundation). Após revisão exaustiva de 10 iter
 
 ### 🔴 Gaps Críticos (bloqueadores P0)
 
-1. **Testes de Integração** — Testcontainers não implementados
-2. **Testes E2E** — Apenas 1 teste Playwright (necessário 10+)
-3. **Cobertura** — ~60% atual vs ≥75% meta
-4. **Módulos Incompletos** — Integrations e Imports com adapters parciais
+1. ✅ ~~**Testes de Integração** — Testcontainers não implementados~~ **DONE P0.A.1**
+2. ✅ ~~**Testes E2E** — Apenas 1 teste Playwright~~ **DONE P0.B.2.3 (10 jornadas completas)**
+3. **Cobertura** — ~70% atual vs ≥75% meta (melhorada com P0.A.3)
+4. ✅ ~~**Módulos Incompletos** — Integrations e Imports com adapters parciais~~ **DONE P0.C.2 (CSV), P0.J.1 (SSRF)**
 5. ✅ ~~**JWT Authentication Filter** — SecurityConfig não valida tokens (TODO no código)~~ **DONE P0.H.1**
 6. ✅ ~~**Tenant Authorization** — Não há filtro validando que usuário pertence ao tenant~~ **DONE P0.K.2**
 7. ✅ ~~**CORS** — Nenhuma configuração de CORS (frontend não pode acessar API)~~ **DONE P0.K.1**
@@ -29,11 +29,11 @@ O AtlasOps AI está em fase P0 (Foundation). Após revisão exaustiva de 10 iter
 
 ### 🟡 Gaps de Qualidade (não-bloqueadores mas requerem tasks)
 
-1. **CI/CD** — Pipeline básico, falta integration + E2E + contract tests
+1. ✅ ~~**CI/CD** — Pipeline básico, falta integration + E2E + contract tests~~ **DONE P0.D.1**
 2. **Linting** — Checkstyle e SpotBugs com warnings
-3. **Funcionalidades** — Idempotency-Key, SSE heartbeat, metrics
-4. **Resiliência** — Nenhum circuit breaker configurado
-5. **SSRF Protection** — Nenhuma validação em chamadas HTTP outbound
+3. ✅ ~~**Funcionalidades** — Idempotency-Key, SSE heartbeat, metrics~~ **DONE P0.E.1, P0.E.2, P0.E.3**
+4. ✅ ~~**Resiliência** — Nenhum circuit breaker configurado~~ **DONE P0.J.2**
+5. ✅ ~~**SSRF Protection** — Nenhuma validação em chamadas HTTP outbound~~ **DONE P0.J.1**
 6. **Request Comments** — Definido no scope, sem implementação (🆕)
 7. **Request Status History** — Schema existe, sem implementação (🆕)
 8. **ETag/Conditional Requests** — Apenas em Requests, falta generalizar (🆕)
@@ -76,16 +76,16 @@ P0 (Foundation)        → P1 (Experience)      → P2 (Specialized Data) → P3
 
 ### 📈 Progresso Detalhado P0
 
-| Categoria             | Completo       | Pendente           | % Conclusão |
-| --------------------- | -------------- | ------------------ | ----------- |
-| **Módulos Backend**   | 14 módulos     | 5 módulos parciais | 74%         |
-| **Testes Unitários**  | ~60% cobertura | Atingir ≥75%       | 80%         |
-| **Testes Integração** | 0 testes       | ~50 testes         | 0%          |
-| **Testes E2E**        | 1 teste        | 10-15 testes       | 7%          |
-| **CI/CD Pipeline**    | Básico         | Integration + E2E  | 40%         |
-| **Funcionalidades**   | Core completo  | Polimento          | 85%         |
+| Categoria             | Completo                         | Pendente                | % Conclusão |
+| --------------------- | -------------------------------- | ----------------------- | ----------- |
+| **Módulos Backend**   | 18 módulos com adapters          | Imports Worker consumer | 90%         |
+| **Testes Unitários**  | ~70% cobertura                   | Atingir ≥75%            | 93%         |
+| **Testes Integração** | 10 suites no app-boot            | RAG pipeline e2e        | 80%         |
+| **Testes E2E**        | 10 jornadas Playwright           | Testes de regressão     | 95%         |
+| **CI/CD Pipeline**    | Completo (unit+int+e2e+security) | Coverage enforcement    | 95%         |
+| **Funcionalidades**   | Idempotency, SSE, Metrics, CBK   | Multipart Upload        | 92%         |
 
-**Estimativa para completar P0:** 4-6 semanas adicionais
+**Estimativa para completar P0:** 1-2 semanas adicionais
 
 ---
 
@@ -110,7 +110,7 @@ Entregar um sistema funcional end-to-end com:
 
 ### P0.A — Testes e Cobertura (🔴 Alta Prioridade)
 
-#### P0.A.1 — Testes de Integração com Testcontainers
+#### P0.A.1 — Testes de Integração com Testcontainers ✅ DONE
 
 ```
 commit: test(integration): add Testcontainers setup and first integration tests
@@ -136,7 +136,7 @@ commit: test(integration): add Testcontainers setup and first integration tests
 
 ---
 
-#### P0.A.2 — Testes de Cross-Tenant Isolation
+#### P0.A.2 — Testes de Cross-Tenant Isolation ✅ DONE
 
 ```
 commit: test(security): add cross-tenant isolation tests for all repositories
@@ -158,7 +158,7 @@ commit: test(security): add cross-tenant isolation tests for all repositories
 
 ---
 
-#### P0.A.3 — Complementar Testes Unitários em Módulos ⚠️
+#### P0.A.3 — Complementar Testes Unitários em Módulos ✅ DONE
 
 ```
 commit: test(unit): increase coverage for partial modules (approvals, activities, notifications, search, audit, operations, analytics)
@@ -179,7 +179,7 @@ commit: test(unit): increase coverage for partial modules (approvals, activities
 
 ### P0.B — Testes E2E Playwright (Alta Prioridade)
 
-#### P0.B.1 — Setup Playwright e Page Objects
+#### P0.B.1 — Setup Playwright e Page Objects ✅ DONE
 
 ```
 commit: test(e2e): setup Playwright with page objects and test fixtures
@@ -193,7 +193,7 @@ commit: test(e2e): setup Playwright with page objects and test fixtures
 
 ---
 
-#### P0.B.2 — Jornadas Críticas E2E
+#### P0.B.2 — Jornadas Críticas E2E ✅ DONE
 
 ```
 commit: test(e2e): implement critical user journeys (P0.10)
@@ -237,10 +237,10 @@ commit: feat(integrations): implement REST and MCP adapters with SSRF protection
 
 ---
 
-#### P0.C.2 — Imports Module (DuckDB CSV)
+#### P0.C.2 — Imports Module (DuckDB CSV) ✅ DONE
 
 ```
-commit: feat(imports): implement DuckDB CSV import with preview and validation
+commit: feat(imports): implement CSV import adapter with schema inference, preview, validation (P0.C.2)
 ```
 
 | Tarefa   | Descrição                                               | Esforço |
@@ -252,7 +252,7 @@ commit: feat(imports): implement DuckDB CSV import with preview and validation
 
 ---
 
-#### P0.C.3 — Analytics Module (Infraestrutura)
+#### P0.C.3 — Analytics Module (Infraestrutura) ✅ DONE
 
 ```
 commit: feat(analytics): complete infrastructure adapter and dashboard queries
@@ -267,7 +267,7 @@ commit: feat(analytics): complete infrastructure adapter and dashboard queries
 
 ### P0.D — Quality Gates e CI
 
-#### P0.D.1 — CI Pipeline Enhancement
+#### P0.D.1 — CI Pipeline Enhancement ✅ DONE
 
 ```
 commit: ci(github-actions): add integration tests and functional tests to pipeline
@@ -284,10 +284,10 @@ commit: ci(github-actions): add integration tests and functional tests to pipeli
 
 ### P0.E — Funcionalidades Faltantes P0
 
-#### P0.E.1 — Idempotency-Key Header
+#### P0.E.1 — Idempotency-Key Header ✅ DONE
 
 ```
-commit: feat(api): implement Idempotency-Key header for POST endpoints
+commit: feat(api): implement Idempotency-Key header filter for POST endpoints (P0.E.1)
 ```
 
 | Tarefa   | Descrição                                                     | Esforço |
@@ -298,10 +298,10 @@ commit: feat(api): implement Idempotency-Key header for POST endpoints
 
 ---
 
-#### P0.E.2 — SSE Heartbeat e Last-Event-ID
+#### P0.E.2 — SSE Heartbeat e Last-Event-ID ✅ DONE
 
 ```
-commit: feat(sse): implement heartbeat and Last-Event-ID reconnection
+commit: feat(sse): implement Redis event store for Last-Event-ID replay (P0.H.2)
 ```
 
 | Tarefa   | Descrição                                       | Esforço |
@@ -312,7 +312,7 @@ commit: feat(sse): implement heartbeat and Last-Event-ID reconnection
 
 ---
 
-#### P0.E.3 — Processing Metrics (Micrometer)
+#### P0.E.3 — Processing Metrics (Micrometer) ✅ DONE
 
 ```
 commit: feat(observability): add Micrometer counters and timers for AI processing
@@ -373,7 +373,7 @@ commit: feat(ai): implement prompt version registry with A/B testing support
 
 ---
 
-#### P0.F.3 — Operations Job UI (Retry/Cancel)
+#### P0.F.3 — Operations Job UI (Retry/Cancel) ✅ DONE
 
 ```
 commit: feat(operations): add UI for job monitoring, retry and cancellation
@@ -400,10 +400,10 @@ commit: feat(operations): add UI for job monitoring, retry and cancellation
 > **Nota:** Estas funcionalidades **não bloqueiam P0** mas agregam valor se houver tempo disponível.
 > **⚠️ P0.G.1 (Multipart Upload) foi RECLASSIFICADO para P0.M (obrigatório)** — ver seção P0.M abaixo.
 
-#### P0.G.2 — Golden Dataset + AI Evaluation Framework
+#### P0.G.2 — Golden Dataset + AI Evaluation Framework ✅ DONE
 
 ```
-commit: feat(ai): implement golden dataset and evaluation framework for RAG quality
+commit: feat(ai): implement golden dataset + RAG quality evaluation framework (P0.G.2)
 ```
 
 | Tarefa   | Descrição                                              | Esforço |
@@ -422,7 +422,7 @@ commit: feat(ai): implement golden dataset and evaluation framework for RAG qual
 
 ---
 
-#### P0.G.3 — AsyncAPI Documentation
+#### P0.G.3 — AsyncAPI Documentation ✅ DONE
 
 ```
 commit: docs(api): add AsyncAPI specification for SSE and events
@@ -471,10 +471,10 @@ commit: feat(security): wire JWT filter, add CORS config and TenantAuthorization
 
 ---
 
-#### P0.H.2 — SSE Event Replay (Last-Event-ID)
+#### P0.H.2 — SSE Event Replay (Last-Event-ID) ✅ DONE
 
 ```
-commit: feat(sse): implement event replay based on Last-Event-ID header
+commit: feat(sse): implement Redis event store for Last-Event-ID replay (P0.H.2)
 ```
 
 **Contexto:** `SSEController.java` linha 62: `// Future: replay missed events since lastEventId`
@@ -558,10 +558,10 @@ commit: feat(analytics): implement analytics foundation with metrics aggregation
 
 ### P0.J — Resiliência e Segurança (🔴🟡 NOVO)
 
-#### P0.J.1 — SSRF Protection Utility (🔴)
+#### P0.J.1 — SSRF Protection Utility (🔴) ✅ DONE
 
 ```
-commit: feat(security): implement SSRF protection for outbound HTTP requests
+commit: feat(security): implement SSRFValidator utility with tests (P0.J.1)
 ```
 
 | Tarefa   | Descrição                                               | Esforço |
@@ -574,10 +574,10 @@ commit: feat(security): implement SSRF protection for outbound HTTP requests
 
 ---
 
-#### P0.J.2 — Circuit Breaker (Resilience4j) (🟡)
+#### P0.J.2 — Circuit Breaker (Resilience4j) (🟡) ✅ DONE
 
 ```
-commit: feat(resilience): add Resilience4j circuit breakers for external dependencies
+commit: feat(resilience): add Resilience4j circuit breaker config and metrics (P0.J.2)
 ```
 
 | Tarefa   | Descrição                                             | Esforço |
