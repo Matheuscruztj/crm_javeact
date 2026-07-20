@@ -23,7 +23,7 @@ jobs:
           k6 version
 
       - name: Run average load test
-        run: k6 run infra/k6/average.js --out json=k6-results.json
+        run: k6 run tests/load/average.js --out json=k6-results.json
         continue-on-error: true
 
       - name: Upload k6 results artifact

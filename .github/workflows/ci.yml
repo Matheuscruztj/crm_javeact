@@ -413,10 +413,10 @@ jobs:
 
       - name: Run k6 smoke test
         run: |
-          if [ -f infra/k6/smoke.js ]; then
-            k6 run --vus 2 --duration 30s infra/k6/smoke.js
+          if [ -f tests/load/smoke.js ]; then
+            k6 run --vus 2 --duration 30s tests/load/smoke.js
           else
-            echo "::notice::No k6 smoke test found at infra/k6/smoke.js, skipping"
+            echo "::notice::No k6 smoke test found at tests/load/smoke.js, skipping"
           fi
         env:
           K6_BASE_URL: ${{ vars.K6_BASE_URL || 'http://localhost:8080' }}
