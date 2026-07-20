@@ -217,6 +217,13 @@ jobs:
       - name: Build
         run: pnpm build
 
+      # P0.T.2.2 — Bundle size check (warn if any page > 1MB)
+      - name: Bundle size check
+        run: |
+          if [ -d ".next" ]; then
+            find .next -name "*.js" -size +1M -exec echo "WARNING: Large bundle: {}" \; || true
+          fi
+
   # ==========================================================================
   # E2E Tests — Playwright (P0.D.1.2)
   # ==========================================================================
@@ -269,13 +276,22 @@ jobs:
   # Security Checks
   # ==========================================================================
   security:
-    name: Security (Dependency Check)
+    name: Security (Dependency Check + Secret Scan)
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # P0.T.1.4 — Secret scanning with gitleaks
+      - name: Secret scanning (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: false
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
