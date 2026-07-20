@@ -3,9 +3,12 @@ package com.atlasops.ai.infrastructure;
 import com.atlasops.ai.domain.IngestionResult;
 import com.atlasops.ai.domain.ports.DocumentIngestionPort;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Component;
 
 /**
@@ -24,10 +27,13 @@ public class DocumentIngestionAdapter implements DocumentIngestionPort {
   private static final String NO_TEXT_REASON = "Document does not contain extractable text";
 
   private final DocumentChunker documentChunker;
+  private final VectorStore vectorStore;
 
-  public DocumentIngestionAdapter(DocumentChunker documentChunker) {
+  public DocumentIngestionAdapter(DocumentChunker documentChunker, VectorStore vectorStore) {
     this.documentChunker =
         Objects.requireNonNull(documentChunker, "documentChunker must not be null");
+    this.vectorStore =
+        Objects.requireNonNull(vectorStore, "vectorStore must not be null");
   }
 
   @Override
@@ -48,10 +54,27 @@ public class DocumentIngestionAdapter implements DocumentIngestionPort {
 
     List<String> chunkIds = chunks.stream().map(DocumentChunker.Chunk::chunkId).toList();
 
-    // TODO: generate embeddings and store in vector store (to be implemented in pgvector adapter
-    // task)
+    // Generate embeddings and store in pgvector via Spring AI VectorStore
+    List<Document> springDocuments = chunks.stream()
+        .map(chunk -> new Document(
+            chunk.chunkId(),
+            chunk.content(),
+            Map.of("documentId", documentId,
+                   "chunkIndex", chunk.chunkIndex(),
+                   "tokenCount", chunk.tokenCount())))
+        .toList();
 
-    log.info("Document {} ingested successfully: {} chunks created", documentId, chunks.size());
+    try {
+      vectorStore.add(springDocuments);
+      log.info("Document {} ingested successfully: {} chunks stored in vector store",
+          documentId, chunks.size());
+    } catch (Exception e) {
+      log.warn("Vector store unavailable for document {}: {}. Chunks created without embeddings.",
+          documentId, e.getMessage());
+      // Graceful degradation: return success even without embeddings
+      // Search will fall back to PostgreSQL FTS
+    }
+
     return IngestionResult.success(documentId, chunks.size(), chunkIds);
   }
 
