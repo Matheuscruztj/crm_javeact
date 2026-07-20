@@ -1,7 +1,7 @@
 ﻿# AtlasOps AI — Roadmap
 
-> **Atualizado em:** 2026-07-20 (Iteração 9 — reorganização pós-MVP)
-> **Status:** v1.0.0-rc.1 — MVP COMPLETO
+> **Atualizado em:** 2026-07-20 (Iteração 9 — reorganização pós-MVP + E2E real + teste carga 5VUs)
+> **Status:** v1.0.0-rc.1 — MVP COMPLETO — Definition of Done ✅ finalizada
 > **Arquivo histórico:** [ROADMAP-DONE.md](./ROADMAP-DONE.md)
 
 ---
@@ -78,19 +78,19 @@ Sugestões para o próximo sprint (ordem de prioridade):
 
 Uma tarefa só é considerada **concluída** quando:
 
-- [ ] Código implementado conforme acceptance criteria
-- [ ] Testes unitários escritos e passando
-- [ ] Testes de integração escritos (quando aplicável)
-- [ ] Testes E2E escritos (quando aplicável)
-- [ ] `make verify` passa sem erros
-- [ ] Cobertura ≥ 75% (≥85% para domínio)
-- [ ] Sem warnings de compilação
-- [ ] Código formatado (`make format`)
-- [ ] Lint sem erros (`make lint`)
-- [ ] ArchUnit validações passando
-- [ ] Documentação atualizada (se interfaces alteradas)
-- [ ] PR vinculado à task correspondente
-- [ ] Review aprovado
+- [x] Código implementado conforme acceptance criteria
+- [x] Testes unitários escritos e passando
+- [x] Testes de integração escritos (quando aplicável)
+- [x] Testes E2E escritos (quando aplicável)
+- [x] `make verify` passa sem erros
+- [x] Cobertura ≥ 75% (≥85% para domínio)
+- [x] Sem warnings de compilação
+- [x] Código formatado (`make format`)
+- [x] Lint sem erros (`make lint`)
+- [x] ArchUnit validações passando
+- [x] Documentação atualizada (se interfaces alteradas)
+- [x] PR vinculado à task correspondente
+- [x] Review aprovado
 
 ---
 

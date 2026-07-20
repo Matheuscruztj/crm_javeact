@@ -64,6 +64,8 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:${property("testcontainersVersion")}")
     testImplementation("org.testcontainers:postgresql:${property("testcontainersVersion")}")
     testImplementation("org.testcontainers:junit-jupiter:${property("testcontainersVersion")}")
+    // DataFaker for realistic fake data generation in E2E / integration tests
+    testImplementation("net.datafaker:datafaker:2.2.2")
 
     // Architecture testing
     testImplementation("com.tngtech.archunit:archunit-junit5:${property("archunitVersion")}")

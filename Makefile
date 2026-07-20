@@ -330,6 +330,14 @@ test-functional-report: ## Generate and open Playwright HTML report
 test-load-smoke: ## Run k6 smoke load test (max 5 VUs, 60s)
 	k6 run tests/load/smoke.js
 
+.PHONY: test-load-5vu
+test-load-5vu: ## Run k6 load test with 5 concurrent users (3min, validates basic concurrency)
+	k6 run infra/k6/five-users.js
+
+.PHONY: test-load-5vu-with-auth
+test-load-5vu-with-auth: ## Run k6 5-VU test with auth token (export K6_AUTH_TOKEN first)
+	k6 run --env K6_AUTH_TOKEN=$(K6_AUTH_TOKEN) --env K6_TENANT_ID=$(K6_TENANT_ID) infra/k6/five-users.js
+
 .PHONY: test-load
 test-load: ## Run k6 average load test (50 VUs, 5min)
 	k6 run --vus 50 --duration 5m infra/k6/average.js
@@ -338,6 +346,11 @@ test-load: ## Run k6 average load test (50 VUs, 5min)
 test-load-report: ## Run k6 load test and save JSON report
 	@mkdir -p infra/k6/reports
 	k6 run --out json=infra/k6/reports/average-$(shell date +%Y%m%d%H%M%S).json infra/k6/average.js
+
+.PHONY: test-load-5vu-report
+test-load-5vu-report: ## Run k6 5-VU test and save HTML report
+	@mkdir -p infra/k6/reports
+	k6 run --out json=infra/k6/reports/five-users-$(shell date +%Y%m%d%H%M%S).json infra/k6/five-users.js
 
 # ============================================================================
 # Database
