@@ -2,11 +2,14 @@ package com.atlasops.boot.config;
 
 import com.atlasops.auth.application.ValidateTokenUseCase;
 import com.atlasops.auth.presentation.JwtAuthenticationFilter;
+import com.atlasops.boot.filter.IdempotencyFilter;
 import com.atlasops.boot.filter.TenantAuthorizationFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -79,6 +82,21 @@ public class SecurityConfig {
   public JwtAuthenticationFilter jwtAuthenticationFilter(
       ValidateTokenUseCase validateTokenUseCase, ObjectMapper objectMapper) {
     return new JwtAuthenticationFilter(validateTokenUseCase, objectMapper);
+  }
+
+  /**
+   * Idempotency filter registration (P0.E.1).
+   * Runs before security filters to allow cached response replay.
+   */
+  @Bean
+  public FilterRegistrationBean<IdempotencyFilter> idempotencyFilterRegistration(
+      StringRedisTemplate redisTemplate) {
+    FilterRegistrationBean<IdempotencyFilter> reg = new FilterRegistrationBean<>();
+    reg.setFilter(new IdempotencyFilter(redisTemplate));
+    reg.addUrlPatterns("/api/v1/requests/*", "/api/v1/approvals/*", "/api/v1/documents/*");
+    reg.setOrder(10);
+    reg.setName("idempotencyFilter");
+    return reg;
   }
 
   /**
