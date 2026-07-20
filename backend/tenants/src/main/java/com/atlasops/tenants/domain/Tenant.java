@@ -14,6 +14,8 @@ public final class Tenant extends AggregateRoot<String> {
   private TenantStatus status;
   private final Instant createdAt;
   private Instant updatedAt;
+  private String logoUrl;
+  private String primaryColor;
 
   private Tenant(
       String id, TenantName name, TenantStatus status, Instant createdAt, Instant updatedAt) {
@@ -22,6 +24,8 @@ public final class Tenant extends AggregateRoot<String> {
     this.status = Objects.requireNonNull(status, "Tenant status must not be null");
     this.createdAt = Objects.requireNonNull(createdAt, "Created at must not be null");
     this.updatedAt = Objects.requireNonNull(updatedAt, "Updated at must not be null");
+    this.logoUrl = null;
+    this.primaryColor = null;
   }
 
   /**
@@ -66,6 +70,20 @@ public final class Tenant extends AggregateRoot<String> {
     this.updatedAt = now;
   }
 
+  /**
+   * Updates the branding configuration for this tenant.
+   *
+   * @param logoUrl      URL to the tenant's logo (may be null to clear)
+   * @param primaryColor hex color code in #RRGGBB format (may be null to clear)
+   * @param now          current timestamp
+   */
+  public void updateBranding(String logoUrl, String primaryColor, Instant now) {
+    Objects.requireNonNull(now, "Timestamp must not be null");
+    this.logoUrl = logoUrl;
+    this.primaryColor = primaryColor;
+    this.updatedAt = now;
+  }
+
   public TenantName getName() {
     return name;
   }
@@ -80,5 +98,13 @@ public final class Tenant extends AggregateRoot<String> {
 
   public Instant getUpdatedAt() {
     return updatedAt;
+  }
+
+  public String getLogoUrl() {
+    return logoUrl;
+  }
+
+  public String getPrimaryColor() {
+    return primaryColor;
   }
 }
