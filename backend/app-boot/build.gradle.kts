@@ -2,6 +2,7 @@ plugins {
     java
     id("org.springframework.boot")
     id("io.spring.dependency-management")
+    id("org.flywaydb.flyway") version "10.11.0"
 }
 
 description = "App Boot module - Spring Boot application entry point (aggregator)"

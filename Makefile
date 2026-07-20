@@ -441,3 +441,22 @@ verify-specs: ## Validate completeness of spec files in .kiro/specs/
 		echo ""; \
 		echo "All specs are complete!"; \
 	fi
+
+## ─────────────────────────────────────────────────────────────────────────────
+## Docker Build Targets (P0.U.1)
+## ─────────────────────────────────────────────────────────────────────────────
+
+.PHONY: docker-build docker-build-api docker-build-worker
+
+## Build all application Docker images
+docker-build: docker-build-api docker-build-worker
+
+## Build backend API Docker image
+docker-build-api:
+	@echo "Building backend API Docker image..."
+	docker build -t atlasops-api:latest -f backend/app-boot/Dockerfile .
+
+## Build worker Docker image
+docker-build-worker:
+	@echo "Building worker Docker image..."
+	docker build -t atlasops-worker:latest -f backend/worker/Dockerfile .
