@@ -69,11 +69,13 @@ public class JpaDocumentRepositoryAdapter implements DocumentRepository {
         DocumentStatus.valueOf(entity.getStatus()),
         entity.getAnalysisResult(),
         entity.getCreatedAt(),
-        entity.getUpdatedAt());
+        entity.getUpdatedAt(),
+        entity.isLegalHold(),
+        entity.getLegalHoldActivatedAt());
   }
 
   private DocumentJpaEntity toEntity(Document document) {
-    return new DocumentJpaEntity(
+    var entity = new DocumentJpaEntity(
         document.getId(),
         document.getTenantId().getValue(),
         document.getRequestId(),
@@ -86,5 +88,8 @@ public class JpaDocumentRepositoryAdapter implements DocumentRepository {
         document.getAnalysisResult(),
         document.getCreatedAt(),
         document.getUpdatedAt());
+    entity.setLegalHold(document.isLegalHold());
+    entity.setLegalHoldActivatedAt(document.getLegalHoldActivatedAt());
+    return entity;
   }
 }

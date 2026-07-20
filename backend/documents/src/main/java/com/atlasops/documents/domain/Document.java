@@ -31,6 +31,8 @@ public final class Document extends AggregateRoot<String> {
   private String analysisResult;
   private final Instant createdAt;
   private Instant updatedAt;
+  private boolean legalHold;
+  private Instant legalHoldActivatedAt;
 
   private Document(
       String id,
@@ -57,6 +59,8 @@ public final class Document extends AggregateRoot<String> {
     this.analysisResult = analysisResult;
     this.createdAt = Objects.requireNonNull(createdAt, "CreatedAt must not be null");
     this.updatedAt = Objects.requireNonNull(updatedAt, "UpdatedAt must not be null");
+    this.legalHold = false;
+    this.legalHoldActivatedAt = null;
   }
 
   /**
@@ -114,19 +118,34 @@ public final class Document extends AggregateRoot<String> {
       String analysisResult,
       Instant createdAt,
       Instant updatedAt) {
-    return new Document(
-        id,
-        tenantId,
-        requestId,
-        filename,
-        contentType,
-        fileSize,
-        checksum,
-        storagePath,
-        status,
-        analysisResult,
-        createdAt,
-        updatedAt);
+    Document doc = new Document(
+        id, tenantId, requestId, filename, contentType, fileSize, checksum,
+        storagePath, status, analysisResult, createdAt, updatedAt);
+    return doc;
+  }
+
+  /** Reconstitutes a Document from persisted data including legal hold fields. */
+  public static Document reconstitute(
+      String id,
+      TenantId tenantId,
+      String requestId,
+      String filename,
+      AllowedContentType contentType,
+      long fileSize,
+      String checksum,
+      String storagePath,
+      DocumentStatus status,
+      String analysisResult,
+      Instant createdAt,
+      Instant updatedAt,
+      boolean legalHold,
+      Instant legalHoldActivatedAt) {
+    Document doc = new Document(
+        id, tenantId, requestId, filename, contentType, fileSize, checksum,
+        storagePath, status, analysisResult, createdAt, updatedAt);
+    doc.legalHold = legalHold;
+    doc.legalHoldActivatedAt = legalHoldActivatedAt;
+    return doc;
   }
 
   /**
@@ -288,6 +307,32 @@ public final class Document extends AggregateRoot<String> {
     }
   }
 
+  // --- Legal Hold ---
+
+  /**
+   * Activates a legal hold on this document, preventing archiving and deletion.
+   *
+   * @param now the current timestamp
+   */
+  public void activateLegalHold(Instant now) {
+    Objects.requireNonNull(now, "Timestamp must not be null");
+    this.legalHold = true;
+    this.legalHoldActivatedAt = now;
+    this.updatedAt = now;
+  }
+
+  /**
+   * Releases the legal hold on this document.
+   *
+   * @param now the current timestamp
+   */
+  public void releaseLegalHold(Instant now) {
+    Objects.requireNonNull(now, "Timestamp must not be null");
+    this.legalHold = false;
+    this.legalHoldActivatedAt = null;
+    this.updatedAt = now;
+  }
+
   // --- Getters ---
 
   public TenantId getTenantId() {
@@ -332,5 +377,13 @@ public final class Document extends AggregateRoot<String> {
 
   public Instant getUpdatedAt() {
     return updatedAt;
+  }
+
+  public boolean isLegalHold() {
+    return legalHold;
+  }
+
+  public Instant getLegalHoldActivatedAt() {
+    return legalHoldActivatedAt;
   }
 }

@@ -48,6 +48,12 @@ public class DocumentJpaEntity {
   @Column(name = "updated_at", nullable = false)
   private Instant updatedAt;
 
+  @Column(name = "legal_hold", nullable = false)
+  private boolean legalHold;
+
+  @Column(name = "legal_hold_activated_at")
+  private Instant legalHoldActivatedAt;
+
   protected DocumentJpaEntity() {
     // JPA requires no-arg constructor
   }
@@ -141,5 +147,21 @@ public class DocumentJpaEntity {
 
   public void setUpdatedAt(Instant updatedAt) {
     this.updatedAt = updatedAt;
+  }
+
+  public boolean isLegalHold() {
+    return legalHold;
+  }
+
+  public void setLegalHold(boolean legalHold) {
+    this.legalHold = legalHold;
+  }
+
+  public Instant getLegalHoldActivatedAt() {
+    return legalHoldActivatedAt;
+  }
+
+  public void setLegalHoldActivatedAt(Instant legalHoldActivatedAt) {
+    this.legalHoldActivatedAt = legalHoldActivatedAt;
   }
 }
