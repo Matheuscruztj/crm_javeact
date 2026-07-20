@@ -130,9 +130,9 @@ commit: test(integration): add Testcontainers setup and first integration tests
 
 **Critério de Aceite:**
 
-- [ ] `./gradlew integrationTest` executa com sucesso
-- [ ] Cobertura de linha ≥ 75%
-- [ ] Containers iniciam e param automaticamente
+- [x] `./gradlew integrationTest` executa com sucesso
+- [x] Cobertura de linha ≥ 75%
+- [x] Containers iniciam e param automaticamente
 
 ---
 
@@ -153,8 +153,8 @@ commit: test(security): add cross-tenant isolation tests for all repositories
 
 **Critério de Aceite:**
 
-- [ ] Testes automatizados provam isolamento
-- [ ] Qualquer violação falha o build
+- [x] Testes automatizados provam isolamento
+- [x] Qualquer violação falha o build
 
 ---
 
@@ -214,9 +214,9 @@ commit: test(e2e): implement critical user journeys (P0.10)
 
 **Critério de Aceite:**
 
-- [ ] `make test-functional` passa
-- [ ] Screenshots e traces em caso de falha
-- [ ] Relatório HTML acessível
+- [x] `make test-functional` passa
+- [x] Screenshots e traces em caso de falha
+- [x] Relatório HTML acessível
 
 ---
 
