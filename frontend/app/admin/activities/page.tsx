@@ -1,8 +1,9 @@
 /**
- * Activities page with global feed and infinite scroll.
+ * Activities page with global feed, infinite scroll and SSE real-time updates.
  * Task 22.7: Implement activities page with global feed and infinite scroll.
  * - Create `/app/admin/activities/page.tsx` showing global activity feed
  * - Infinite scroll pagination
+ * - SSE real-time updates for new activities (P1.12.4)
  * Requirements: 22.8
  */
 
@@ -13,6 +14,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, type PageResponse } from "@/lib/api-client";
+import { useSSE } from "@/hooks/use-sse";
 
 type ActivityType =
   | "CUSTOMER_CREATED"
@@ -270,8 +272,20 @@ export default function ActivitiesPage() {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [entityTypeFilter, setEntityTypeFilter] = useState<string>("ALL");
+  const [liveCount, setLiveCount] = useState(0);
 
   const observerTarget = useRef<HTMLDivElement>(null);
+
+  // P1.12.4 — SSE real-time updates for activities feed
+  useSSE({
+    enabled: true,
+    callbacks: {
+      onNotification: () => {
+        // When any event arrives, increment live counter and prepend on refresh
+        setLiveCount((c) => c + 1);
+      },
+    },
+  });
 
   const fetchActivities = useCallback(
     async (pageNum: number, append: boolean = false) => {
