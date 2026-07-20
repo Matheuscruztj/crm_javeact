@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api-client";
 import { getApiErrorMessage } from "@/lib/form-utils";
 
@@ -32,8 +32,12 @@ const STATUS_COLORS: Record<Job["status"], string> = {
   CANCELLED: "bg-gray-100 text-gray-800",
 };
 
+/** Auto-refresh interval (ms) while there are QUEUED or RUNNING jobs. */
+const LIVE_POLL_INTERVAL_MS = 5000;
+
 /**
- * Operations page: job monitoring with retry/cancel actions.
+ * Operations page: job monitoring with retry/cancel actions and real-time progress.
+ * Uses polling-based live updates (5s) while active jobs exist (P0.F.3).
  * Validates: P0.K.3.3 — admin/operations/page.tsx — Job list + health status
  */
 export default function OperationsPage() {
@@ -41,22 +45,50 @@ export default function OperationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [isLive, setIsLive] = useState(false);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const loadJobs = async () => {
+  const loadJobs = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const result = await api.get<PageResult>("/operations/jobs?size=20");
       setJobs(result.content);
       setError(null);
+
+      // Enable live polling if there are active jobs
+      const hasActive = result.content.some(
+        (j) => j.status === "QUEUED" || j.status === "RUNNING",
+      );
+      setIsLive(hasActive);
     } catch (err) {
       setError(getApiErrorMessage(err));
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
+  // Live polling: refresh every 5s when there are active jobs
   useEffect(() => {
-    loadJobs();
+    if (isLive) {
+      pollRef.current = setInterval(() => {
+        void loadJobs(true);
+      }, LIVE_POLL_INTERVAL_MS);
+    } else {
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
+    }
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, [isLive]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    void loadJobs();
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
   }, []);
 
   const handleRetry = async (jobId: string) => {
@@ -92,13 +124,24 @@ export default function OperationsPage() {
             System health monitoring and background job management.
           </p>
         </div>
-        <button
-          onClick={loadJobs}
-          className="rounded-md border px-4 py-2 text-sm hover:bg-accent"
-          aria-label="Refresh jobs list"
-        >
-          Refresh
-        </button>
+        <div className="flex items-center gap-3">
+          {isLive && (
+            <span className="flex items-center gap-1.5 text-sm text-green-600">
+              <span
+                className="inline-block h-2 w-2 animate-pulse rounded-full bg-green-500"
+                aria-hidden="true"
+              />
+              Live
+            </span>
+          )}
+          <button
+            onClick={() => void loadJobs()}
+            className="rounded-md border px-4 py-2 text-sm hover:bg-accent"
+            aria-label="Refresh jobs list"
+          >
+            Refresh
+          </button>
+        </div>
       </div>
 
       {error && (

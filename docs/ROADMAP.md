@@ -345,9 +345,9 @@ commit: feat(approvals): implement append-only ledger with hash chain for audita
 
 **Critério de Aceite:**
 
-- [ ] Toda aprovação gera registro imutável no ledger
-- [ ] Verificação detecta qualquer modificação na chain
-- [ ] Performance não degrada (índices adequados)
+- [x] Toda aprovação gera registro imutável no ledger
+- [x] Verificação detecta qualquer modificação na chain
+- [x] Performance não degrada (índices adequados)
 
 ---
 
@@ -367,9 +367,9 @@ commit: feat(ai): implement prompt version registry with A/B testing support
 
 **Critério de Aceite:**
 
-- [ ] Prompts versionados e rastreáveis
-- [ ] Possível comparar performance entre versões
-- [ ] Rollback de prompt sem deploy de código
+- [x] Prompts versionados e rastreáveis
+- [x] Possível comparar performance entre versões
+- [x] Rollback de prompt sem deploy de código
 
 ---
 
@@ -389,9 +389,9 @@ commit: feat(operations): add UI for job monitoring, retry and cancellation
 
 **Critério de Aceite:**
 
-- [ ] Admin pode cancelar job em progresso
-- [ ] Admin pode fazer retry de job falhado
-- [ ] UI mostra progresso em tempo real (SSE)
+- [x] Admin pode cancelar job em progresso
+- [x] Admin pode fazer retry de job falhado
+- [x] UI mostra progresso em tempo real (SSE)
 
 ---
 
