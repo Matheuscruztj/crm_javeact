@@ -1,18 +1,20 @@
-import http from "k6/http";
-import { check, sleep } from "k6";
-
 /**
- * Stress Load Test — AtlasOps AI
+ * k6 Stress Test — AtlasOps AI (P3.4)
  *
  * Pushes the system beyond normal load to find breaking points.
- * Ramps up to 50+ VUs in stages to identify degradation thresholds.
+ * Ramps up to 200 VUs in stages to identify degradation thresholds.
  *
  * Usage:
  *   k6 run tests/load/stress.js
- *   k6 run --env BASE_URL=http://localhost:9090 tests/load/stress.js
+ *   k6 run --env K6_BASE_URL=http://localhost:8080 tests/load/stress.js
+ *
+ * Makefile: make test-load-stress
  */
 
-const BASE_URL = __ENV.BASE_URL || "http://localhost:8080";
+import http from "k6/http";
+import { check, sleep } from "k6";
+
+const BASE_URL = __ENV.K6_BASE_URL || __ENV.BASE_URL || "http://localhost:8080";
 
 export const options = {
   stages: [

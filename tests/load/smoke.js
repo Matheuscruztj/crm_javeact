@@ -1,37 +1,68 @@
-import http from "k6/http";
-import { check, sleep } from "k6";
-
 /**
- * Smoke Load Test — AtlasOps AI
+ * k6 Smoke Test — AtlasOps AI
+ * Validates: P0.T.3.2 — k6 smoke test against running API
  *
- * Minimal load scenario to verify the API is responsive under light traffic.
- * Max 5 VUs, max 60 seconds total duration.
+ * Runs 2 VUs for 30 seconds, checks:
+ * - /actuator/health returns 200 with status UP
+ * - /api/v1/auth/login returns 200 or 401 (endpoint is reachable)
+ * - Response times < 2s p95
  *
  * Usage:
  *   k6 run tests/load/smoke.js
- *   k6 run --env BASE_URL=http://localhost:9090 tests/load/smoke.js
+ *   k6 run --env K6_BASE_URL=http://localhost:8080 tests/load/smoke.js
  */
 
-const BASE_URL = __ENV.BASE_URL || "http://localhost:8080";
+import http from "k6/http";
+import { check, sleep } from "k6";
+import { Rate } from "k6/metrics";
+
+const BASE_URL = __ENV.K6_BASE_URL || __ENV.BASE_URL || "http://localhost:8080";
+
+export const errorRate = new Rate("errors");
 
 export const options = {
-  stages: [
-    { duration: "15s", target: 5 }, // ramp-up to 5 VUs over 15s
-    { duration: "30s", target: 5 }, // stay at 5 VUs for 30s
-    { duration: "15s", target: 0 }, // ramp-down to 0 over 15s
-  ],
+  vus: 2,
+  duration: "30s",
   thresholds: {
-    http_req_duration: ["p(95)<2000"], // 95% of requests under 2s
-    http_req_failed: ["rate<0.1"], // less than 10% failure rate
+    http_req_duration: ["p(95)<2000"],
+    errors: ["rate<0.1"],
   },
 };
 
 export default function () {
-  const res = http.get(`${BASE_URL}/actuator/health`);
+  // 1. Health check
+  const health = http.get(`${BASE_URL}/actuator/health`);
+  const healthOk = check(health, {
+    "health status 200": (r) => r.status === 200,
+    "health UP": (r) => {
+      try {
+        return JSON.parse(r.body).status === "UP";
+      } catch {
+        return false;
+      }
+    },
+  });
+  errorRate.add(!healthOk);
 
-  check(res, {
-    "status is 200": (r) => r.status === 200,
-    "response time < 2000ms": (r) => r.timings.duration < 2000,
+  sleep(0.5);
+
+  // 2. Login endpoint reachable (returns 401 without credentials)
+  const login = http.post(
+    `${BASE_URL}/api/v1/auth/login`,
+    JSON.stringify({ email: "test@example.com", password: "wrong" }),
+    { headers: { "Content-Type": "application/json" } },
+  );
+  const loginOk = check(login, {
+    "login endpoint reachable": (r) => r.status < 500,
+  });
+  errorRate.add(!loginOk);
+
+  sleep(0.5);
+
+  // 3. Actuator prometheus metrics endpoint
+  const metrics = http.get(`${BASE_URL}/actuator/prometheus`);
+  check(metrics, {
+    "prometheus metrics reachable": (r) => r.status === 200 || r.status === 403,
   });
 
   sleep(1);

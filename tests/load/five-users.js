@@ -25,8 +25,8 @@
  *   - health check p95 < 200ms
  *
  * Usage:
- *   k6 run infra/k6/five-users.js --env K6_BASE_URL=http://localhost:8080
- *   k6 run infra/k6/five-users.js --env K6_BASE_URL=http://localhost:8080 --env K6_AUTH_TOKEN=<jwt>
+ *   k6 run tests/load/five-users.js --env K6_BASE_URL=http://localhost:8080
+ *   k6 run tests/load/five-users.js --env K6_BASE_URL=http://localhost:8080 --env K6_AUTH_TOKEN=<jwt>
  *
  * Makefile: make test-load-5vu
  */
@@ -35,7 +35,7 @@ import http from "k6/http";
 import { check, group, sleep } from "k6";
 import { Rate, Trend, Counter } from "k6/metrics";
 
-const BASE_URL = __ENV.K6_BASE_URL || "http://localhost:8080";
+const BASE_URL = __ENV.K6_BASE_URL || __ENV.BASE_URL || "http://localhost:8080";
 const AUTH_TOKEN = __ENV.K6_AUTH_TOKEN || "";
 const TENANT_ID = __ENV.K6_TENANT_ID || "tenant-alpha";
 
@@ -58,17 +58,13 @@ export const options = {
     { duration: "30s", target: 0 }, // Ramp down
   ],
   thresholds: {
-    // Overall response time — 5 users must be fast
     http_req_duration: ["p(95)<500", "p(99)<1500"],
-    // Error rate — near-zero expected at this load
     errors: ["rate<0.01"],
-    // Per-endpoint latency budgets
     health_latency_ms: ["p(95)<200"],
     login_latency_ms: ["p(95)<800"],
     list_resources_ms: ["p(95)<600"],
     search_latency_ms: ["p(95)<1000"],
     metrics_latency_ms: ["p(95)<300"],
-    // HTTP-level checks
     http_req_failed: ["rate<0.01"],
   },
 };
@@ -84,10 +80,6 @@ function authHeaders() {
     h["Authorization"] = `Bearer ${AUTH_TOKEN}`;
   }
   return h;
-}
-
-function publicHeaders() {
-  return { "Content-Type": "application/json" };
 }
 
 // ─── Scenarios ────────────────────────────────────────────────────────────
@@ -118,7 +110,6 @@ function doHealthCheck() {
 function doLoginAttempt() {
   group("login_attempt", () => {
     concurrentReqs.add(1);
-    // Use a fake email — we expect 401 (endpoint is reachable and auth works)
     const res = http.post(
       `${BASE_URL}/api/v1/auth/login`,
       JSON.stringify({
@@ -148,10 +139,8 @@ function doLoginAttempt() {
 function doListResources() {
   group("list_resources", () => {
     concurrentReqs.add(1);
-    const headers = authHeaders();
-    // Without a valid token, expect 401 — validates auth enforcement under load
     const res = http.get(`${BASE_URL}/api/v1/customers?page=0&size=10`, {
-      headers,
+      headers: authHeaders(),
       tags: { endpoint: "customers_list" },
     });
     listLatency.add(res.timings.duration);
@@ -171,10 +160,9 @@ function doSearchQuery() {
     concurrentReqs.add(1);
     const terms = ["alpha", "customer", "request", "document", "beta"];
     const term = terms[Math.floor(Math.random() * terms.length)];
-    const headers = authHeaders();
 
     const res = http.get(`${BASE_URL}/api/v1/search?q=${term}&page=0&size=10`, {
-      headers,
+      headers: authHeaders(),
       tags: { endpoint: "search" },
     });
     searchLatency.add(res.timings.duration);
@@ -236,7 +224,6 @@ export function setup() {
     `[Setup] Auth token: ${AUTH_TOKEN ? "provided" : "not provided (expect 401 on protected endpoints)"}`,
   );
 
-  // Pre-flight: verify the system is reachable before the test starts
   const health = http.get(`${BASE_URL}/actuator/health`);
   if (health.status !== 200) {
     console.warn(
@@ -251,7 +238,6 @@ export function setup() {
 
 export function teardown(data) {
   console.log(`[Teardown] Test completed. Started: ${data.startTime}`);
-  console.log(`[Teardown] Final health check...`);
 
   const health = http.get(`${BASE_URL}/actuator/health`);
   console.log(`[Teardown] Post-test health: ${health.status} — ${health.body}`);
