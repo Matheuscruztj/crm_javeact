@@ -102,6 +102,39 @@ app:
     secret-key: ${MINIO_SECRET_KEY:minioadmin}
     region: ${OBJECT_STORAGE_REGION:us-east-1}
 
+# Resilience4j Circuit Breakers (P0.J.2)
+resilience4j:
+  circuitbreaker:
+    instances:
+      ollama:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+        recordExceptions:
+          - java.io.IOException
+          - java.util.concurrent.TimeoutException
+          - org.springframework.web.client.ResourceAccessException
+      minio:
+        registerHealthIndicator: true
+        slidingWindowSize: 5
+        failureRateThreshold: 60
+        waitDurationInOpenState: 20s
+        permittedNumberOfCallsInHalfOpenState: 2
+      webhook-dispatch:
+        registerHealthIndicator: false
+        slidingWindowSize: 10
+        failureRateThreshold: 70
+        waitDurationInOpenState: 15s
+  timelimiter:
+    instances:
+      ollama:
+        timeoutDuration: 60s
+      minio:
+        timeoutDuration: 30s
+
 logging:
   level:
     root: ${LOG_LEVEL:INFO}

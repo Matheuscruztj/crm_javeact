@@ -53,6 +53,10 @@ dependencies {
     // Logging - structured JSON
     implementation("net.logstash.logback:logstash-logback-encoder:7.4")
 
+    // Resilience4j circuit breakers (P0.J.2)
+    implementation("io.github.resilience4j:resilience4j-spring-boot3:2.1.0")
+    implementation("io.github.resilience4j:resilience4j-micrometer:2.1.0")
+
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
