@@ -198,4 +198,41 @@ class HexagonalArchitectureTest {
       }
     }
   }
+
+  @Nested
+  @DisplayName("Coding Standards (P3.1)")
+  class CodingStandardsTests {
+
+    @Test
+    @DisplayName("should_notUseSystemOutPrintln_in_productionCode")
+    void should_notUseSystemOutPrintln_in_productionCode() {
+      ArchRule rule =
+          noClasses()
+              .that()
+              .resideInAPackage("com.atlasops..")
+              .should()
+              .callMethod(System.class, "out")
+              .orShould()
+              .callMethod(System.class, "err")
+              .as("Production code must use SLF4J Logger, not System.out.println");
+
+      rule.allowEmptyShould(true).check(allClasses);
+    }
+
+    @Test
+    @DisplayName("should_notUseDateNew_in_productionCode")
+    void should_notUseDateNew_in_productionCode() {
+      ArchRule rule =
+          noClasses()
+              .that()
+              .resideInAPackage("com.atlasops..")
+              .and()
+              .doNotHaveSimpleName("SharedPortsConfig")
+              .should()
+              .callConstructor(java.util.Date.class)
+              .as("Use Clock port instead of new Date()");
+
+      rule.allowEmptyShould(true).check(allClasses);
+    }
+  }
 }
