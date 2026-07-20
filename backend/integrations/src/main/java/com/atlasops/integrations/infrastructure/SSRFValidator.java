@@ -2,96 +2,123 @@ package com.atlasops.integrations.infrastructure;
 
 import java.net.InetAddress;
 import java.net.URI;
-import java.net.UnknownHostException;
+import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Utility class for validating URLs against Server-Side Request Forgery (SSRF) attack vectors.
+ * SSRF (Server-Side Request Forgery) protection utility.
  *
- * <p>Blocks requests to:
+ * <p>Validates outbound HTTP target URLs against known attack vectors:
  * <ul>
- *   <li>Loopback addresses (127.x, ::1)
- *   <li>Private network ranges (10.x, 172.16-31.x, 192.168.x)
- *   <li>Link-local addresses (169.254.x)
- *   <li>Cloud metadata endpoints (169.254.169.254, 100.100.100.200)
- *   <li>Non-HTTP(S) schemes
+ *   <li>Loopback addresses (127.x.x.x, ::1)
+ *   <li>Private network ranges (10.x.x.x, 172.16–31.x.x, 192.168.x.x)
+ *   <li>Link-local addresses (169.254.x.x)
+ *   <li>Cloud metadata endpoints (169.254.169.254, 100.100.100.200 for Alibaba)
+ *   <li>Non-HTTP/HTTPS schemes (file://, ftp://, gopher://, etc.)
  * </ul>
  *
  * <p>Validates: P0.J.1 — SSRF Protection Utility
  */
 public final class SSRFValidator {
 
-    private SSRFValidator() {}
+  private static final Logger log = LoggerFactory.getLogger(SSRFValidator.class);
 
-    /**
-     * Validates that the given URL is safe to make an outbound HTTP request to.
-     *
-     * @param targetUrl the URL to validate
-     * @throws IllegalArgumentException if the URL is null, blank, or has an invalid format
-     * @throws SecurityException        if the URL targets a blocked address (SSRF risk)
-     */
-    public static void validate(String targetUrl) {
-        if (targetUrl == null || targetUrl.isBlank()) {
-            throw new IllegalArgumentException("Target URL must not be blank");
-        }
+  /** Cloud metadata endpoint IPs to block explicitly. */
+  private static final Set<String> BLOCKED_CLOUD_METADATA_IPS = Set.of(
+      "169.254.169.254",  // AWS/GCP/Azure instance metadata
+      "100.100.100.200"   // Alibaba Cloud metadata
+  );
 
-        URI uri;
-        try {
-            uri = URI.create(targetUrl);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Malformed URL: " + targetUrl, e);
-        }
+  /** Allowed URI schemes. */
+  private static final Set<String> ALLOWED_SCHEMES = Set.of("http", "https");
 
-        String scheme = uri.getScheme();
-        if (scheme == null || (!scheme.equalsIgnoreCase("http") && !scheme.equalsIgnoreCase("https"))) {
-            throw new SecurityException("SSRF blocked: only HTTP/HTTPS schemes are allowed, got: " + scheme);
-        }
+  private SSRFValidator() {}
 
-        String host = uri.getHost();
-        if (host == null || host.isBlank()) {
-            throw new IllegalArgumentException("URL has no valid host: " + targetUrl);
-        }
-
-        InetAddress address;
-        try {
-            address = InetAddress.getByName(host);
-        } catch (UnknownHostException e) {
-            throw new IllegalArgumentException("Cannot resolve host: " + host, e);
-        }
-
-        if (address.isLoopbackAddress()) {
-            throw new SecurityException("SSRF blocked: loopback address not allowed: " + host);
-        }
-
-        if (address.isSiteLocalAddress()) {
-            throw new SecurityException("SSRF blocked: private network address not allowed: " + host);
-        }
-
-        if (address.isLinkLocalAddress()) {
-            throw new SecurityException("SSRF blocked: link-local address not allowed: " + host);
-        }
-
-        String rawIp = address.getHostAddress();
-        // Block cloud metadata endpoints
-        if (rawIp.startsWith("169.254.") || rawIp.equals("100.100.100.200")) {
-            throw new SecurityException("SSRF blocked: cloud metadata endpoint not allowed: " + rawIp);
-        }
-
-        // Block multicast
-        if (address.isMulticastAddress()) {
-            throw new SecurityException("SSRF blocked: multicast address not allowed: " + host);
-        }
+  /**
+   * Validates a target URL is safe for outbound HTTP requests.
+   *
+   * @param targetUrl the URL to validate
+   * @throws IllegalArgumentException if the URL is null, blank, or malformed
+   * @throws SecurityException        if the URL targets a blocked address
+   */
+  public static void validate(String targetUrl) {
+    if (targetUrl == null || targetUrl.isBlank()) {
+      throw new IllegalArgumentException("Target URL must not be blank");
     }
 
-    /**
-     * Returns true if the URL is safe for outbound requests; false otherwise.
-     * Silently swallows exceptions — use {@link #validate(String)} for explicit error handling.
-     */
-    public static boolean isSafe(String targetUrl) {
-        try {
-            validate(targetUrl);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
+    URI uri;
+    try {
+      uri = URI.create(targetUrl);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Malformed URL: " + targetUrl, e);
     }
+
+    String scheme = uri.getScheme();
+    if (scheme == null || !ALLOWED_SCHEMES.contains(scheme.toLowerCase())) {
+      throw new SecurityException(
+          "SSRF blocked: only HTTP/HTTPS allowed, got scheme: " + scheme);
+    }
+
+    String host = uri.getHost();
+    if (host == null || host.isBlank()) {
+      throw new IllegalArgumentException("URL must contain a valid host: " + targetUrl);
+    }
+
+    InetAddress address;
+    try {
+      address = InetAddress.getByName(host);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Cannot resolve host: " + host, e);
+    }
+
+    validateResolvedAddress(address);
+  }
+
+  /**
+   * Checks a resolved InetAddress against all blocked categories.
+   */
+  static void validateResolvedAddress(InetAddress address) {
+    String ip = address.getHostAddress();
+
+    if (address.isLoopbackAddress()) {
+      throw new SecurityException("SSRF blocked: loopback address not allowed — " + ip);
+    }
+
+    if (address.isSiteLocalAddress()) {
+      throw new SecurityException("SSRF blocked: private network address not allowed — " + ip);
+    }
+
+    if (address.isLinkLocalAddress()) {
+      throw new SecurityException("SSRF blocked: link-local address not allowed — " + ip);
+    }
+
+    if (address.isMulticastAddress()) {
+      throw new SecurityException("SSRF blocked: multicast address not allowed — " + ip);
+    }
+
+    if (address.isAnyLocalAddress()) {
+      throw new SecurityException("SSRF blocked: any-local address not allowed — " + ip);
+    }
+
+    if (BLOCKED_CLOUD_METADATA_IPS.contains(ip)) {
+      throw new SecurityException("SSRF blocked: cloud metadata endpoint not allowed — " + ip);
+    }
+
+    log.debug("SSRF check passed for IP: {}", ip);
+  }
+
+  /**
+   * Returns true if the URL is safe; false if any SSRF check fails.
+   * Convenience method for non-throwing usage.
+   */
+  public static boolean isSafe(String targetUrl) {
+    try {
+      validate(targetUrl);
+      return true;
+    } catch (SecurityException | IllegalArgumentException e) {
+      log.debug("SSRF unsafe URL: {} — {}", targetUrl, e.getMessage());
+      return false;
+    }
+  }
 }
