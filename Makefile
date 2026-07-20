@@ -84,6 +84,9 @@ bootstrap: ## Full environment setup for new developer
 	@echo "==> Running migrations..."
 	@$(MAKE) migrate
 	@echo ""
+	@echo "==> Seeding demo data..."
+	@$(MAKE) seed
+	@echo ""
 	@echo "==> Bootstrap complete!"
 
 .PHONY: doctor

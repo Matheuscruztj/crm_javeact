@@ -1267,9 +1267,9 @@ commit: chore(docker): create multi-stage Dockerfiles for backend-api and worker
 
 **Critério de Aceite:**
 
-- [ ] `docker build -t atlasops-api .` funciona
-- [ ] Container roda como non-root user
-- [ ] Health check endpoint acessível
+- [x] `docker build -t atlasops-api .` funciona
+- [x] Container roda como non-root user
+- [x] Health check endpoint acessível
 
 ---
 
@@ -1295,10 +1295,10 @@ commit: docs: add CONTRIBUTING.md with development workflow and standards (P0.V.
 
 **Critério de Aceite:**
 
-- [ ] `make bootstrap` executa seed ao final
-- [ ] `make compose-observability` não falha por config ausente
-- [ ] `.env.example` tem todas as variáveis usadas pelo docker-compose
-- [ ] AI pipeline funciona com Ollama acessível
+- [x] `make bootstrap` executa seed ao final
+- [x] `make compose-observability` não falha por config ausente
+- [x] `.env.example` tem todas as variáveis usadas pelo docker-compose
+- [x] AI pipeline funciona com Ollama acessível
 
 ---
 
@@ -1319,9 +1319,9 @@ commit: feat(frontend): add ESLint config, Prettier and CI bundle/secret scan ga
 
 **Critério de Aceite:**
 
-- [ ] ESLint detecta `any` types e imports não utilizados
-- [ ] Prettier formata com as regras do steering file
-- [ ] CI `pnpm lint` falha em código não-conforme
+- [x] ESLint detecta `any` types e imports não utilizados
+- [x] Prettier formata com as regras do steering file
+- [x] CI `pnpm lint` falha em código não-conforme
 
 ---
 
