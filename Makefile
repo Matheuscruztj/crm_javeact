@@ -470,3 +470,21 @@ docker-build-api:
 docker-build-worker:
 	@echo "Building worker Docker image..."
 	docker build -t atlasops-worker:latest -f backend/worker/Dockerfile .
+
+## ─────────────────────────────────────────────────────────────────────────────
+## Backup and Restore (P3.3)
+## ─────────────────────────────────────────────────────────────────────────────
+
+.PHONY: backup restore restore-validate
+
+## Create full backup (PostgreSQL + MinIO)
+backup:
+	@bash infra/scripts/backup.sh
+
+## Restore from backup: make restore BACKUP_ID=20260720120000
+restore:
+	@bash infra/scripts/restore.sh $(BACKUP_ID)
+
+## Validate restore without applying: make restore-validate BACKUP_ID=20260720120000
+restore-validate:
+	@bash infra/scripts/restore.sh $(BACKUP_ID) --dry-run
