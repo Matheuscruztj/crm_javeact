@@ -832,9 +832,9 @@ commit: feat(requests): implement flat comments on requests
 
 **Critério de Aceite:**
 
-- [ ] ADMIN, ANALYST e CLIENT podem comentar em requests
-- [ ] Comentários ordenados por data de criação
-- [ ] Isolamento por tenant validado
+- [x] ADMIN, ANALYST e CLIENT podem comentar em requests
+- [x] Comentários ordenados por data de criação
+- [x] Isolamento por tenant validado
 
 ---
 
@@ -854,8 +854,8 @@ commit: feat(requests): implement status transition history (P0.N.2)
 
 **Critério de Aceite:**
 
-- [ ] Transições inválidas rejeitadas com `INVALID_STATE_TRANSITION`
-- [ ] Histórico completo acessível por request
+- [x] Transições inválidas rejeitadas com `INVALID_STATE_TRANSITION`
+- [x] Histórico completo acessível por request
 
 ---
 
@@ -874,8 +874,8 @@ commit: feat(customers): add activate endpoint for customer reactivation (P0.N.3
 
 **Critério de Aceite:**
 
-- [ ] Customer desativado não permite novas requests
-- [ ] Ação reversível (reativação possível)
+- [x] Customer desativado não permite novas requests
+- [x] Ação reversível (reativação possível)
 
 ---
 
@@ -894,8 +894,8 @@ commit: feat(customers): implement client user association to customer
 
 **Critério de Aceite:**
 
-- [ ] CLIENT logado vê apenas requests/documents do seu customer
-- [ ] ADMIN pode associar/desassociar usuários
+- [x] CLIENT logado vê apenas requests/documents do seu customer
+- [x] ADMIN pode associar/desassociar usuários
 
 ---
 
@@ -914,8 +914,8 @@ commit: feat(documents): implement document reprocessing endpoint (P0.N.5)
 
 **Critério de Aceite:**
 
-- [ ] ANALYST pode re-triggerar análise de IA
-- [ ] Documento volta para status PROCESSING
+- [x] ANALYST pode re-triggerar análise de IA
+- [x] Documento volta para status PROCESSING
 
 ---
 
@@ -934,8 +934,8 @@ commit: feat(documents): implement preview generation in worker
 
 **Critério de Aceite:**
 
-- [ ] Preview gerado automaticamente após upload
-- [ ] Suporte a PDF (primeira página) e imagens (thumbnail)
+- [x] Preview gerado automaticamente após upload
+- [x] Suporte a PDF (primeira página) e imagens (thumbnail)
 
 ---
 
@@ -960,9 +960,9 @@ commit: feat(security): implement resource authorization for CLIENT role
 
 **Critério de Aceite:**
 
-- [ ] CLIENT user de Customer A não acessa dados de Customer B (mesmo tenant)
-- [ ] ANALYST vê apenas requests do próprio tenant
-- [ ] ADMIN vê tudo do tenant
+- [x] CLIENT user de Customer A não acessa dados de Customer B (mesmo tenant)
+- [x] ANALYST vê apenas requests do próprio tenant
+- [x] ADMIN vê tudo do tenant
 
 ---
 
