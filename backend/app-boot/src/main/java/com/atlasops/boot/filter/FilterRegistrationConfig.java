@@ -54,4 +54,17 @@ public class FilterRegistrationConfig {
     registration.addUrlPatterns("/api/*");
     return registration;
   }
+
+  /**
+   * ETag filter for GET responses and conditional request support (P0.Q.2).
+   */
+  @Bean
+  public FilterRegistrationBean<ETagFilter> eTagFilterRegistration() {
+    FilterRegistrationBean<ETagFilter> registration = new FilterRegistrationBean<>();
+    registration.setFilter(new ETagFilter());
+    registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 20);
+    registration.setName("eTagFilter");
+    registration.addUrlPatterns("/api/*");
+    return registration;
+  }
 }
