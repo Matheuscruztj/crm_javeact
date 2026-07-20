@@ -67,4 +67,19 @@ public class FilterRegistrationConfig {
     registration.addUrlPatterns("/api/*");
     return registration;
   }
+
+  /**
+   * Maintenance mode filter — returns 503 for mutating operations when tenant is in maintenance.
+   * Validates: P2.11 — Tenant read-only maintenance mode
+   */
+  @Bean
+  public FilterRegistrationBean<MaintenanceModeFilter> maintenanceModeFilterRegistration(
+      StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
+    FilterRegistrationBean<MaintenanceModeFilter> registration = new FilterRegistrationBean<>();
+    registration.setFilter(new MaintenanceModeFilter(redisTemplate, objectMapper));
+    registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 30);
+    registration.setName("maintenanceModeFilter");
+    registration.addUrlPatterns("/api/*");
+    return registration;
+  }
 }
