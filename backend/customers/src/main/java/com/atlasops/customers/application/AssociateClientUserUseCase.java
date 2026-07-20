@@ -52,6 +52,28 @@ public class AssociateClientUserUseCase {
   }
 
   /**
+   * Removes a CLIENT user's association from a customer.
+   *
+   * @param userId the user identifier
+   * @param customerId the customer identifier
+   * @param tenantId the tenant identifier
+   */
+  public void dissociate(String userId, String customerId, String tenantId) {
+    Objects.requireNonNull(userId, "User id must not be null");
+    Objects.requireNonNull(customerId, "Customer id must not be null");
+    Objects.requireNonNull(tenantId, "Tenant id must not be null");
+
+    customerRepository
+        .findById(customerId, tenantId)
+        .orElseThrow(
+            () ->
+                new ResourceNotFoundException(
+                    "Customer with id '" + customerId + "' not found"));
+
+    associationRepository.delete(userId, customerId);
+  }
+
+  /**
    * Command for associating a CLIENT user with a customer.
    *
    * @param userId the user identifier

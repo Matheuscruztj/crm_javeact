@@ -23,4 +23,21 @@ public interface UserCustomerAssociationRepository {
    * @param tenantId the tenant identifier
    */
   void save(String userId, String customerId, String tenantId);
+
+  /**
+   * Removes the association between a user and a customer.
+   *
+   * @param userId the user identifier
+   * @param customerId the customer identifier
+   */
+  void delete(String userId, String customerId);
+
+  /**
+   * Returns all customer IDs associated with the given user.
+   *
+   * @param userId the user identifier
+   * @param tenantId the tenant identifier
+   * @return list of customer IDs the user has access to
+   */
+  java.util.List<String> findCustomerIdsByUserId(String userId, String tenantId);
 }

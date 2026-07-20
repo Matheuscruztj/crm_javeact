@@ -18,6 +18,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -268,7 +269,7 @@ public class CustomerController {
    * @param request the association request body
    * @return 204 No Content
    */
-  @PostMapping("/{id}/associate")
+  @PostMapping("/{id}/users")
   public ResponseEntity<Void> associate(
       @RequestHeader("X-Tenant-ID") String tenantId,
       @PathVariable String id,
@@ -278,6 +279,36 @@ public class CustomerController {
         new AssociateClientUserUseCase.AssociateClientUserCommand(request.userId(), id, tenantId);
     associateClientUserUseCase.execute(command);
 
+    return ResponseEntity.noContent().build();
+  }
+
+  /**
+   * @deprecated Use POST /{id}/users instead. Kept for backward compatibility.
+   */
+  @Deprecated(forRemoval = true)
+  @PostMapping("/{id}/associate")
+  public ResponseEntity<Void> associateLegacy(
+      @RequestHeader("X-Tenant-ID") String tenantId,
+      @PathVariable String id,
+      @Valid @RequestBody AssociateClientUserRequest request) {
+    return associate(tenantId, id, request);
+  }
+
+  /**
+   * Removes the association between a CLIENT user and a customer.
+   *
+   * @param tenantId the tenant identifier from header
+   * @param id the customer identifier
+   * @param userId the user identifier to dissociate
+   * @return 204 No Content
+   */
+  @DeleteMapping("/{id}/users/{userId}")
+  public ResponseEntity<Void> dissociate(
+      @RequestHeader("X-Tenant-ID") String tenantId,
+      @PathVariable String id,
+      @PathVariable String userId) {
+
+    associateClientUserUseCase.dissociate(userId, id, tenantId);
     return ResponseEntity.noContent().build();
   }
 

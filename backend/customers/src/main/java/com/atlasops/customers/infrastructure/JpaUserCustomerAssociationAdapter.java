@@ -28,4 +28,14 @@ public class JpaUserCustomerAssociationAdapter implements UserCustomerAssociatio
         new UserCustomerAssociationJpaEntity(userId, customerId, tenantId);
     springDataRepository.save(entity);
   }
+
+  @Override
+  public void delete(String userId, String customerId) {
+    springDataRepository.deleteByUserIdAndCustomerId(userId, customerId);
+  }
+
+  @Override
+  public java.util.List<String> findCustomerIdsByUserId(String userId, String tenantId) {
+    return springDataRepository.findCustomerIdsByUserId(userId, tenantId);
+  }
 }
