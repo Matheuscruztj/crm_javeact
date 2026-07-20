@@ -1149,9 +1149,9 @@ commit: build(gradle): implement custom verification and test tasks
 
 **Critério de Aceite:**
 
-- [ ] `./gradlew verifyFast` executa com sucesso
-- [ ] `./gradlew integrationTest` filtra corretamente
-- [ ] Makefile targets funcionam sem erro
+- [x] `./gradlew verifyFast` executa com sucesso
+- [x] `./gradlew integrationTest` filtra corretamente
+- [x] Makefile targets funcionam sem erro
 
 ---
 
@@ -1173,9 +1173,9 @@ commit: chore(makefile): add operational make targets (P0.S.2)
 
 **Critério de Aceite:**
 
-- [ ] Todos os comandos do OPERATIONS-RUNBOOK §8 funcionam
-- [ ] `make help` lista todos os targets
-- [ ] Hook `validate-spec-completeness.json` funciona com `make verify-specs`
+- [x] Todos os comandos do OPERATIONS-RUNBOOK §8 funcionam
+- [x] `make help` lista todos os targets
+- [x] Hook `validate-spec-completeness.json` funciona com `make verify-specs`
 
 ---
 
@@ -1193,8 +1193,8 @@ commit: build(gradle): add Flyway plugin to app-boot build and docker-build Make
 
 **Critério de Aceite:**
 
-- [ ] `make migrate` aplica migrations com sucesso
-- [ ] Re-execução é idempotente (Flyway history table)
+- [x] `make migrate` aplica migrations com sucesso
+- [x] Re-execução é idempotente (Flyway history table)
 
 ---
 
