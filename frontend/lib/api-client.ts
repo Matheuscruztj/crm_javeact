@@ -149,6 +149,10 @@ async function apiRequest<T>(
     (headers as Record<string, string>)["X-Tenant-ID"] = tenantId;
   }
 
+  // Add X-Correlation-ID for tracing (P0.L.2.4)
+  (headers as Record<string, string>)["X-Correlation-ID"] =
+    crypto.randomUUID();
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers,

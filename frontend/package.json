@@ -9,7 +9,9 @@
     "lint": "next lint",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -35,11 +37,17 @@
   },
   "devDependencies": {
     "@playwright/test": "1.49.1",
+    "@storybook/addon-a11y": "^8.4.0",
+    "@storybook/addon-essentials": "^8.4.0",
+    "@storybook/addon-interactions": "^8.4.0",
+    "@storybook/nextjs": "^8.4.0",
+    "@storybook/react": "^8.4.0",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.0",
+    "storybook": "^8.4.0",
     "typescript": "^5.7.0"
   }
 }
