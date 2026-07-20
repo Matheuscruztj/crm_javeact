@@ -1,0 +1,144 @@
+groups:
+  # ══════════════════════════════════════════════════════════
+  # AtlasOps AI — Prometheus Alerting Rules
+  # Validates: P3.6.3-P3.6.7 — Alert definitions
+  # ══════════════════════════════════════════════════════════
+
+  - name: atlasops.jobs
+    interval: 30s
+    rules:
+      # P3.6.3 — Job failure rate > 5%
+      - alert: HighJobFailureRate
+        expr: |
+          rate(atlasops_job_failures_total[5m])
+          / (rate(atlasops_job_total[5m]) + 0.001)
+          > 0.05
+        for: 2m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Job failure rate above 5%"
+          description: 'Job failure rate is {{ printf "%.1f" (mul 100 $value) }}% (threshold: 5%) over the last 5 minutes.'
+          runbook: "https://docs.atlasops.io/runbooks/job-failures"
+
+      - alert: CriticalJobFailureRate
+        expr: |
+          rate(atlasops_job_failures_total[5m])
+          / (rate(atlasops_job_total[5m]) + 0.001)
+          > 0.20
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Critical job failure rate above 20%"
+          description: 'Job failure rate is {{ printf "%.1f" (mul 100 $value) }}% — immediate action required.'
+
+  - name: atlasops.ai
+    interval: 30s
+    rules:
+      # P3.6.4 — AI fallback rate > 20%
+      - alert: HighAIFallbackRate
+        expr: |
+          rate(ai_fallback_total[10m])
+          / (rate(ai_analysis_duration_seconds_count[10m]) + 0.001)
+          > 0.20
+        for: 5m
+        labels:
+          severity: warning
+          team: ai
+        annotations:
+          summary: "AI analysis fallback rate above 20%"
+          description: 'AI is falling back to default response in {{ printf "%.1f" (mul 100 $value) }}% of cases. Check Ollama availability.'
+          runbook: "https://docs.atlasops.io/runbooks/ollama-unavailable"
+
+      - alert: OllamaCircuitBreakerOpen
+        expr: resilience4j_circuitbreaker_state{name="ollama"} == 1
+        for: 30s
+        labels:
+          severity: warning
+          team: ai
+        annotations:
+          summary: "Ollama circuit breaker is OPEN"
+          description: "The Ollama circuit breaker has opened due to repeated failures. AI analysis is falling back."
+
+  - name: atlasops.search
+    interval: 30s
+    rules:
+      # P3.6.5 — Search latency p95 > 800ms
+      - alert: HighSearchLatency
+        expr: |
+          histogram_quantile(0.95,
+            rate(http_server_requests_seconds_bucket{uri=~".*search.*"}[5m])
+          ) > 0.800
+        for: 3m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Search p95 latency above 800ms"
+          description: 'Search endpoint p95 latency is {{ printf "%.0f" (mul 1000 $value) }}ms (threshold: 800ms).'
+
+  - name: atlasops.storage
+    interval: 30s
+    rules:
+      # P3.6.6 — Storage error rate > 1%
+      - alert: HighStorageErrorRate
+        expr: |
+          rate(http_server_requests_seconds_count{uri=~".*/documents/.*", status=~"5.."}[5m])
+          / (rate(http_server_requests_seconds_count{uri=~".*/documents/.*"}[5m]) + 0.001)
+          > 0.01
+        for: 2m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Storage error rate above 1%"
+          description: 'Document endpoint error rate is {{ printf "%.2f" (mul 100 $value) }}% (threshold: 1%).'
+
+  - name: atlasops.ledger
+    interval: 60s
+    rules:
+      # P3.6.7 — Ledger tampering detected
+      - alert: LedgerTamperingDetected
+        expr: atlasops_ledger_tampered_total > 0
+        for: 0s
+        labels:
+          severity: critical
+          team: security
+        annotations:
+          summary: "CRITICAL: Ledger tampering detected"
+          description: "{{ $value }} ledger entries have failed hash verification. Immediate security review required."
+          runbook: "https://docs.atlasops.io/runbooks/ledger-tampering"
+
+  - name: atlasops.slo
+    interval: 60s
+    rules:
+      # P3.6.8 — SLO: API availability > 99.5%
+      - alert: APIAvailabilitySLOBreach
+        expr: |
+          (1 - rate(http_server_requests_seconds_count{status=~"5.."}[1h])
+               / (rate(http_server_requests_seconds_count[1h]) + 0.001))
+          < 0.995
+        for: 5m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "API availability SLO breach (< 99.5%)"
+          description: 'API availability is {{ printf "%.3f" (mul 100 $value) }}% over the last hour (SLO: 99.5%).'
+
+      # P3.6.8 — SLO: API p95 latency < 1s
+      - alert: APILatencySLOBreach
+        expr: |
+          histogram_quantile(0.95,
+            rate(http_server_requests_seconds_bucket[5m])
+          ) > 1.0
+        for: 10m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "API latency SLO breach (p95 > 1s)"
+          description: 'API p95 latency is {{ printf "%.2f" $value }}s (SLO: 1.0s).'
