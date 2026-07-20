@@ -783,9 +783,9 @@ commit: feat(documents): implement S3 multipart upload with signed URLs
 
 **Critério de Aceite:**
 
-- [ ] Arquivos >500MB uploadados sem timeout
-- [ ] Backend nunca proxeia bytes do arquivo
-- [ ] Sessão expirada retorna 410 Gone
+- [x] Arquivos >500MB uploadados sem timeout
+- [x] Backend nunca proxeia bytes do arquivo
+- [x] Sessão expirada retorna 410 Gone
 
 ---
 
@@ -806,9 +806,9 @@ commit: feat(frontend): implement UploadManager with pause/resume/retry/cancel (
 
 **Critério de Aceite:**
 
-- [ ] Upload pode ser pausado e retomado
-- [ ] Part falhada é retransmitida sem reiniciar upload
-- [ ] UI mostra progresso em tempo real
+- [x] Upload pode ser pausado e retomado
+- [x] Part falhada é retransmitida sem reiniciar upload
+- [x] UI mostra progresso em tempo real
 
 ---
 
