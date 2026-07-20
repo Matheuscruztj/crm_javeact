@@ -1,5 +1,6 @@
 package com.atlasops.approvals.presentation;
 
+import com.atlasops.approvals.application.AppendToLedgerUseCase;
 import com.atlasops.approvals.application.ApproveDocumentCommand;
 import com.atlasops.approvals.application.ApproveDocumentUseCase;
 import com.atlasops.approvals.application.CancelApprovalCommand;
@@ -7,10 +8,13 @@ import com.atlasops.approvals.application.CancelApprovalUseCase;
 import com.atlasops.approvals.application.RejectDocumentCommand;
 import com.atlasops.approvals.application.RejectDocumentUseCase;
 import com.atlasops.approvals.domain.Approval;
+import com.atlasops.approvals.domain.ApprovalLedgerEntry;
 import com.atlasops.approvals.domain.ApprovalStatus;
+import com.atlasops.approvals.domain.ports.ApprovalLedgerRepository;
 import com.atlasops.approvals.domain.ports.ApprovalRepository;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
  *   <li>POST /api/v1/approvals/{id}/approve — approve a document
  *   <li>POST /api/v1/approvals/{id}/reject — reject a document with reason
  *   <li>POST /api/v1/approvals/{id}/cancel — cancel an approval (ADMIN only)
+ *   <li>GET /api/v1/approvals/{id}/verify — verify ledger integrity for an approval
  *   <li>GET /api/v1/approvals — list approvals with optional status filter
  * </ul>
  *
@@ -48,16 +53,22 @@ public class ApprovalController {
   private final RejectDocumentUseCase rejectDocumentUseCase;
   private final CancelApprovalUseCase cancelApprovalUseCase;
   private final ApprovalRepository approvalRepository;
+  private final ApprovalLedgerRepository approvalLedgerRepository;
+  private final AppendToLedgerUseCase appendToLedgerUseCase;
 
   public ApprovalController(
       ApproveDocumentUseCase approveDocumentUseCase,
       RejectDocumentUseCase rejectDocumentUseCase,
       CancelApprovalUseCase cancelApprovalUseCase,
-      ApprovalRepository approvalRepository) {
+      ApprovalRepository approvalRepository,
+      ApprovalLedgerRepository approvalLedgerRepository,
+      AppendToLedgerUseCase appendToLedgerUseCase) {
     this.approveDocumentUseCase = approveDocumentUseCase;
     this.rejectDocumentUseCase = rejectDocumentUseCase;
     this.cancelApprovalUseCase = cancelApprovalUseCase;
     this.approvalRepository = approvalRepository;
+    this.approvalLedgerRepository = approvalLedgerRepository;
+    this.appendToLedgerUseCase = appendToLedgerUseCase;
   }
 
   /**
@@ -122,6 +133,7 @@ public class ApprovalController {
 
     var command = new ApproveDocumentCommand(id, userId, role, tenantId, correlationId);
     Approval approval = approveDocumentUseCase.execute(command);
+    appendToLedgerUseCase.execute(approval);
     return ResponseEntity.ok(ApprovalResponse.from(approval));
   }
 
@@ -148,6 +160,7 @@ public class ApprovalController {
     var command =
         new RejectDocumentCommand(id, userId, request.reason(), role, tenantId, correlationId);
     Approval approval = rejectDocumentUseCase.execute(command);
+    appendToLedgerUseCase.execute(approval);
     return ResponseEntity.ok(ApprovalResponse.from(approval));
   }
 
@@ -171,6 +184,29 @@ public class ApprovalController {
 
     var command = new CancelApprovalCommand(id, userId, role, tenantId, correlationId);
     Approval approval = cancelApprovalUseCase.execute(command);
+    appendToLedgerUseCase.execute(approval);
     return ResponseEntity.ok(ApprovalResponse.from(approval));
+  }
+
+  /**
+   * Verifies the integrity of the approval ledger chain for a specific approval.
+   *
+   * @param tenantId the tenant identifier from header
+   * @param id the approval identifier
+   * @return 200 OK with verification result
+   */
+  @GetMapping("/{id}/verify")
+  public ResponseEntity<Map<String, Object>> verifyLedger(
+      @RequestHeader("X-Tenant-ID") String tenantId,
+      @PathVariable String id) {
+
+    List<ApprovalLedgerEntry> entries = approvalLedgerRepository.findByApprovalId(id, tenantId);
+    boolean valid = entries.stream().allMatch(ApprovalLedgerEntry::isValid);
+
+    return ResponseEntity.ok(Map.of(
+            "approvalId", id,
+            "entriesCount", entries.size(),
+            "integrityValid", valid,
+            "tamperingDetected", !valid));
   }
 }
