@@ -313,44 +313,42 @@ compose-all: ## Start all services (all profiles)
 # ============================================================================
 
 .PHONY: test-functional
-test-functional: ## Run Playwright functional tests (headless)
-	cd tests/functional && npx playwright test
+test-functional: ## Run Playwright E2E tests (headless)
+	cd frontend && pnpm test:e2e
 
 .PHONY: test-functional-headed
-test-functional-headed: ## Run Playwright functional tests (headed browser)
-	cd tests/functional && npx playwright test --headed
+test-functional-headed: ## Run Playwright E2E tests (headed browser)
+	cd frontend && pnpm test:e2e:ui
 
 .PHONY: test-functional-report
 test-functional-report: ## Generate and open Playwright HTML report
-	cd tests/functional && npx playwright test --reporter=html || true
-	@echo "Report generated at tests/functional/playwright-report/"
-	cd tests/functional && npx playwright show-report ./playwright-report
+	cd frontend && pnpm test:e2e:report
 
 .PHONY: test-load-smoke
-test-load-smoke: ## Run k6 smoke load test (max 5 VUs, 60s)
+test-load-smoke: ## Run k6 smoke load test (max 2 VUs, 30s)
 	k6 run tests/load/smoke.js
 
 .PHONY: test-load-5vu
 test-load-5vu: ## Run k6 load test with 5 concurrent users (3min, validates basic concurrency)
-	k6 run infra/k6/five-users.js
+	k6 run tests/load/five-users.js
 
 .PHONY: test-load-5vu-with-auth
 test-load-5vu-with-auth: ## Run k6 5-VU test with auth token (export K6_AUTH_TOKEN first)
-	k6 run --env K6_AUTH_TOKEN=$(K6_AUTH_TOKEN) --env K6_TENANT_ID=$(K6_TENANT_ID) infra/k6/five-users.js
+	k6 run --env K6_AUTH_TOKEN=$(K6_AUTH_TOKEN) --env K6_TENANT_ID=$(K6_TENANT_ID) tests/load/five-users.js
 
 .PHONY: test-load
 test-load: ## Run k6 average load test (50 VUs, 5min)
-	k6 run --vus 50 --duration 5m infra/k6/average.js
+	k6 run tests/load/average.js
 
 .PHONY: test-load-report
 test-load-report: ## Run k6 load test and save JSON report
-	@mkdir -p infra/k6/reports
-	k6 run --out json=infra/k6/reports/average-$(shell date +%Y%m%d%H%M%S).json infra/k6/average.js
+	@mkdir -p tests/load/reports
+	k6 run --out json=tests/load/reports/average-$(shell date +%Y%m%d%H%M%S).json tests/load/average.js
 
 .PHONY: test-load-5vu-report
 test-load-5vu-report: ## Run k6 5-VU test and save HTML report
-	@mkdir -p infra/k6/reports
-	k6 run --out json=infra/k6/reports/five-users-$(shell date +%Y%m%d%H%M%S).json infra/k6/five-users.js
+	@mkdir -p tests/load/reports
+	k6 run --out json=tests/load/reports/five-users-$(shell date +%Y%m%d%H%M%S).json tests/load/five-users.js
 
 # ============================================================================
 # Database
@@ -513,7 +511,7 @@ restore-validate:
 
 ## Stress test: 200 VUs, 10min ramp-up (P3.4)
 test-load-stress:
-	k6 run infra/k6/stress.js
+	k6 run tests/load/stress.js
 
 ## ─────────────────────────────────────────────────────────────────────────────
 ## Ledger Verification (P2.5, P3.13)
