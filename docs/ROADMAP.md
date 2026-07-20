@@ -688,9 +688,9 @@ commit: feat(frontend): implement auth state management with route protection (P
 
 **Critério de Aceite:**
 
-- [ ] Rotas protegidas redirecionam para login
-- [ ] Token refresh funciona transparentemente
-- [ ] Role ADMIN vê menu admin, CLIENT vê apenas portal
+- [x] Rotas protegidas redirecionam para login
+- [x] Token refresh funciona transparentemente
+- [x] Role ADMIN vê menu admin, CLIENT vê apenas portal
 
 **⚠️ BLOQUEADOR:** Sem isso, nenhuma página funcional pode operar.
 
@@ -716,9 +716,9 @@ commit: feat(frontend): add typed data-fetching hooks with retry and pagination 
 
 **Critério de Aceite:**
 
-- [ ] Todas as chamadas API usam o client tipado
-- [ ] Erros RFC 7807 parseados e exibidos corretamente
-- [ ] Token expirado dispara refresh transparente
+- [x] Todas as chamadas API usam o client tipado
+- [x] Erros RFC 7807 parseados e exibidos corretamente
+- [x] Token expirado dispara refresh transparente
 
 ---
 
@@ -737,8 +737,8 @@ commit: feat(frontend): add react-hook-form + zod form infrastructure (P0.L.3)
 
 **Critério de Aceite:**
 
-- [ ] Validação inline em todos os formulários
-- [ ] Erros da API mapeados corretamente para campos
+- [x] Validação inline em todos os formulários
+- [x] Erros da API mapeados corretamente para campos
 
 ---
 
@@ -757,8 +757,8 @@ commit: feat(frontend): implement responsive admin and portal layouts (P0.L.4)
 
 **Critério de Aceite:**
 
-- [ ] Layout funcional em 375px, 768px, 1024px, 1440px
-- [ ] Portal totalmente usável em mobile
+- [x] Layout funcional em 375px, 768px, 1024px, 1440px
+- [x] Portal totalmente usável em mobile
 
 ---
 
