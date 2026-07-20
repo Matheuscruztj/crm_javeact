@@ -102,6 +102,19 @@ app:
     secret-key: ${MINIO_SECRET_KEY:minioadmin}
     region: ${OBJECT_STORAGE_REGION:us-east-1}
 
+  # Feature flags (P1.20 — Feature Flag Framework)
+  features:
+    opensearch.enabled: ${FEATURE_OPENSEARCH:false}
+    neo4j.enabled: ${FEATURE_NEO4J:false}
+    timescaledb.enabled: ${FEATURE_TIMESCALEDB:false}
+    clickhouse.enabled: ${FEATURE_CLICKHOUSE:false}
+    eventstoredb.enabled: ${FEATURE_EVENTSTOREDB:false}
+    mongodb.enabled: ${FEATURE_MONGODB:false}
+
+  # Maintenance mode (P2.13)
+  maintenance:
+    enabled: ${MAINTENANCE_MODE:false}
+
 # Resilience4j Circuit Breakers (P0.J.2)
 resilience4j:
   circuitbreaker:
