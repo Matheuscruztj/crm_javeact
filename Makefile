@@ -328,15 +328,13 @@ test-load-smoke: ## Run k6 smoke load test (max 5 VUs, 60s)
 	k6 run tests/load/smoke.js
 
 .PHONY: test-load
-test-load: ## Run k6 average load test (20 VUs, 2min)
-	k6 run tests/load/average.js
+test-load: ## Run k6 average load test (50 VUs, 5min)
+	k6 run --vus 50 --duration 5m infra/k6/average.js
 
 .PHONY: test-load-report
-test-load-report: ## Run k6 load test and generate HTML report in tests/load/reports/
-	@mkdir -p tests/load/reports
-	k6 run --out json=tests/load/reports/results.json tests/load/average.js
-	@echo "JSON results saved to tests/load/reports/results.json"
-	@echo "To generate HTML report, use: k6-reporter or import results.json into Grafana"
+test-load-report: ## Run k6 load test and save JSON report
+	@mkdir -p infra/k6/reports
+	k6 run --out json=infra/k6/reports/average-$(shell date +%Y%m%d%H%M%S).json infra/k6/average.js
 
 # ============================================================================
 # Database
