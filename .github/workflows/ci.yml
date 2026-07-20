@@ -420,3 +420,57 @@ jobs:
           fi
         env:
           K6_BASE_URL: ${{ vars.K6_BASE_URL || 'http://localhost:8080' }}
+
+  # ==========================================================================
+  # SAST — Static Application Security Testing (P3.1.3)
+  # ==========================================================================
+  sast:
+    name: SAST (CodeQL + Semgrep)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # CodeQL for Java (P3.1.3)
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+          queries: security-and-quality
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: "gradle"
+
+      - name: Build for CodeQL analysis
+        run: |
+          chmod +x ./gradlew
+          ./gradlew compileJava -x test --no-daemon --parallel
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:java"
+
+      # Semgrep for additional rule coverage (P3.1.3)
+      - name: Semgrep security scan
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: >-
+            p/java
+            p/spring
+            p/owasp-top-ten
+        continue-on-error: true
+        env:
+          SEMGREP_TIMEOUT: "300"
