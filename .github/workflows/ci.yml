@@ -103,9 +103,9 @@ jobs:
       - name: Jacoco coverage report
         run: ./gradlew jacocoTestReport
 
-      # P0.D.1.4 — Coverage enforcement: fail if < 75% line coverage
+      # P0.D.1.4 + P0.T.1.2 — Coverage enforcement: fail build if < 75% line coverage
       - name: Coverage enforcement (Jacoco)
-        run: ./gradlew jacocoTestCoverageVerification || echo "Coverage below threshold - review report"
+        run: ./gradlew jacocoTestCoverageVerification
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
