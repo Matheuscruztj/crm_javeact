@@ -81,17 +81,13 @@ class CreateRequestUseCaseTest {
   }
 
   @Test
-  void should_throwIllegalArgument_when_titleTooShort() {
-    assertThatThrownBy(() -> new CreateRequestUseCase.CreateRequestCommand(
-        "", "Description", RequestPriority.LOW, CUSTOMER_ID, TENANT_ID))
-        .isInstanceOf(NullPointerException.class)
-        .satisfies(e -> assertThat(e.getMessage()).isNull()); // NPE from Objects.requireNonNull path
-    // OR
-    // The domain itself rejects blank title — test via useCase.execute
+  void should_throwException_when_titleTooShort() {
+    // Empty title passes command validation (not null) but fails domain validation in ServiceRequest
     when(idGenerator.generate()).thenReturn(GENERATED_ID);
     when(clock.now()).thenReturn(FIXED_NOW);
     var command = new CreateRequestUseCase.CreateRequestCommand(
         "", "Description", RequestPriority.LOW, CUSTOMER_ID, TENANT_ID);
+    // The domain entity validates the title — blank title rejected
     assertThatThrownBy(() -> useCase.execute(command))
         .isInstanceOf(Exception.class);
   }
