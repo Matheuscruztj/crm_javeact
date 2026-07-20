@@ -416,9 +416,9 @@ commit: feat(ai): implement golden dataset + RAG quality evaluation framework (P
 
 **Critério de Aceite:**
 
-- [ ] Dataset de exemplos curados para avaliação
-- [ ] Métricas comparáveis entre versões de prompt
-- [ ] Regressão de qualidade detectável antes de deploy
+- [x] Dataset de exemplos curados para avaliação
+- [x] Métricas comparáveis entre versões de prompt
+- [x] Regressão de qualidade detectável antes de deploy
 
 ---
 
@@ -437,9 +437,9 @@ commit: docs(api): add AsyncAPI specification for SSE and events
 
 **Critério de Aceite:**
 
-- [ ] Documentação acessível em `/asyncapi.html`
-- [ ] Todos os SSE channels documentados
-- [ ] Schemas de eventos validados
+- [x] Documentação acessível em `/asyncapi.html`
+- [x] Todos os SSE channels documentados
+- [x] Schemas de eventos validados
 
 ---
 

@@ -1,0 +1,315 @@
+asyncapi: "2.6.0"
+info:
+  title: AtlasOps AI — Async API
+  version: "1.0.0"
+  description: |
+    Server-Sent Events (SSE) channels and domain events for AtlasOps AI.
+    Validates: P0.G.3 — AsyncAPI Documentation
+  contact:
+    name: AtlasOps Engineering
+  license:
+    name: Proprietary
+
+servers:
+  production:
+    url: "https://api.atlasops.io"
+    protocol: https
+    description: Production API server
+  local:
+    url: "http://localhost:8080"
+    protocol: http
+    description: Local development server
+
+channels:
+  /api/v1/events/stream:
+    description: |
+      SSE stream endpoint for real-time notifications.
+      Clients connect with a JWT token and optional Last-Event-ID header for replay.
+    subscribe:
+      summary: Receive real-time server-sent events
+      operationId: subscribeToEventStream
+      bindings:
+        http:
+          type: request
+          method: GET
+          headers:
+            type: object
+            properties:
+              Authorization:
+                type: string
+                description: Bearer JWT token
+              X-User-ID:
+                type: string
+                description: Authenticated user identifier
+              Last-Event-ID:
+                type: string
+                description: Last received event ID for replay on reconnect
+      message:
+        oneOf:
+          - $ref: "#/components/messages/HeartbeatEvent"
+          - $ref: "#/components/messages/NotificationCreatedEvent"
+          - $ref: "#/components/messages/DocumentStatusChangedEvent"
+          - $ref: "#/components/messages/ApprovalDecisionEvent"
+          - $ref: "#/components/messages/RequestStatusChangedEvent"
+          - $ref: "#/components/messages/JobProgressEvent"
+
+  documents.ready_for_analysis:
+    description: Redis Stream — documents ready for AI analysis
+    subscribe:
+      summary: Document ready for AI analysis (consumed by Worker)
+      operationId: consumeDocumentReadyForAnalysis
+      message:
+        $ref: "#/components/messages/DocumentReadyForAnalysisMessage"
+    publish:
+      summary: Publish document ready for analysis
+      operationId: publishDocumentReadyForAnalysis
+      message:
+        $ref: "#/components/messages/DocumentReadyForAnalysisMessage"
+
+  documents.analyzed:
+    description: Redis Stream — documents that have been analyzed by AI
+    subscribe:
+      summary: Document analysis result (consumed to update status)
+      operationId: consumeDocumentAnalyzed
+      message:
+        $ref: "#/components/messages/DocumentAnalyzedMessage"
+
+  approval.decisions:
+    description: Redis Stream — approval decisions (approve, reject, cancel)
+    subscribe:
+      summary: Approval decision event
+      operationId: consumeApprovalDecision
+      message:
+        $ref: "#/components/messages/ApprovalDecisionMessage"
+
+components:
+  messages:
+    HeartbeatEvent:
+      name: HeartbeatEvent
+      summary: Periodic heartbeat to keep SSE connection alive (every 30s)
+      contentType: text/event-stream
+      payload:
+        type: object
+        properties:
+          comment:
+            type: string
+            enum: [heartbeat]
+
+    NotificationCreatedEvent:
+      name: NotificationCreatedEvent
+      summary: A new in-app notification was created for the user
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/NotificationPayload"
+
+    DocumentStatusChangedEvent:
+      name: DocumentStatusChangedEvent
+      summary: A document status changed (e.g., TEXT_EXTRACTED, ANALYZED, FAILED)
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/DocumentStatusPayload"
+
+    ApprovalDecisionEvent:
+      name: ApprovalDecisionEvent
+      summary: An approval decision was made (APPROVED, REJECTED, CANCELLED)
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/ApprovalDecisionPayload"
+
+    RequestStatusChangedEvent:
+      name: RequestStatusChangedEvent
+      summary: A service request changed status
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/RequestStatusPayload"
+
+    JobProgressEvent:
+      name: JobProgressEvent
+      summary: Background job progress update
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/JobProgressPayload"
+
+    DocumentReadyForAnalysisMessage:
+      name: DocumentReadyForAnalysisMessage
+      summary: Document text extracted and ready for AI analysis
+      contentType: application/json
+      payload:
+        type: object
+        required: [documentId, tenantId, extractedText, contentType, status]
+        properties:
+          documentId:
+            type: string
+            description: Unique document identifier
+          tenantId:
+            type: string
+            description: Tenant context
+          extractedText:
+            type: string
+            description: Extracted text content (may be empty for images)
+          contentType:
+            type: string
+            description: Original file MIME type
+          status:
+            type: string
+            enum: [TEXT_EXTRACTED]
+
+    DocumentAnalyzedMessage:
+      name: DocumentAnalyzedMessage
+      summary: AI analysis completed for a document
+      contentType: application/json
+      payload:
+        type: object
+        required: [documentId, tenantId, analysisId, status]
+        properties:
+          documentId:
+            type: string
+          tenantId:
+            type: string
+          analysisId:
+            type: string
+          status:
+            type: string
+            enum: [ANALYZED, FAILED]
+          confidenceScore:
+            type: number
+            minimum: 0.0
+            maximum: 1.0
+          fallback:
+            type: boolean
+
+    ApprovalDecisionMessage:
+      name: ApprovalDecisionMessage
+      summary: Approval decision domain event
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/ApprovalDecisionPayload"
+
+  schemas:
+    NotificationPayload:
+      type: object
+      required:
+        [eventType, id, recipientUserId, tenantId, title, message, createdAt]
+      properties:
+        eventType:
+          type: string
+          enum: [NOTIFICATION_CREATED]
+        id:
+          type: string
+          format: uuid
+        recipientUserId:
+          type: string
+        tenantId:
+          type: string
+        title:
+          type: string
+          maxLength: 150
+        message:
+          type: string
+          maxLength: 500
+        link:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+
+    DocumentStatusPayload:
+      type: object
+      required: [eventType, documentId, tenantId, status, updatedAt]
+      properties:
+        eventType:
+          type: string
+          enum: [DOCUMENT_STATUS_CHANGED]
+        documentId:
+          type: string
+        tenantId:
+          type: string
+        status:
+          type: string
+          enum: [UPLOADED, TEXT_EXTRACTED, ANALYZED, FAILED, REPROCESSING]
+        updatedAt:
+          type: string
+          format: date-time
+
+    ApprovalDecisionPayload:
+      type: object
+      required:
+        [
+          eventType,
+          documentId,
+          decision,
+          analystId,
+          decisionTimestamp,
+          tenantId,
+        ]
+      properties:
+        eventType:
+          type: string
+          enum: [APPROVAL_DECISION]
+        documentId:
+          type: string
+        decision:
+          type: string
+          enum: [APPROVED, REJECTED, CANCELLED]
+        analystId:
+          type: string
+        decisionTimestamp:
+          type: string
+          format: date-time
+        tenantId:
+          type: string
+        correlationId:
+          type: string
+          nullable: true
+
+    RequestStatusPayload:
+      type: object
+      required: [eventType, requestId, tenantId, status, updatedAt]
+      properties:
+        eventType:
+          type: string
+          enum: [REQUEST_STATUS_CHANGED]
+        requestId:
+          type: string
+        tenantId:
+          type: string
+        status:
+          type: string
+          enum:
+            [
+              OPEN,
+              IN_PROGRESS,
+              PENDING_APPROVAL,
+              APPROVED,
+              REJECTED,
+              CLOSED,
+              CANCELLED,
+            ]
+        updatedAt:
+          type: string
+          format: date-time
+
+    JobProgressPayload:
+      type: object
+      required: [eventType, jobId, tenantId, status, progressPercent]
+      properties:
+        eventType:
+          type: string
+          enum: [JOB_PROGRESS]
+        jobId:
+          type: string
+        tenantId:
+          type: string
+        jobType:
+          type: string
+        status:
+          type: string
+          enum: [QUEUED, RUNNING, COMPLETED, FAILED, CANCELLED]
+        progressPercent:
+          type: integer
+          minimum: 0
+          maximum: 100
+        errorMessage:
+          type: string
+          nullable: true
