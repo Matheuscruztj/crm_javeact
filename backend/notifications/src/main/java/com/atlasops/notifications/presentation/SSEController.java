@@ -59,7 +59,7 @@ public class SSEController {
 
     if (lastEventId != null && !lastEventId.isBlank()) {
       log.debug("Reconnection detected for user {} with lastEventId: {}", userId, lastEventId);
-      // Future: replay missed events since lastEventId
+      connectionManager.replayMissedEvents(userId, lastEventId, emitter);
     }
 
     return emitter;

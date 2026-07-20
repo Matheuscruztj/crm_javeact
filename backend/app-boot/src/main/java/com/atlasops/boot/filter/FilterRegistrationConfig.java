@@ -1,9 +1,11 @@
 package com.atlasops.boot.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
  * Configuration for registering servlet filters with explicit ordering.
@@ -13,10 +15,8 @@ import org.springframework.core.Ordered;
  * <ol>
  *   <li>{@link MdcCleanupFilter} — Wraps everything in try/finally to clear MDC
  *   <li>{@link CorrelationIdFilter} — Extracts/generates correlation ID and sets MDC
+ *   <li>{@link IdempotencyFilter} — Deduplicates POST requests via Idempotency-Key header
  * </ol>
- *
- * <p>The MdcCleanupFilter runs first so its finally block executes last, ensuring MDC is always
- * cleaned regardless of what happens in inner filters.
  */
 @Configuration
 public class FilterRegistrationConfig {
@@ -38,6 +38,20 @@ public class FilterRegistrationConfig {
     registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
     registration.setName("correlationIdFilter");
     registration.addUrlPatterns("/*");
+    return registration;
+  }
+
+  /**
+   * Idempotency filter for deduplicating POST requests using Idempotency-Key header (P0.E.1).
+   */
+  @Bean
+  public FilterRegistrationBean<IdempotencyFilter> idempotencyFilterRegistration(
+      StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
+    FilterRegistrationBean<IdempotencyFilter> registration = new FilterRegistrationBean<>();
+    registration.setFilter(new IdempotencyFilter(redisTemplate, objectMapper));
+    registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 10);
+    registration.setName("idempotencyFilter");
+    registration.addUrlPatterns("/api/*");
     return registration;
   }
 }

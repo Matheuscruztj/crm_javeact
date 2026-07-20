@@ -83,7 +83,9 @@ public class SSEConnectionManager implements SSEConnectionPort {
     }
   }
 
-  /** Sends a heartbeat to all connected users to keep connections alive. */
+  /**
+   * Sends a heartbeat to all connected users to keep connections alive. (P0.E.2)
+   */
   public void sendHeartbeatToAll() {
     connections.forEach(
         (userId, emitter) -> {
@@ -94,6 +96,21 @@ public class SSEConnectionManager implements SSEConnectionPort {
             log.debug("Heartbeat failed for user {}, connection removed", userId);
           }
         });
+  }
+
+  /**
+   * Replays missed events for a reconnecting user since the given lastEventId. (P0.E.2)
+   * Currently a no-op placeholder — full event persistence requires an event store.
+   *
+   * @param userId the reconnecting user
+   * @param lastEventId the last event ID received by the client
+   * @param emitter the new emitter to send replayed events to
+   */
+  public void replayMissedEvents(String userId, String lastEventId, SseEmitter emitter) {
+    // Events are currently in-memory only — no persistent event store.
+    // Full implementation requires Redis sorted set or DB table with TTL.
+    // When event store is available, query events since lastEventId and send them.
+    log.debug("Event replay requested for user {} since lastEventId: {}", userId, lastEventId);
   }
 
   /**
