@@ -298,16 +298,16 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: OWASP Dependency Check
-        if: ${{ secrets.NVD_API_KEY != '' }}
-        run: ./gradlew dependencyCheckAnalyze
+        run: |
+          if [ -n "$NVD_API_KEY" ]; then
+            ./gradlew dependencyCheckAnalyze
+          else
+            echo "::warning::OWASP Dependency Check skipped — NVD_API_KEY secret not configured. Add it in repository settings for vulnerability scanning."
+          fi
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         # Blocking: fails build if any dependency has CVSS >= 9.0 (CRITICAL)
         # Note: requires NVD_API_KEY secret for reliable NVD data updates
-
-      - name: OWASP Dependency Check (skipped — no NVD_API_KEY)
-        if: ${{ secrets.NVD_API_KEY == '' }}
-        run: echo "::warning::OWASP Dependency Check skipped — NVD_API_KEY secret not configured. Add it in repository settings for vulnerability scanning."
 
       - name: Upload dependency check report
         uses: actions/upload-artifact@v4
