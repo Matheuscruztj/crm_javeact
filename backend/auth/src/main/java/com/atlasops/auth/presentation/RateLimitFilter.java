@@ -1,6 +1,6 @@
 package com.atlasops.auth.presentation;
 
-import com.atlasops.auth.infrastructure.RedisRateLimiter;
+import com.atlasops.auth.domain.ports.RateLimiterPort;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,9 +35,9 @@ public class RateLimitFilter extends OncePerRequestFilter {
   private static final int GENERAL_MAX_REQUESTS = 100;
   private static final Duration WINDOW = Duration.ofMinutes(1);
 
-  private final RedisRateLimiter rateLimiter;
+  private final RateLimiterPort rateLimiter;
 
-  public RateLimitFilter(RedisRateLimiter rateLimiter) {
+  public RateLimitFilter(RateLimiterPort rateLimiter) {
     this.rateLimiter = rateLimiter;
   }
 

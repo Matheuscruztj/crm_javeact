@@ -3,6 +3,7 @@ package com.atlasops.integrations.presentation;
 import com.atlasops.integrations.application.DispatchWebhookUseCase;
 import com.atlasops.integrations.domain.DispatchResult;
 import com.atlasops.integrations.domain.WebhookPayload;
+import com.atlasops.integrations.domain.ports.UrlValidationPort;
 import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,9 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class IntegrationController {
 
   private final DispatchWebhookUseCase dispatchWebhookUseCase;
+  private final UrlValidationPort urlValidationPort;
 
-  public IntegrationController(DispatchWebhookUseCase dispatchWebhookUseCase) {
+  public IntegrationController(DispatchWebhookUseCase dispatchWebhookUseCase,
+      UrlValidationPort urlValidationPort) {
     this.dispatchWebhookUseCase = dispatchWebhookUseCase;
+    this.urlValidationPort = urlValidationPort;
   }
 
   /**
@@ -71,7 +75,7 @@ public class IntegrationController {
       @RequestBody Map<String, String> body) {
 
     String url = body.get("url");
-    boolean safe = com.atlasops.integrations.infrastructure.SSRFValidator.isSafe(url);
+    boolean safe = urlValidationPort.isSafe(url);
     return ResponseEntity.ok(Map.of(
         "url", url != null ? url : "",
         "safe", safe));

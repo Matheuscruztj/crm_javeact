@@ -1,6 +1,6 @@
 package com.atlasops.notifications.presentation;
 
-import com.atlasops.notifications.infrastructure.SSEConnectionManager;
+import com.atlasops.notifications.domain.ports.SSEConnectionPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -29,9 +29,9 @@ public class SSEController {
   private static final Logger log = LoggerFactory.getLogger(SSEController.class);
   private static final long SSE_TIMEOUT = 0L; // No timeout, managed by heartbeat
 
-  private final SSEConnectionManager connectionManager;
+  private final SSEConnectionPort connectionManager;
 
-  public SSEController(SSEConnectionManager connectionManager) {
+  public SSEController(SSEConnectionPort connectionManager) {
     this.connectionManager = connectionManager;
   }
 
