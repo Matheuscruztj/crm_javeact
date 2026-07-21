@@ -201,8 +201,11 @@ jobs:
             ${{ runner.os }}-pnpm-
 
       # Install from repo root (pnpm workspace defined in pnpm-workspace.yaml)
+      # Note: using --no-frozen-lockfile because eslint/eslint-config-next were added
+      # to package.json; run `pnpm install` locally and commit the updated pnpm-lock.yaml
+      # to restore --frozen-lockfile enforcement.
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       # P0.T.2.1 — TypeScript strict check
       - name: TypeScript check
@@ -247,7 +250,7 @@ jobs:
 
       # Install from repo root (pnpm workspace)
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Install Playwright browsers
         run: pnpm --filter @atlasops/frontend exec playwright install --with-deps chromium

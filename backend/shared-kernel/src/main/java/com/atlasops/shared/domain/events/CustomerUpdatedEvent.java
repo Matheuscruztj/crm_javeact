@@ -18,6 +18,11 @@ public final class CustomerUpdatedEvent extends DomainEvent {
         this.actorId = Objects.requireNonNull(actorId, "actorId must not be null");
     }
 
-    public String getCustomerId() { return customerId; }
-    public String getActorId() { return actorId; }
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public String getActorId() {
+        return actorId;
+    }
 }

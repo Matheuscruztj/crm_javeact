@@ -26,7 +26,15 @@ public final class DocumentProcessedEvent extends DomainEvent {
         this.pageCount = pageCount;
     }
 
-    public String getDocumentId() { return documentId; }
-    public String getExtractedTextPath() { return extractedTextPath; }
-    public int getPageCount() { return pageCount; }
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public String getExtractedTextPath() {
+        return extractedTextPath;
+    }
+
+    public int getPageCount() {
+        return pageCount;
+    }
 }

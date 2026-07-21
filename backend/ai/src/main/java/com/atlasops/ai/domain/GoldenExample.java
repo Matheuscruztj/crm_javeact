@@ -45,10 +45,27 @@ public final class GoldenExample extends Entity<String> {
     return new GoldenExample(id, tenantId, query, expectedAnswer, category, createdBy, createdAt);
   }
 
-  public String getTenantId() { return tenantId; }
-  public String getQuery() { return query; }
-  public String getExpectedAnswer() { return expectedAnswer; }
-  public String getCategory() { return category; }
-  public String getCreatedBy() { return createdBy; }
-  public Instant getCreatedAt() { return createdAt; }
+  public String getTenantId() {
+    return tenantId;
+  }
+
+  public String getQuery() {
+    return query;
+  }
+
+  public String getExpectedAnswer() {
+    return expectedAnswer;
+  }
+
+  public String getCategory() {
+    return category;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
+  }
+
+  public Instant getCreatedAt() {
+    return createdAt;
+  }
 }
