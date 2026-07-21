@@ -39,7 +39,7 @@ export default function CustomerDetailPage() {
 
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [requests, setRequests] = useState<Request[]>([]);
-  const [users, setUsers] = useState<AssociatedUser[]>([]);
+  const [users] = useState<AssociatedUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<"info" | "requests" | "users">("info");
@@ -119,7 +119,7 @@ export default function CustomerDetailPage() {
             key={t}
             onClick={() => setTab(t)}
             className={`pb-2 text-sm capitalize ${tab === t ? "border-b-2 border-primary font-medium" : "text-muted-foreground"}`}
-            aria-selected={tab === t}
+            aria-current={tab === t ? "true" : undefined}
           >
             {t}
           </button>

@@ -7,11 +7,13 @@
 #   analytics      - core + TimescaleDB, ClickHouse
 #   event-sourcing - core + EventStoreDB
 #   observability  - core + Prometheus, Grafana, Loki, Tempo, MailHog
+#   quality        - SonarQube + SonarQube DB (code quality analysis)
 #
 # Usage:
 #   docker compose --profile core up -d
 #   docker compose --profile advanced up -d
 #   docker compose --profile analytics --profile observability up -d
+#   docker compose --profile quality up -d
 #   docker compose --profile core --profile advanced --profile analytics --profile event-sourcing --profile observability up -d
 # =============================================================================
 
@@ -301,6 +303,66 @@ services:
       retries: 12
 
   # ===========================================================================
+  # QUALITY PROFILE — SonarQube + SonarQube DB
+  # ===========================================================================
+
+  sonarqube-db:
+    image: postgres:16-alpine
+    container_name: atlasops-sonarqube-db
+    profiles: ["quality"]
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: ${SONAR_DB_PASSWORD:-sonar_local}
+      POSTGRES_DB: sonarqube
+    volumes:
+      - atlasops-sonardb:/var/lib/postgresql/data
+    networks:
+      - atlasops-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sonar -d sonarqube"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  sonarqube:
+    image: sonarqube:10.6-community
+    container_name: atlasops-sonarqube
+    profiles: ["quality"]
+    depends_on:
+      sonarqube-db:
+        condition: service_healthy
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonarqube-db:5432/sonarqube
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: ${SONAR_DB_PASSWORD:-sonar_local}
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+      # Web context and host
+      SONAR_WEB_CONTEXT: /
+      SONAR_WEB_HOST: 0.0.0.0
+      # Search heap (min for dev)
+      SONAR_SEARCH_JAVAOPTS: "-Xms256m -Xmx256m"
+      SONAR_CE_JAVAOPTS: "-Xms256m -Xmx512m"
+      SONAR_WEB_JAVAOPTS: "-Xms256m -Xmx512m"
+    ports:
+      - "${SONAR_PORT:-9099}:9000"
+    volumes:
+      - atlasops-sonardata:/opt/sonarqube/data
+      - atlasops-sonarlogs:/opt/sonarqube/logs
+      - atlasops-sonarextensions:/opt/sonarqube/extensions
+    networks:
+      - atlasops-network
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/api/system/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 15
+      start_period: 120s
+
+  # ===========================================================================
   # OBSERVABILITY PROFILE — Prometheus, Grafana, Loki, Tempo, MailHog
   # ===========================================================================
 
@@ -446,3 +508,11 @@ volumes:
     name: atlasops-grafanadata
   atlasops-tempodata:
     name: atlasops-tempodata
+  atlasops-sonardb:
+    name: atlasops-sonardb
+  atlasops-sonardata:
+    name: atlasops-sonardata
+  atlasops-sonarlogs:
+    name: atlasops-sonarlogs
+  atlasops-sonarextensions:
+    name: atlasops-sonarextensions

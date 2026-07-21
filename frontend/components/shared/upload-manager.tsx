@@ -349,7 +349,7 @@ export function UploadManager({
                 )}
                 {f.status === "complete" && onComplete && f.documentId && (
                   <button
-                    onClick={() => onComplete(f.documentId!)}
+                    onClick={() => onComplete(f.documentId as string)}
                     className="text-xs text-green-700 hover:underline"
                     aria-label="View uploaded document"
                   >

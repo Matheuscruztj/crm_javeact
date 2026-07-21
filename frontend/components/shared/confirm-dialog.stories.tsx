@@ -34,23 +34,25 @@ export const Open: Story = {
 };
 
 export const Controlled: Story = {
-  render: () => {
-    const [open, setOpen] = useState(false);
-    return (
-      <div>
-        <button
-          onClick={() => setOpen(true)}
-          className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground"
-        >
-          Trigger Conflict
-        </button>
-        <ConflictDialog
-          open={open}
-          resourceType="request"
-          onReload={() => { setOpen(false); alert("Reloading..."); }}
-          onCancel={() => setOpen(false)}
-        />
-      </div>
-    );
-  },
+  render: () => <ControlledStory />,
 };
+
+function ControlledStory() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <button
+        onClick={() => setOpen(true)}
+        className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground"
+      >
+        Trigger Conflict
+      </button>
+      <ConflictDialog
+        open={open}
+        resourceType="request"
+        onReload={() => { setOpen(false); alert("Reloading..."); }}
+        onCancel={() => setOpen(false)}
+      />
+    </div>
+  );
+}

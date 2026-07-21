@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Clock, Info, Lock, RefreshCw } from "lucide-react";
+import { AlertTriangle, Info, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 // ─── MaintenanceBanner ────────────────────────────────────────────────────────

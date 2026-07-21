@@ -137,13 +137,39 @@ public final class Job extends Entity<String> {
     return type;
   }
 
-  public String getType() { return type; }
-  public JobStatus getStatus() { return status; }
-  public String getTenantId() { return tenantId; }
-  public Instant getCreatedAt() { return createdAt; }
-  public Instant getStartedAt() { return startedAt; }
-  public Instant getCompletedAt() { return completedAt; }
-  public Integer getProgressPercent() { return progressPercent; }
-  public String getErrorMessage() { return errorMessage; }
-  public String getReferenceId() { return referenceId; }
+  public String getType() {
+    return type;
+  }
+
+  public JobStatus getStatus() {
+    return status;
+  }
+
+  public String getTenantId() {
+    return tenantId;
+  }
+
+  public Instant getCreatedAt() {
+    return createdAt;
+  }
+
+  public Instant getStartedAt() {
+    return startedAt;
+  }
+
+  public Instant getCompletedAt() {
+    return completedAt;
+  }
+
+  public Integer getProgressPercent() {
+    return progressPercent;
+  }
+
+  public String getErrorMessage() {
+    return errorMessage;
+  }
+
+  public String getReferenceId() {
+    return referenceId;
+  }
 }

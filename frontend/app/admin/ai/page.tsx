@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { api } from "@/lib/api-client";
 import { getApiErrorMessage } from "@/lib/form-utils";
 

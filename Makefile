@@ -486,6 +486,62 @@ docker-build-worker:
 	docker build -t atlasops-worker:latest -f backend/worker/Dockerfile .
 
 ## ─────────────────────────────────────────────────────────────────────────────
+## SonarQube (self-hosted) — Quality Analysis
+## ─────────────────────────────────────────────────────────────────────────────
+
+.PHONY: sonar-up sonar-down sonar-provision sonar-analyze sonar-open sonar-token
+
+## Start SonarQube and its database (quality profile)
+sonar-up: ## Start SonarQube self-hosted (first run: ~2min to initialize)
+	@docker compose -f $(COMPOSE_FILE) --profile quality up -d
+	@echo ""
+	@echo "SonarQube starting at http://localhost:$${SONAR_PORT:-9099}"
+	@echo "Run 'make sonar-provision' once it is fully UP (check with 'make sonar-health')"
+
+## Stop SonarQube services
+sonar-down: ## Stop SonarQube services
+	@docker compose -f $(COMPOSE_FILE) --profile quality down
+
+## Provision Quality Gate and project (run once after sonar-up)
+sonar-provision: ## Provision AtlasOps Quality Gate (80% coverage + all conditions)
+	@echo "==> Provisioning SonarQube Quality Gate..."
+	@SONAR_HOST_URL="http://localhost:$${SONAR_PORT:-9099}" \
+	 bash infra/sonar/provision-quality-gate.sh
+
+## Run full analysis and publish to SonarQube (requires tests + jacoco to have run)
+sonar-analyze: ## Run SonarQube analysis (requires: make coverage first)
+	@echo "==> Generating coverage reports..."
+	@$(GRADLEW) $(GRADLE_OPTS) test jacocoTestReport aggregateJacocoReport
+	@echo "==> Running SonarQube analysis..."
+	@$(GRADLEW) $(GRADLE_OPTS) sonar \
+		-Dsonar.host.url="$${SONAR_HOST_URL:-http://localhost:$${SONAR_PORT:-9099}}" \
+		-Dsonar.token="$${SONAR_TOKEN:-}" \
+		-Dsonar.qualitygate.wait=true \
+		-Dsonar.qualitygate.timeout=300
+	@echo ""
+	@echo "Results: http://localhost:$${SONAR_PORT:-9099}/dashboard?id=atlasops-ai"
+
+## Run analysis without waiting for Quality Gate result (faster feedback)
+sonar-analyze-async: ## Run SonarQube analysis without Quality Gate wait
+	@$(GRADLEW) $(GRADLE_OPTS) test jacocoTestReport sonar \
+		-Dsonar.host.url="$${SONAR_HOST_URL:-http://localhost:$${SONAR_PORT:-9099}}" \
+		-Dsonar.token="$${SONAR_TOKEN:-}"
+	@echo "Results (async): http://localhost:$${SONAR_PORT:-9099}/dashboard?id=atlasops-ai"
+
+## Check SonarQube health
+sonar-health: ## Check if SonarQube is UP and ready
+	@STATUS=$$(curl -sf "http://localhost:$${SONAR_PORT:-9099}/api/system/status" 2>/dev/null \
+		| python3 -c "import sys,json; print(json.load(sys.stdin).get('status','UNKNOWN'))" 2>/dev/null || echo "UNREACHABLE"); \
+	echo "SonarQube status: $$STATUS"; \
+	[ "$$STATUS" = "UP" ] || exit 1
+
+## Open SonarQube dashboard in default browser
+sonar-open: ## Open SonarQube dashboard in browser
+	@command -v xdg-open >/dev/null 2>&1 && xdg-open "http://localhost:$${SONAR_PORT:-9099}/dashboard?id=atlasops-ai" || \
+	 command -v open >/dev/null 2>&1 && open "http://localhost:$${SONAR_PORT:-9099}/dashboard?id=atlasops-ai" || \
+	 echo "Open: http://localhost:$${SONAR_PORT:-9099}/dashboard?id=atlasops-ai"
+
+## ─────────────────────────────────────────────────────────────────────────────
 ## Backup and Restore (P3.3)
 ## ─────────────────────────────────────────────────────────────────────────────
 

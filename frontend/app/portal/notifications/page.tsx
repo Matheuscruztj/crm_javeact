@@ -13,9 +13,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, type PageResponse } from "@/lib/api-client";
@@ -229,7 +226,6 @@ export default function PortalNotificationsPage() {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
   const [unreadCount, setUnreadCount] = useState(0);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<"ALL" | "UNREAD">("ALL");
@@ -258,7 +254,6 @@ export default function PortalNotificationsPage() {
 
       setNotifications(notifsRes.content);
       setTotalPages(notifsRes.page.totalPages);
-      setTotalElements(notifsRes.page.totalElements);
       setUnreadCount(countRes.unreadCount);
       setSelectedIds(new Set());
     } catch {

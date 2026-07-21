@@ -100,7 +100,7 @@ export default function RequestDetailPage() {
         {(["info", "comments", "history"] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)}
             className={`pb-2 text-sm capitalize ${tab === t ? "border-b-2 border-primary font-medium" : "text-muted-foreground"}`}
-            aria-selected={tab === t}>
+            aria-current={tab === t ? "true" : undefined}
             {t}
           </button>
         ))}

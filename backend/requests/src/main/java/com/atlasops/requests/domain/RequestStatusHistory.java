@@ -70,10 +70,27 @@ public final class RequestStatusHistory extends Entity<String> {
     return new RequestStatusHistory(id, requestId, fromStatus, toStatus, reason, actorId, occurredAt);
   }
 
-  public String getRequestId() { return requestId; }
-  public RequestStatus getFromStatus() { return fromStatus; }
-  public RequestStatus getToStatus() { return toStatus; }
-  public String getReason() { return reason; }
-  public String getActorId() { return actorId; }
-  public Instant getOccurredAt() { return occurredAt; }
+  public String getRequestId() {
+    return requestId;
+  }
+
+  public RequestStatus getFromStatus() {
+    return fromStatus;
+  }
+
+  public RequestStatus getToStatus() {
+    return toStatus;
+  }
+
+  public String getReason() {
+    return reason;
+  }
+
+  public String getActorId() {
+    return actorId;
+  }
+
+  public Instant getOccurredAt() {
+    return occurredAt;
+  }
 }

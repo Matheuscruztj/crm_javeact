@@ -1,7 +1,6 @@
 package com.atlasops.search.infrastructure;
 
 import com.atlasops.search.domain.ports.SearchIndexPort;
-import com.atlasops.search.domain.ports.SearchIndexUpdatePort;
 import com.atlasops.shared.domain.ports.FeatureFlagPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

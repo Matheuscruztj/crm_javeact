@@ -1,3 +1,5 @@
+import java.time.Duration
+
 plugins {
     java
     id("org.springframework.boot") version "3.2.5" apply false
@@ -5,10 +7,9 @@ plugins {
     id("com.diffplug.spotless") version "6.25.0" apply false
     id("com.github.spotbugs") version "6.0.9" apply false
     id("org.owasp.dependencycheck") version "9.1.0" apply false
+    id("org.sonarqube") version "5.1.0.4882"
     jacoco
 }
-
-import java.time.Duration
 
 allprojects {
     group = property("group") as String
@@ -20,6 +21,98 @@ allprojects {
         maven { url = uri("https://repo.spring.io/snapshot") }
     }
 }
+
+// ============================================================================
+// SonarQube Configuration (self-hosted)
+// ============================================================================
+sonarqube {
+    properties {
+        // --- Connection ---
+        property("sonar.host.url",          System.getenv("SONAR_HOST_URL")  ?: "http://localhost:9099")
+        property("sonar.token",             System.getenv("SONAR_TOKEN")     ?: "")
+
+        // --- Project identity ---
+        property("sonar.projectKey",        "atlasops-ai")
+        property("sonar.projectName",       "AtlasOps AI")
+        property("sonar.projectVersion",    project.version.toString())
+
+        // --- Source ---
+        property("sonar.sources",           "src/main/java")
+        property("sonar.tests",             "src/test/java")
+        property("sonar.java.source",       "21")
+        property("sonar.sourceEncoding",    "UTF-8")
+
+        // --- Coverage (Jacoco XML) ---
+        // Aggregated report from all submodules
+        property("sonar.coverage.jacoco.xmlReportPaths",
+            subprojects.joinToString(",") {
+                "${it.layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml"
+            }
+        )
+
+        // --- Test reports ---
+        property("sonar.junit.reportPaths",
+            subprojects.joinToString(",") {
+                "${it.layout.buildDirectory.get()}/reports/tests/test"
+            }
+        )
+
+        // --- Exclusions ---
+        // Skip generated code, configs, DTOs with no logic, and entry point
+        property("sonar.exclusions", listOf(
+            // Spring config classes
+            "**/config/**",
+            "**/configuration/**",
+            "**/*Config.java",
+            "**/*Configuration.java",
+            // Spring Boot entry point
+            "**/Application.java",
+            "**/AtlasOpsApplication.java",
+            // Package-info files
+            "**/package-info.java",
+            // Flyway migrations (SQL only, no Java logic)
+            "**/db/migration/**",
+            // Lombok-generated (builders, equals, hashCode)
+            "**/lombok/**"
+        ).joinToString(","))
+
+        // Skip coverage for same set
+        property("sonar.coverage.exclusions", listOf(
+            "**/config/**",
+            "**/configuration/**",
+            "**/*Config.java",
+            "**/*Configuration.java",
+            "**/Application.java",
+            "**/AtlasOpsApplication.java",
+            "**/package-info.java"
+        ).joinToString(","))
+
+        // --- Duplication ---
+        // Ignore test fixtures and builders from duplication analysis
+        property("sonar.cpd.exclusions", listOf(
+            "**/testfixtures/**",
+            "**/*Builder.java",
+            "**/TestFixtures.java"
+        ).joinToString(","))
+
+        // --- Complexity thresholds (enforce via Quality Gate, not here) ---
+        // These match the Quality Gate configured by infra/sonar/provision-quality-gate.sh
+
+        // --- Multi-module support ---
+        // Each subproject reports its own binaries
+        property("sonar.java.binaries",
+            subprojects.joinToString(",") {
+                "${it.layout.buildDirectory.get()}/classes/java/main"
+            }
+        )
+        property("sonar.java.libraries",
+            subprojects.joinToString(",") {
+                "${it.layout.buildDirectory.get()}/libs/*.jar"
+            }
+        )
+    }
+}
+
 
 subprojects {
     apply(plugin = "java")

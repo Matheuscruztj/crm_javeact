@@ -123,6 +123,106 @@ jobs:
           retention-days: 7
 
   # ==========================================================================
+  # SonarQube Analysis
+  # ==========================================================================
+  sonar:
+    name: SonarQube Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: backend
+    # Only run when SONAR_TOKEN secret is configured
+    if: vars.SONAR_HOST_URL != ''
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: atlasops
+          POSTGRES_PASSWORD: atlasops_ci
+          POSTGRES_DB: atlasops
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U atlasops"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout (full history for blame info)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: "gradle"
+
+      - name: Cache Gradle wrapper
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/wrapper
+            ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Cache SonarQube scanner
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Compile
+        run: ./gradlew compileJava -x test --parallel
+
+      - name: Run tests + generate Jacoco reports
+        run: ./gradlew test jacocoTestReport aggregateJacocoReport
+        env:
+          DATABASE_URL: jdbc:postgresql://localhost:5432/atlasops
+          POSTGRES_USER: atlasops
+          POSTGRES_PASSWORD: atlasops_ci
+          REDIS_URL: redis://localhost:6379
+
+      - name: SonarQube analysis
+        run: |
+          ./gradlew sonar \
+            -Dsonar.host.url="${{ vars.SONAR_HOST_URL }}" \
+            -Dsonar.token="${{ secrets.SONAR_TOKEN }}" \
+            -Dsonar.qualitygate.wait=true \
+            -Dsonar.qualitygate.timeout=300 \
+            --parallel --build-cache
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: SonarQube Quality Gate status
+        if: always()
+        run: |
+          STATUS=$(curl -sf \
+            "${{ vars.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=atlasops-ai" \
+            -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" \
+            | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['projectStatus']['status'])" 2>/dev/null || echo "UNKNOWN")
+          echo "Quality Gate: $STATUS"
+          [ "$STATUS" = "OK" ] || [ "$STATUS" = "NONE" ] || exit 1
+
+  # ==========================================================================
   # Backend Integration Tests (P0.D.1.1)
   # ==========================================================================
   integration-tests:

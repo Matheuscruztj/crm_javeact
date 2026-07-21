@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { api } from "@/lib/api-client";
 import { getApiErrorMessage } from "@/lib/form-utils";
 
@@ -73,7 +74,7 @@ export default function TenantsPage() {
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   {t.logoUrl ? (
-                    <img src={t.logoUrl} alt={`${t.name} logo`} className="h-8 w-8 rounded object-contain" />
+                    <Image src={t.logoUrl} alt={`${t.name} logo`} width={32} height={32} className="rounded object-contain" />
                   ) : (
                     <div className="h-8 w-8 rounded bg-muted flex items-center justify-center text-xs font-bold">
                       {t.name.charAt(0).toUpperCase()}

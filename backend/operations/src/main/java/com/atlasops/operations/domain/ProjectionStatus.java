@@ -83,9 +83,23 @@ public final class ProjectionStatus {
         }
     }
 
-    public String getName() { return name; }
-    public Status getStatus() { return status; }
-    public Instant getLastBuiltAt() { return lastBuiltAt; }
-    public long getLag() { return lag; }
-    public String getErrorMessage() { return errorMessage; }
+    public String getName() {
+        return name;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public Instant getLastBuiltAt() {
+        return lastBuiltAt;
+    }
+
+    public long getLag() {
+        return lag;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 }

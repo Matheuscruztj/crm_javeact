@@ -11,7 +11,6 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, type PageResponse } from "@/lib/api-client";
 import { useSSE } from "@/hooks/use-sse";
@@ -272,7 +271,6 @@ export default function ActivitiesPage() {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [entityTypeFilter, setEntityTypeFilter] = useState<string>("ALL");
-  const [liveCount, setLiveCount] = useState(0);
 
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -281,8 +279,10 @@ export default function ActivitiesPage() {
     enabled: true,
     callbacks: {
       onNotification: () => {
-        // When any event arrives, increment live counter and prepend on refresh
-        setLiveCount((c) => c + 1);
+        // When any event arrives, trigger a refresh by resetting the page
+        setPage(0);
+        setActivities([]);
+        setHasMore(true);
       },
     },
   });

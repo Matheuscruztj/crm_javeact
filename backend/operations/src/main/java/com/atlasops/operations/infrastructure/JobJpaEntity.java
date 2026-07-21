@@ -62,20 +62,63 @@ public class JobJpaEntity {
         this.referenceId = referenceId;
     }
 
-    public String getId() { return id; }
-    public String getType() { return type; }
-    public String getStatus() { return status; }
-    public String getTenantId() { return tenantId; }
-    public Instant getCreatedAt() { return createdAt; }
-    public Instant getStartedAt() { return startedAt; }
-    public Instant getCompletedAt() { return completedAt; }
-    public Integer getProgressPercent() { return progressPercent; }
-    public String getErrorMessage() { return errorMessage; }
-    public String getReferenceId() { return referenceId; }
+    public String getId() {
+        return id;
+    }
 
-    public void setStatus(String status) { this.status = status; }
-    public void setStartedAt(Instant startedAt) { this.startedAt = startedAt; }
-    public void setCompletedAt(Instant completedAt) { this.completedAt = completedAt; }
-    public void setProgressPercent(Integer progressPercent) { this.progressPercent = progressPercent; }
-    public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
+    public String getType() {
+        return type;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getStartedAt() {
+        return startedAt;
+    }
+
+    public Instant getCompletedAt() {
+        return completedAt;
+    }
+
+    public Integer getProgressPercent() {
+        return progressPercent;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public String getReferenceId() {
+        return referenceId;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setStartedAt(Instant startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public void setCompletedAt(Instant completedAt) {
+        this.completedAt = completedAt;
+    }
+
+    public void setProgressPercent(Integer progressPercent) {
+        this.progressPercent = progressPercent;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 }
