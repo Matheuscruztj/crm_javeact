@@ -1,7 +1,6 @@
 package com.atlasops.analytics.presentation;
 
 import com.atlasops.analytics.domain.DashboardSummary;
-import com.atlasops.analytics.domain.MetricName;
 import java.time.Instant;
 import java.util.Map;
 import java.util.stream.Collectors;

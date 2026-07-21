@@ -17,6 +17,13 @@ dependencies {
     // Spring context (for component scanning)
     implementation("org.springframework:spring-context")
 
+    // Spring Web (RestController, ResponseEntity, request annotations)
+    implementation("org.springframework:spring-web")
+    implementation("org.springframework:spring-webmvc")
+
+    // Jakarta Validation (Valid, NotBlank)
+    implementation("jakarta.validation:jakarta.validation-api")
+
     // Testing
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.assertj:assertj-core:${property("assertjVersion")}")

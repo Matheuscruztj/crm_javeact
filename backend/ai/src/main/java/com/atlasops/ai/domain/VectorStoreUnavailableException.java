@@ -9,6 +9,8 @@ package com.atlasops.ai.domain;
  */
 public class VectorStoreUnavailableException extends RuntimeException {
 
+  private static final long serialVersionUID = 1L;
+
   public VectorStoreUnavailableException(String message) {
     super(message);
   }

@@ -177,10 +177,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
-    defaults:
-      run:
-        working-directory: frontend
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -195,33 +191,34 @@ jobs:
         with:
           version: 9
 
-      # P0.D.1.3 — Node/pnpm cache
+      # P0.D.1.3 — Node/pnpm cache (lockfile lives at repo root)
       - name: Cache pnpm store
         uses: actions/cache@v4
         with:
           path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('frontend/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
+      # Install from repo root (pnpm workspace defined in pnpm-workspace.yaml)
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       # P0.T.2.1 — TypeScript strict check
       - name: TypeScript check
-        run: pnpm exec tsc --noEmit
+        run: pnpm --filter @atlasops/frontend exec tsc --noEmit
 
       - name: Lint
-        run: pnpm lint
+        run: pnpm --filter @atlasops/frontend lint
 
       - name: Build
-        run: pnpm build
+        run: pnpm --filter @atlasops/frontend build
 
       # P0.T.2.2 — Bundle size check (warn if any page > 1MB)
       - name: Bundle size check
         run: |
-          if [ -d ".next" ]; then
-            find .next -name "*.js" -size +1M -exec echo "WARNING: Large bundle: {}" \; || true
+          if [ -d "frontend/.next" ]; then
+            find frontend/.next -name "*.js" -size +1M -exec echo "WARNING: Large bundle: {}" \; || true
           fi
 
   # ==========================================================================
@@ -234,10 +231,6 @@ jobs:
     needs: frontend
     if: github.event_name == 'push' || github.event_name == 'pull_request'
 
-    defaults:
-      run:
-        working-directory: frontend
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -252,14 +245,15 @@ jobs:
         with:
           version: 9
 
+      # Install from repo root (pnpm workspace)
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps chromium
+        run: pnpm --filter @atlasops/frontend exec playwright install --with-deps chromium
 
       - name: Run Playwright tests
-        run: pnpm test:e2e
+        run: pnpm --filter @atlasops/frontend test:e2e
         env:
           BASE_URL: http://localhost:3000
           CI: "true"
@@ -305,7 +299,10 @@ jobs:
 
       - name: OWASP Dependency Check
         run: ./gradlew dependencyCheckAnalyze
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         # Blocking: fails build if any dependency has CVSS >= 9.0 (CRITICAL)
+        # Note: requires NVD_API_KEY secret for reliable NVD data updates
 
       - name: Upload dependency check report
         uses: actions/upload-artifact@v4
@@ -413,10 +410,10 @@ jobs:
 
       - name: Run k6 smoke test
         run: |
-          if [ -f tests/load/smoke.js ]; then
-            k6 run --vus 2 --duration 30s tests/load/smoke.js
+          if [ -f infra/k6/smoke.js ]; then
+            k6 run --vus 2 --duration 30s infra/k6/smoke.js
           else
-            echo "::notice::No k6 smoke test found at tests/load/smoke.js, skipping"
+            echo "::notice::No k6 smoke test found at infra/k6/smoke.js, skipping"
           fi
         env:
           K6_BASE_URL: ${{ vars.K6_BASE_URL || 'http://localhost:8080' }}
