@@ -96,6 +96,7 @@ export default function PortalRequestDetailPage() {
           <button key={t} onClick={() => setTab(t)}
             className={`pb-2 text-sm capitalize ${tab === t ? "border-b-2 border-primary font-medium" : "text-muted-foreground"}`}
             aria-current={tab === t ? "true" : undefined}
+          >
             {t}
           </button>
         ))}

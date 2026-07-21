@@ -1,21 +1,29 @@
 package com.atlasops.ai.infrastructure;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import com.atlasops.ai.domain.IngestionResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.ai.vectorstore.VectorStore;
 
 /**
  * Unit tests for DocumentIngestionAdapter. Validates rejection of documents without extractable
  * text (Requirement 4.11).
  */
+@ExtendWith(MockitoExtension.class)
 @DisplayName("DocumentIngestionAdapter")
 class DocumentIngestionAdapterTest {
+
+  @Mock private VectorStore vectorStore;
 
   private DocumentIngestionAdapter adapter;
   private DocumentChunker chunker;
@@ -23,7 +31,7 @@ class DocumentIngestionAdapterTest {
   @BeforeEach
   void setUp() {
     chunker = new DocumentChunker();
-    adapter = new DocumentIngestionAdapter(chunker);
+    adapter = new DocumentIngestionAdapter(chunker, vectorStore);
   }
 
   @ParameterizedTest(name = "content=\"{0}\"")
