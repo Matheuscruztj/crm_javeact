@@ -63,15 +63,47 @@ public class PromptVersionJpaEntity {
         this.createdAt = createdAt;
     }
 
-    public String getId() { return id; }
-    public String getTenantId() { return tenantId; }
-    public String getName() { return name; }
-    public String getVersion() { return version; }
-    public String getTag() { return tag; }
-    public String getTemplate() { return template; }
-    public boolean isActive() { return active; }
-    public int getAbWeight() { return abWeight; }
-    public String getCreatedBy() { return createdBy; }
-    public Instant getCreatedAt() { return createdAt; }
-    public void setActive(boolean active) { this.active = active; }
+    public String getId() {
+        return id;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public int getAbWeight() {
+        return abWeight;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }

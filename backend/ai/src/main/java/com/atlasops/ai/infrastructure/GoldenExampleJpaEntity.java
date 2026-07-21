@@ -49,11 +49,31 @@ public class GoldenExampleJpaEntity {
         this.createdAt = createdAt;
     }
 
-    public String getId() { return id; }
-    public String getTenantId() { return tenantId; }
-    public String getQuery() { return query; }
-    public String getExpectedAnswer() { return expectedAnswer; }
-    public String getCategory() { return category; }
-    public String getCreatedBy() { return createdBy; }
-    public Instant getCreatedAt() { return createdAt; }
+    public String getId() {
+        return id;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public String getExpectedAnswer() {
+        return expectedAnswer;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
 }

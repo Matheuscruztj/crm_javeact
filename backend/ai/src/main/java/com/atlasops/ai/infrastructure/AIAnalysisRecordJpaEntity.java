@@ -67,15 +67,47 @@ public class AIAnalysisRecordJpaEntity {
         this.createdAt = createdAt;
     }
 
-    public String getId() { return id; }
-    public String getTenantId() { return tenantId; }
-    public String getModel() { return model; }
-    public String getPromptVersion() { return promptVersion; }
-    public String getInputHash() { return inputHash; }
-    public long getDurationMs() { return durationMs; }
-    public double getConfidenceScore() { return confidenceScore; }
-    public boolean isFallback() { return fallback; }
-    public String getResult() { return result; }
-    public String[] getChunksUsed() { return chunksUsed; }
-    public Instant getCreatedAt() { return createdAt; }
+    public String getId() {
+        return id;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public String getPromptVersion() {
+        return promptVersion;
+    }
+
+    public String getInputHash() {
+        return inputHash;
+    }
+
+    public long getDurationMs() {
+        return durationMs;
+    }
+
+    public double getConfidenceScore() {
+        return confidenceScore;
+    }
+
+    public boolean isFallback() {
+        return fallback;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public String[] getChunksUsed() {
+        return chunksUsed;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
 }
