@@ -252,7 +252,7 @@ public class RedisStreamConsumer {
         PendingMessages pending = redisTemplate.opsForStream()
             .pending(streamKey, config.groupName(), Range.unbounded(), 1);
         if (pending != null) {
-          lag.set(pending.getTotalDeliveryCount());
+          lag.set(pending.size());
         }
       } catch (Exception ignored) {
         // Non-critical — lag metric may be stale

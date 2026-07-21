@@ -19,6 +19,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+    // Micrometer (Prometheus metrics — MeterRegistry, Gauge)
+    implementation("io.micrometer:micrometer-core")
+    runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 
     // Database
     runtimeOnly("org.postgresql:postgresql:${property("postgresqlDriverVersion")}")

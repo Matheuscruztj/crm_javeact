@@ -34,7 +34,8 @@ public record ApprovalLedgerEntry(
         String previousHash,
         String entryHash) {
 
-    public static final String GENESIS_HASH = "0000000000000000000000000000000000000000000000000000000000000000";
+    public static final String GENESIS_HASH =
+        "0000000000000000000000000000000000000000000000000000000000000000";
 
     public ApprovalLedgerEntry {
         Objects.requireNonNull(approvalId, "ApprovalId must not be null");
@@ -58,8 +59,11 @@ public record ApprovalLedgerEntry(
             String tenantId,
             String previousHash) {
 
-        String hash = computeHash(sequenceNumber, approvalId, status, decisionBy, occurredAt, tenantId, previousHash);
-        return new ApprovalLedgerEntry(sequenceNumber, approvalId, status, decisionBy, occurredAt, tenantId, previousHash, hash);
+        String hash = computeHash(
+            sequenceNumber, approvalId, status, decisionBy, occurredAt, tenantId, previousHash);
+        return new ApprovalLedgerEntry(
+            sequenceNumber, approvalId, status, decisionBy, occurredAt, tenantId, previousHash,
+            hash);
     }
 
     /**
@@ -68,7 +72,8 @@ public record ApprovalLedgerEntry(
      * @return true if the stored hash matches the computed hash
      */
     public boolean isValid() {
-        String expected = computeHash(sequenceNumber, approvalId, status, decisionBy, occurredAt, tenantId, previousHash);
+        String expected = computeHash(
+            sequenceNumber, approvalId, status, decisionBy, occurredAt, tenantId, previousHash);
         return expected.equals(entryHash);
     }
 

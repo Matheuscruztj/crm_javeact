@@ -306,6 +306,11 @@ subprojects {
         failBuildOnCVSS = 9.0f
         format = org.owasp.dependencycheck.reporting.ReportGenerator.Format.HTML.toString()
         outputDirectory = "${project.layout.buildDirectory.get()}/reports/dependency-check"
+        // Use NVD API key if provided (avoids 403/rate-limiting without a key)
+        val nvdApiKey = System.getenv("NVD_API_KEY")
+        if (!nvdApiKey.isNullOrBlank()) {
+            nvd.setApiKey(nvdApiKey)
+        }
         // Suppress false positives (add to backend/config/dependency-check/suppression.xml)
         val suppressionFile = rootProject.file("backend/config/dependency-check/suppression.xml")
         if (suppressionFile.exists()) {

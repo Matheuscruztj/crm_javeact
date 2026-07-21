@@ -49,7 +49,7 @@ export const WithError: Story = {
 export const CustomFallback: Story = {
   args: {
     section: "portal",
-    fallback: (error, reset) => (
+    fallback: (error: Error | null, reset: () => void) => (
       <div className="rounded-md bg-yellow-50 p-4">
         <p className="text-sm font-medium text-yellow-800">Custom fallback: {error?.message}</p>
         <button onClick={reset} className="mt-2 text-xs text-yellow-700 underline">

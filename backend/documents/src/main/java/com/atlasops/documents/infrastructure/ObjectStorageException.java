@@ -3,6 +3,8 @@ package com.atlasops.documents.infrastructure;
 /** Runtime exception thrown when object storage operations fail. */
 public class ObjectStorageException extends RuntimeException {
 
+  private static final long serialVersionUID = 1L;
+
   public ObjectStorageException(String message, Throwable cause) {
     super(message, cause);
   }

@@ -69,14 +69,43 @@ public class ApprovalLedgerJpaEntity {
         this.createdAt = Instant.now();
     }
 
-    public Long getId() { return id; }
-    public long getSequenceNumber() { return sequenceNumber; }
-    public String getApprovalId() { return approvalId; }
-    public String getStatus() { return status; }
-    public String getDecisionBy() { return decisionBy; }
-    public Instant getOccurredAt() { return occurredAt; }
-    public String getTenantId() { return tenantId; }
-    public String getPreviousHash() { return previousHash; }
-    public String getEntryHash() { return entryHash; }
-    public Instant getCreatedAt() { return createdAt; }
+    public Long getId() {
+        return id;
+    }
+
+    public long getSequenceNumber() {
+        return sequenceNumber;
+    }
+
+    public String getApprovalId() {
+        return approvalId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getDecisionBy() {
+        return decisionBy;
+    }
+
+    public Instant getOccurredAt() {
+        return occurredAt;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public String getPreviousHash() {
+        return previousHash;
+    }
+
+    public String getEntryHash() {
+        return entryHash;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
 }

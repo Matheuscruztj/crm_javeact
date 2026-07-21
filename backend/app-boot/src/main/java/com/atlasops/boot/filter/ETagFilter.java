@@ -27,7 +27,6 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 public class ETagFilter extends OncePerRequestFilter {
 
   private static final String ETAG_HEADER = "ETag";
-  private static final String IF_MATCH_HEADER = "If-Match";
   private static final String IF_NONE_MATCH_HEADER = "If-None-Match";
 
   @Override

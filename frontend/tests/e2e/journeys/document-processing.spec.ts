@@ -17,7 +17,7 @@ test.describe("Document Processing: SSE progress → ANALYZED status", () => {
     documentPage,
     page,
   }) => {
-    await documentPage.goto();
+    await documentPage.gotoAdmin();
     await expect(page).not.toHaveURL(/login/);
   });
 
@@ -47,7 +47,7 @@ test.describe("Document Processing: SSE progress → ANALYZED status", () => {
     documentPage,
     page,
   }) => {
-    await documentPage.goto();
+    await documentPage.gotoAdmin();
     // If any documents exist, verify status badges are rendered
     const statusBadge = page
       .locator("[data-testid='document-status'], .status-badge")
