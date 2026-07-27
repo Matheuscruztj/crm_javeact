@@ -157,7 +157,8 @@ jobs:
           cache: "gradle"
 
       - name: Run mutation tests
-        run: echo "TODO: PIT mutation testing - configure pitest Gradle plugin"
+        run: |
+          echo "TODO: PIT mutation testing - configure pitest Gradle plugin"
 
   # P3.7.1 — SBOM generation (CycloneDX)
   sbom:
