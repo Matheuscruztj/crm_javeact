@@ -85,7 +85,7 @@ Each issue group maps to one wave and one or more task plans under [`docs/task-p
 ## 3.5 Wave W5 — Runtime Resilience and Dynamic Coupling
 
 - `QE-400` Introduce fault injection with Toxiproxy and Testcontainers. [done]
-- `QE-401` Automate dependency outage scenarios for core services. [in progress]
+- `QE-401` Automate dependency outage scenarios for core services. [done]
 - `QE-402` Validate circuit breaker, timeout and fallback behavior. [done]
 - `QE-403` Validate retry, DLQ and idempotency behavior under failure. [done]
 - `QE-404` Separate resilience suites from standard integration suites where needed. [done]
@@ -105,7 +105,7 @@ Each issue group maps to one wave and one or more task plans under [`docs/task-p
 ### 3.5.2 Remaining gaps
 
 - Toxiproxy/Testcontainers fault injection is visible for MinIO and Ollama fallback validation.
-- Dedicated dependency-outage coverage is still partial for PostgreSQL, Redis and OpenSearch.
+- Broader integration outage suites for PostgreSQL, Redis and OpenSearch can still be expanded.
 - Resilience artifact/report routing is documented, but CI routing is still limited to the existing quality workflows.
 
 ## 3.6 Wave W6 — Performance and Operational Evidence
@@ -115,7 +115,7 @@ Each issue group maps to one wave and one or more task plans under [`docs/task-p
 - `QE-502` Define baseline performance scenarios and thresholds. [done]
 - `QE-503` Publish performance artifacts per execution. [done]
 - `QE-504` Correlate backend metrics with load test scenarios. [done]
-- `QE-505` Add frontend critical-path performance evidence where relevant. [in progress]
+- `QE-505` Add frontend critical-path performance evidence where relevant. [done]
 - `QE-506` Define nightly stress and soak strategy. [done]
 - `QE-507` Establish regression review process for performance drift. [in progress]
 - `QE-508` Integrate performance evidence into release documentation. [done]
@@ -131,7 +131,6 @@ Each issue group maps to one wave and one or more task plans under [`docs/task-p
 
 ### 3.6.2 Remaining gaps
 
-- Frontend critical-path performance evidence is still missing a dedicated flow.
 - Release-readiness policy for performance artifacts is still not automated end-to-end.
 
 ## 3.7 Wave W7 — Governance and Continuous Hardening

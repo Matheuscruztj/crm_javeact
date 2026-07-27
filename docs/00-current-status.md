@@ -91,7 +91,7 @@
 - `ResilienceConfigResilienceTest` now exercises open/recover state transitions for the circuit breaker baseline.
 - `.github/workflows/ci.yml` now routes `resilienceTest` through a dedicated `resilience-tests` job on the main quality pipeline.
 - `backend/app-boot/src/test/java/com/atlasops/boot/resilience/MinioResilienceIntegrationTest.java` and `backend/ai/src/test/java/com/atlasops/ai/infrastructure/OllamaAIAdapterResilienceTest.java` add fault-injection and deterministic fallback coverage, with the Ollama path validated and the MinIO/Testcontainers path still being stabilized in this environment.
-- `backend/search/src/test/java/com/atlasops/search/infrastructure/OpenSearchAdapterTest.java` and `backend/auth/src/test/java/com/atlasops/auth/infrastructure/RedisRateLimiterTest.java` cover fail-closed behavior for dependency outages.
+- `backend/search/src/test/java/com/atlasops/search/infrastructure/PostgresFullTextSearchAdapterResilienceTest.java`, `backend/search/src/test/java/com/atlasops/search/infrastructure/OpenSearchAdapterResilienceTest.java` and `backend/notifications/src/test/java/com/atlasops/notifications/infrastructure/RedisSSEEventStoreResilienceTest.java` add explicit failure-path coverage for PostgreSQL, OpenSearch and Redis-backed SSE replay.
 
 ### W6 — Performance and Operational Evidence
 
@@ -99,6 +99,7 @@
 - `Makefile` exposes `test-load-smoke`, `test-load-5vu`, `test-load`, `test-load-report`, `test-load-5vu-report` and `test-load-stress`.
 - `tests/load/generate-report.mjs` now emits a lightweight HTML report from k6 JSON summary artifacts.
 - `Makefile` report targets now emit JSON raw output, k6 `summary-export` artifacts, and HTML summaries.
+- `frontend/tests/performance/critical-path.mjs` captures a basic frontend route-load evidence snapshot.
 - The k6 scripts accept threshold overrides through env vars, which makes baseline tuning reproducible.
 - `.github/workflows/ci.yml` runs the smoke load test on push to `main`.
 - `.github/workflows/nightly.yml` runs the average load test and stores JSON + HTML artifacts.
@@ -107,8 +108,8 @@
 
 ### Remaining Gaps
 
-- Fault injection with Toxiproxy + Testcontainers is present for MinIO and Ollama, but PostgreSQL, Redis and OpenSearch outage suites still need dedicated coverage.
-- Frontend critical-path load evidence is still not documented in a dedicated flow.
+- Fault injection with Toxiproxy + Testcontainers is present for MinIO and Ollama, and explicit failure-path coverage now exists for PostgreSQL, Redis and OpenSearch adapters; broader integration outage suites can still be expanded.
+- Frontend critical-path load evidence is still lightweight and can be expanded into a CI-gated flow.
 
 ---
 

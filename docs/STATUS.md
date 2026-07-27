@@ -154,8 +154,8 @@ AtlasOps AI é um CRM multi-tenant com análise de documentos via IA local (Olla
 
 ### 🔄 W5/W6 Quality Enforcement Status
 
-- **W5 Runtime Resilience**: mostly in place. Circuit breaker baseline, dedicated `resilienceTest`, operator runbook, CI routing, and initial fault-injection coverage are present; additional outage suites for PostgreSQL, Redis and OpenSearch are still pending.
-- **W6 Performance Evidence**: mostly in place. k6 scenarios, CI smoke execution, nightly average test, JSON + HTML artifact targets, and documented metadata/threshold inputs exist; frontend performance evidence is still pending.
+- **W5 Runtime Resilience**: mostly in place. Circuit breaker baseline, dedicated `resilienceTest`, operator runbook, CI routing, and failure-path coverage for PostgreSQL, Redis, MinIO, Ollama and OpenSearch are present; broader integration outage suites can still be expanded.
+- **W6 Performance Evidence**: mostly in place. k6 scenarios, CI smoke execution, nightly average test, JSON + HTML artifact targets, documented metadata/threshold inputs, and a frontend critical-path smoke script are present; release-gated automation can still be expanded.
 
 ### 🟢 Baixa Prioridade (Nice-to-have P0)
 
