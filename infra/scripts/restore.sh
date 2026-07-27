@@ -40,6 +40,19 @@ if [[ ! -f "${BACKUP_DIR}/manifest.json" ]]; then
 fi
 echo "      Manifest valid: $(cat "${BACKUP_DIR}/manifest.json" | grep created_at || echo 'unknown date')"
 
+if [[ -f "${BACKUP_DIR}/checksums.sha256" ]]; then
+  echo "      Validating backup checksums..."
+  (
+    cd "${BACKUP_DIR}"
+    sha256sum --check --quiet checksums.sha256
+  ) && echo "      Checksum validation OK" || {
+    echo "ERROR: Backup checksum validation failed"
+    exit 1
+  }
+else
+  echo "      WARNING: checksums.sha256 not found — continuing without checksum validation"
+fi
+
 # ── Validate PostgreSQL dump ─────────────────────────────────────────────────
 echo "[2/4] Validating PostgreSQL dump..."
 DUMP_FILE="${BACKUP_DIR}/postgres-${POSTGRES_DB}.dump"

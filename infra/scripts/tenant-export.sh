@@ -76,6 +76,19 @@ cat > "${OUTPUT_DIR}/manifest.json" << EOF
 }
 EOF
 
+echo "[5/5] Generating export checksums..."
+CHECKSUM_FILE="${OUTPUT_DIR}/checksums.sha256"
+{
+  cd "${OUTPUT_DIR}"
+  find . -type f \
+    ! -name "$(basename "${CHECKSUM_FILE}")" \
+    -print0 \
+    | sort -z \
+    | xargs -0 sha256sum
+} > "${CHECKSUM_FILE}"
+
+echo "      Checksum manifest: ${CHECKSUM_FILE}"
+
 echo "=== Export complete: ${OUTPUT_DIR} ==="
 echo "    Files:"
 ls -lh "${OUTPUT_DIR}"
