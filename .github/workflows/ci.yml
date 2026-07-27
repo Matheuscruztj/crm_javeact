@@ -87,7 +87,7 @@ jobs:
 
       # P0.T.1.1 — Architecture rules explicit check
       - name: Architecture tests (ArchUnit)
-        run: ./gradlew test --tests "*ArchitectureTest" --tests "*ArchRulesTest" || true
+        run: ./gradlew test --tests "*ArchitectureTest" --tests "*ArchRulesTest"
         env:
           DATABASE_URL: jdbc:postgresql://localhost:5432/atlasops
           POSTGRES_USER: atlasops
@@ -121,6 +121,52 @@ jobs:
           name: test-results
           path: "**/build/reports/tests/"
           retention-days: 7
+
+  architecture-backend:
+    name: Architecture Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: "gradle"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Architecture tests (Backend)
+        run: ./gradlew :backend:app-boot:architectureTest
+
+  architecture-frontend:
+    name: Architecture Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Architecture tests (Frontend)
+        working-directory: frontend
+        run: pnpm architecture:check
 
   # ==========================================================================
   # SonarQube Analysis
@@ -258,6 +304,36 @@ jobs:
       # Testcontainers requires Docker socket — available on ubuntu-latest
       - name: Integration tests (Testcontainers)
         run: ./gradlew :backend:app-boot:integrationTest
+
+  openapi-contract-export:
+    name: OpenAPI Contract Export
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: "gradle"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Export OpenAPI artifact
+        run: ./gradlew :backend:app-boot:openApiContractExportTest
+
+      - name: Upload OpenAPI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-contract
+          path: backend/app-boot/build/reports/openapi/openapi.json
+          retention-days: 7
         env:
           TESTCONTAINERS_RYUK_DISABLED: "true"
 
@@ -267,6 +343,66 @@ jobs:
         with:
           name: integration-test-results
           path: "**/build/reports/tests/integrationTest/"
+          retention-days: 7
+
+  resilience-tests:
+    name: Backend Resilience Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: backend
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: atlasops
+          POSTGRES_PASSWORD: atlasops_ci
+          POSTGRES_DB: atlasops
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U atlasops"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: "gradle"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Run resilience verification
+        run: ./gradlew :backend:app-boot:resilienceTest
+        env:
+          DATABASE_URL: jdbc:postgresql://localhost:5432/atlasops
+          POSTGRES_USER: atlasops
+          POSTGRES_PASSWORD: atlasops_ci
+          REDIS_URL: redis://localhost:6379
+
+      - name: Upload resilience test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: resilience-test-results
+          path: "**/build/reports/tests/resilienceTest/"
           retention-days: 7
 
   # ==========================================================================
@@ -316,6 +452,10 @@ jobs:
 
       - name: Build
         run: pnpm --filter @atlasops/frontend build
+
+      # W1.FE-01 — explicit formatting gate
+      - name: Format check
+        run: pnpm --filter @atlasops/frontend exec prettier --check .
 
       # P0.T.2.2 — Bundle size check (warn if any page > 1MB)
       - name: Bundle size check
@@ -484,14 +624,63 @@ jobs:
             echo "::notice::No asyncapi.yaml found, skipping"
           fi
 
-      # Validate OpenAPI spec from running app (if available)
-      - name: Check OpenAPI spec exists
+      # Validate the generated OpenAPI contract artifact
+      - name: Validate OpenAPI spec artifact
         run: |
           if [ -f backend/app-boot/src/main/resources/openapi.yaml ]; then
             spectral lint backend/app-boot/src/main/resources/openapi.yaml --ruleset spectral:oas
           else
-            echo "::notice::No static OpenAPI spec found (generated at runtime)"
+            echo "::warning::No OpenAPI spec found; contract lint skipped"
+            exit 1
           fi
+
+  supply-chain:
+    name: Supply Chain Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: backend
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run filesystem scan with Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: 1
+          ignore-unfixed: true
+
+      - name: Build backend API image for scan
+        run: docker build --file backend/app-boot/Dockerfile --target builder --tag atlasops-api:ci-scan .
+
+      - name: Run image scan with Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: image
+          image-ref: atlasops-api:ci-scan
+          format: table
+          severity: CRITICAL,HIGH
+          exit-code: 1
+          ignore-unfixed: true
+
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@v0
+
+      - name: Generate SBOM
+        run: syft dir:. -o cyclonedx-json=sbom.json
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-cyclonedx
+          path: sbom.json
+          retention-days: 30
 
   # ==========================================================================
   # k6 Smoke Test (P0.T.3.2) — only on push to main
@@ -518,13 +707,18 @@ jobs:
 
       - name: Run k6 smoke test
         run: |
-          if [ -f infra/k6/smoke.js ]; then
-            k6 run --vus 2 --duration 30s infra/k6/smoke.js
-          else
-            echo "::notice::No k6 smoke test found at infra/k6/smoke.js, skipping"
-          fi
+          mkdir -p k6-results
+          k6 run --vus 2 --duration 30s --out json=k6-results/smoke.json tests/load/smoke.js
         env:
           K6_BASE_URL: ${{ vars.K6_BASE_URL || 'http://localhost:8080' }}
+
+      - name: Upload k6 smoke results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-smoke-results
+          path: k6-results/smoke.json
+          retention-days: 14
 
   # ==========================================================================
   # SAST — Static Application Security Testing (P3.1.3)
