@@ -356,7 +356,8 @@ test-load-smoke: ## Run k6 smoke load test (max 2 VUs, 30s)
 test-load-smoke-report: ## Run k6 smoke load test and save JSON report
 	@mkdir -p tests/load/reports
 	@ts=$$(date +%Y%m%d%H%M%S); \
-	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/smoke-$$ts.summary.json --out json=tests/load/reports/smoke-$$ts.json tests/load/smoke.js
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/smoke-$$ts.summary.json --out json=tests/load/reports/smoke-$$ts.json tests/load/smoke.js; \
+	node tests/load/generate-report.mjs tests/load/reports/smoke-$$ts.summary.json tests/load/reports/smoke-$$ts.json tests/load/reports/smoke-$$ts.html
 
 .PHONY: test-load-5vu
 test-load-5vu: ## Run k6 load test with 5 concurrent users (3min, validates basic concurrency)
@@ -374,13 +375,15 @@ test-load: ## Run k6 average load test (50 VUs, 5min)
 test-load-report: ## Run k6 load test and save JSON report
 	@mkdir -p tests/load/reports
 	@ts=$$(date +%Y%m%d%H%M%S); \
-	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/average-$$ts.summary.json --out json=tests/load/reports/average-$$ts.json tests/load/average.js
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/average-$$ts.summary.json --out json=tests/load/reports/average-$$ts.json tests/load/average.js; \
+	node tests/load/generate-report.mjs tests/load/reports/average-$$ts.summary.json tests/load/reports/average-$$ts.json tests/load/reports/average-$$ts.html
 
 .PHONY: test-load-5vu-report
 test-load-5vu-report: ## Run k6 5-VU test and save JSON report
 	@mkdir -p tests/load/reports
 	@ts=$$(date +%Y%m%d%H%M%S); \
-	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/five-users-$$ts.summary.json --out json=tests/load/reports/five-users-$$ts.json tests/load/five-users.js
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/five-users-$$ts.summary.json --out json=tests/load/reports/five-users-$$ts.json tests/load/five-users.js; \
+	node tests/load/generate-report.mjs tests/load/reports/five-users-$$ts.summary.json tests/load/reports/five-users-$$ts.json tests/load/reports/five-users-$$ts.html
 
 # ============================================================================
 # Database
@@ -607,7 +610,8 @@ test-load-stress:
 test-load-stress-report:
 	@mkdir -p tests/load/reports
 	@ts=$$(date +%Y%m%d%H%M%S); \
-	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/stress-$$ts.summary.json --out json=tests/load/reports/stress-$$ts.json tests/load/stress.js
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/stress-$$ts.summary.json --out json=tests/load/reports/stress-$$ts.json tests/load/stress.js; \
+	node tests/load/generate-report.mjs tests/load/reports/stress-$$ts.summary.json tests/load/reports/stress-$$ts.json tests/load/reports/stress-$$ts.html
 
 .PHONY: test-resilience-ollama
 test-resilience-ollama: ## Run Ollama fallback resilience test
