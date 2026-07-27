@@ -1,6 +1,6 @@
 # AtlasOps AI — Status do Projeto
 
-> **Última atualização:** 2026-07-19  
+> **Última atualização:** 2026-07-27  
 > **Versão:** 0.1.0-SNAPSHOT  
 > **Fase:** P0 (MVP Foundation) — ~75% completo  
 > **Próximo milestone:** Completar testes e integração E2E
@@ -154,8 +154,8 @@ AtlasOps AI é um CRM multi-tenant com análise de documentos via IA local (Olla
 
 ### 🔄 W5/W6 Quality Enforcement Status
 
-- **W5 Runtime Resilience**: mostly in place. Circuit breaker baseline, dedicated `resilienceTest`, operator runbook, and initial fault-injection coverage are present; additional outage suites for PostgreSQL, Redis and OpenSearch are still pending.
-- **W6 Performance Evidence**: mostly in place. k6 scenarios, CI smoke execution, nightly average test, JSON artifact targets, and documented metadata/threshold inputs exist; HTML reporting and frontend performance evidence are still pending.
+- **W5 Runtime Resilience**: mostly in place. Circuit breaker baseline, dedicated `resilienceTest`, operator runbook, CI routing, and initial fault-injection coverage are present; additional outage suites for PostgreSQL, Redis and OpenSearch are still pending.
+- **W6 Performance Evidence**: mostly in place. k6 scenarios, CI smoke execution, nightly average test, JSON + HTML artifact targets, and documented metadata/threshold inputs exist; frontend performance evidence is still pending.
 
 ### 🟢 Baixa Prioridade (Nice-to-have P0)
 

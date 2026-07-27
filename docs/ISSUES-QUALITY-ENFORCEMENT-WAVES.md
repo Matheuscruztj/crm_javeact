@@ -126,11 +126,11 @@ Each issue group maps to one wave and one or more task plans under [`docs/task-p
 - `tests/load/smoke.js`, `tests/load/average.js`, `tests/load/stress.js` and `tests/load/five-users.js` already provide the scenario layout.
 - `Makefile` exposes `test-load-smoke`, `test-load-5vu`, `test-load`, `test-load-report`, `test-load-5vu-report` and `test-load-stress`.
 - `.github/workflows/ci.yml` runs the smoke scenario on push to `main` and uploads a JSON artifact.
-- `.github/workflows/nightly.yml` runs the average load scenario and uploads the result artifact.
+- `.github/workflows/nightly.yml` runs the average load scenario and uploads JSON + HTML artifacts.
+- `tests/load/generate-report.mjs` renders a lightweight HTML performance report from k6 summary output.
 
 ### 3.6.2 Remaining gaps
 
-- No explicit HTML report publication for k6 yet.
 - Frontend critical-path performance evidence is still missing a dedicated flow.
 - Release-readiness policy for performance artifacts is still not automated end-to-end.
 
