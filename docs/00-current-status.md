@@ -92,6 +92,9 @@
 - `.github/workflows/ci.yml` now routes `resilienceTest` through a dedicated `resilience-tests` job on the main quality pipeline.
 - `backend/app-boot/src/test/java/com/atlasops/boot/resilience/MinioResilienceIntegrationTest.java` and `backend/ai/src/test/java/com/atlasops/ai/infrastructure/OllamaAIAdapterResilienceTest.java` add fault-injection and deterministic fallback coverage, with the Ollama path validated and the MinIO/Testcontainers path still being stabilized in this environment.
 - `backend/search/src/test/java/com/atlasops/search/infrastructure/PostgresFullTextSearchAdapterResilienceTest.java`, `backend/search/src/test/java/com/atlasops/search/infrastructure/OpenSearchAdapterResilienceTest.java` and `backend/notifications/src/test/java/com/atlasops/notifications/infrastructure/RedisSSEEventStoreResilienceTest.java` add explicit failure-path coverage for PostgreSQL, OpenSearch and Redis-backed SSE replay.
+- `backend/notifications/src/test/java/com/atlasops/notifications/infrastructure/SmtpEmailSenderAdapterResilienceTest.java` and `backend/integrations/src/test/java/com/atlasops/integrations/infrastructure/RestIntegrationAdapterResilienceTest.java` cover SMTP and external REST failure handling.
+- `backend/search/src/test/java/com/atlasops/search/infrastructure/Neo4jRelationshipAdapterResilienceTest.java`, `backend/analytics/src/test/java/com/atlasops/analytics/infrastructure/TimescaleMetricsAdapterResilienceTest.java`, `backend/analytics/src/test/java/com/atlasops/analytics/infrastructure/ClickHouseAnalyticsAdapterResilienceTest.java` and `backend/approvals/src/test/java/com/atlasops/approvals/infrastructure/EventStoreApprovalAdapterResilienceTest.java` enforce fail-fast behavior for feature-flagged specialized stubs.
+- `infra/scripts/backup.sh`, `infra/scripts/restore.sh` and `infra/scripts/tenant-export.sh` now generate and validate `checksums.sha256` manifests for backup and portability evidence.
 
 ### W6 — Performance and Operational Evidence
 
@@ -108,7 +111,7 @@
 
 ### Remaining Gaps
 
-- Fault injection with Toxiproxy + Testcontainers is present for MinIO and Ollama, and explicit failure-path coverage now exists for PostgreSQL, Redis and OpenSearch adapters; broader integration outage suites can still be expanded.
+- Fault injection with Toxiproxy + Testcontainers is present for MinIO and Ollama, and explicit failure-path coverage now exists for PostgreSQL, Redis, SMTP, OpenSearch, REST integrations and specialized feature-flagged stubs; broader integration outage suites can still be expanded.
 - Frontend critical-path load evidence is still lightweight and can be expanded into a CI-gated flow.
 
 ---

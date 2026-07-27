@@ -135,6 +135,13 @@ Tasks:
 
 Exit: transactional integrity remains correct and degradation is documented.
 
+### 4.1 Current implementation evidence
+
+- `backend/app-boot/src/test/java/com/atlasops/boot/resilience/MinioResilienceIntegrationTest.java` and `backend/ai/src/test/java/com/atlasops/ai/infrastructure/OllamaAIAdapterResilienceTest.java` cover MinIO and Ollama fallback behavior.
+- `backend/search/src/test/java/com/atlasops/search/infrastructure/PostgresFullTextSearchAdapterResilienceTest.java`, `backend/search/src/test/java/com/atlasops/search/infrastructure/OpenSearchAdapterResilienceTest.java` and `backend/notifications/src/test/java/com/atlasops/notifications/infrastructure/RedisSSEEventStoreResilienceTest.java` cover PostgreSQL, OpenSearch and Redis failure paths.
+- `backend/notifications/src/test/java/com/atlasops/notifications/infrastructure/SmtpEmailSenderAdapterResilienceTest.java` and `backend/integrations/src/test/java/com/atlasops/integrations/infrastructure/RestIntegrationAdapterResilienceTest.java` cover SMTP and external REST failure handling.
+- `backend/search/src/test/java/com/atlasops/search/infrastructure/Neo4jRelationshipAdapterResilienceTest.java`, `backend/analytics/src/test/java/com/atlasops/analytics/infrastructure/TimescaleMetricsAdapterResilienceTest.java`, `backend/analytics/src/test/java/com/atlasops/analytics/infrastructure/ClickHouseAnalyticsAdapterResilienceTest.java` and `backend/approvals/src/test/java/com/atlasops/approvals/infrastructure/EventStoreApprovalAdapterResilienceTest.java` enforce fail-fast behavior for feature-flagged specialized stubs.
+
 ---
 
 ## 5. Wave P3.3 — Backup, restore and tenant operations
@@ -168,6 +175,13 @@ Excluded:
 - restore any arbitrary aggregate.
 
 Exit: an isolated restore passes automated validation.
+
+### 5.1 Current implementation evidence
+
+- `infra/scripts/backup.sh` emits `checksums.sha256` alongside the backup manifest and PostgreSQL dump.
+- `infra/scripts/restore.sh` validates `checksums.sha256` before any restore action and still supports `--dry-run`.
+- `infra/scripts/tenant-export.sh` emits `checksums.sha256` for CSV exports and mirrored object-storage files.
+- `docs/runbooks/OPERATIONS-RUNBOOK.md` documents the restore-validation and portability evidence flow.
 
 ---
 
@@ -208,6 +222,13 @@ Outputs:
 
 Exit: thresholds pass or have expiring approved exceptions.
 
+### 6.1 Current implementation evidence
+
+- `tests/load/generate-report.mjs` converts k6 summaries into a lightweight HTML report.
+- `Makefile` report targets emit raw JSON, `summary-export`, and HTML artifacts for the smoke and average scenarios.
+- `.github/workflows/nightly.yml` stores the generated performance artifacts for later comparison.
+- `frontend/tests/performance/critical-path.mjs` records frontend route-load evidence for the critical path.
+
 ---
 
 ## 7. Wave P3.5 — Test reliability and mutation
@@ -223,6 +244,11 @@ Tasks:
 - slow-test report.
 
 Exit: critical tests are deterministic and no critical test is quarantined.
+
+### 7.1 Current implementation evidence
+
+- The resilience-focused test additions around PostgreSQL, Redis, SMTP, OpenSearch, REST integrations, Neo4j, TimescaleDB, ClickHouse and EventStoreDB reduce the need for quarantines on fragile external dependencies.
+- The existing `make verify` and targeted module tests provide a deterministic baseline for repeated execution and future flaky-test detection.
 
 ---
 
@@ -252,6 +278,12 @@ Search-projection freshness
 ```
 
 Exit: a demo failure can be diagnosed from evidence.
+
+### 8.1 Current implementation evidence
+
+- `docs/STATUS.md` and `docs/00-current-status.md` now summarize W5 and W6 evidence together with the remaining gaps.
+- The existing Prometheus/Grafana stack already covers job failures, AI fallback, ledger tampering and SLO-oriented health checks.
+- The runbook work establishes the operational baseline needed for the remaining dashboards and alert definitions.
 
 ---
 

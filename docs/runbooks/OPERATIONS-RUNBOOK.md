@@ -300,6 +300,11 @@ Minimum set:
 - version and migration metadata.
 
 OpenSearch and Neo4j are rebuildable, although optional backups may improve recovery time.
+Local backup and portability scripts now also emit checksum manifests:
+
+- `infra/scripts/backup.sh` writes `checksums.sha256` next to the PostgreSQL dump and mirrored objects;
+- `infra/scripts/restore.sh` validates `checksums.sha256` before restoring;
+- `infra/scripts/tenant-export.sh` writes `checksums.sha256` for tenant exports.
 
 ---
 
@@ -322,6 +327,7 @@ Validate:
 - smoke test.
 
 Use an isolated environment.
+If `checksums.sha256` exists, validation must fail before data restoration when any file hash differs.
 
 ---
 
@@ -340,6 +346,7 @@ Minimum:
 - audit references.
 
 Export must be authorized, audited, legal-hold aware, versioned and hashed.
+The portable export directory should retain `manifest.json` and `checksums.sha256` together.
 
 Online tenant migration is excluded.
 
