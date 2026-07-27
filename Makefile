@@ -188,10 +188,30 @@ verify: ## Run all quality gates in sequence (format → lint → compile → te
 	@echo ""
 	@echo "==> All quality gates passed!"
 
+.PHONY: verify-local-fast
+verify-local-fast: verify-fast verify-frontend-fast ## Fast local verification across backend and frontend
+
+.PHONY: verify-precommit
+verify-precommit: format-check lint ## Run the minimal blocking checks for a pre-commit hook
+	@echo "==> Pre-commit verification passed!"
+
+.PHONY: verify-prepush
+verify-prepush: verify ## Run the blocking backend quality gates intended before push
+	@echo "==> Pre-push verification passed!"
+
+.PHONY: verify-contracts
+verify-contracts: ## Placeholder for contract verification gates (added in the W3 wave)
+	@echo "==> Contract verification gates are not yet defined in Makefile."
+	@echo "==> Use the CI contract job once it is introduced."
+
+.PHONY: verify-frontend-fast
+verify-frontend-fast: ## Fast local frontend verification (format + lint + typecheck)
+	@cd frontend && pnpm verify:fast
+
 .PHONY: verify-fast
 verify-fast: ## Run fast quality gates only (skip SpotBugs, coverage, slow tests)
 	@echo "==> [FAST MODE] Running quick quality gates..."
-	@$(GRADLEW) $(GRADLE_OPTS) verifyFast
+	@$(GRADLEW) $(GRADLE_OPTS) --no-configuration-cache verifyFast
 	@echo "==> Fast verification passed!"
 
 .PHONY: verify-full
@@ -219,7 +239,7 @@ test-integration: ## Run integration tests (requires Docker)
 
 .PHONY: test-all
 test-all: ## Run all tests (unit + property + integration)
-	@docker compose -f $(COMPOSE_FILE) ps --quiet > /dev/null 2>&1 || { echo "WARNING: Docker not running, skipping integration tests."; $(GRADLEW) $(GRADLE_OPTS) test testProperty; exit 0; }
+	@docker compose -f $(COMPOSE_FILE) ps --quiet > /dev/null 2>&1 || { echo "ERROR: Docker Compose services not running. Run 'make compose-up' first."; exit 1; }
 	@$(GRADLEW) $(GRADLE_OPTS) test testProperty integrationTest
 
 .PHONY: build
@@ -304,9 +324,13 @@ compose-event-sourcing: ## Start core + event sourcing services (EventStoreDB)
 compose-observability: ## Start core + observability services (Prometheus, Grafana, Loki, Tempo, MailHog)
 	docker compose -f $(COMPOSE_FILE) --profile observability up -d
 
+.PHONY: compose-resilience
+compose-resilience: ## Start core + resilience services (Toxiproxy)
+	docker compose -f $(COMPOSE_FILE) --profile resilience up -d
+
 .PHONY: compose-all
 compose-all: ## Start all services (all profiles)
-	docker compose -f $(COMPOSE_FILE) --profile core --profile advanced --profile analytics --profile event-sourcing --profile observability up -d
+	docker compose -f $(COMPOSE_FILE) --profile core --profile advanced --profile analytics --profile event-sourcing --profile observability --profile resilience up -d
 
 # ============================================================================
 # Test Infrastructure (Functional + Load)
@@ -326,29 +350,37 @@ test-functional-report: ## Generate and open Playwright HTML report
 
 .PHONY: test-load-smoke
 test-load-smoke: ## Run k6 smoke load test (max 2 VUs, 30s)
-	k6 run tests/load/smoke.js
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} tests/load/smoke.js
+
+.PHONY: test-load-smoke-report
+test-load-smoke-report: ## Run k6 smoke load test and save JSON report
+	@mkdir -p tests/load/reports
+	@ts=$$(date +%Y%m%d%H%M%S); \
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/smoke-$$ts.summary.json --out json=tests/load/reports/smoke-$$ts.json tests/load/smoke.js
 
 .PHONY: test-load-5vu
 test-load-5vu: ## Run k6 load test with 5 concurrent users (3min, validates basic concurrency)
-	k6 run tests/load/five-users.js
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} tests/load/five-users.js
 
 .PHONY: test-load-5vu-with-auth
 test-load-5vu-with-auth: ## Run k6 5-VU test with auth token (export K6_AUTH_TOKEN first)
-	k6 run --env K6_AUTH_TOKEN=$(K6_AUTH_TOKEN) --env K6_TENANT_ID=$(K6_TENANT_ID) tests/load/five-users.js
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --env K6_AUTH_TOKEN=$(K6_AUTH_TOKEN) --env K6_TENANT_ID=$(K6_TENANT_ID) tests/load/five-users.js
 
 .PHONY: test-load
 test-load: ## Run k6 average load test (50 VUs, 5min)
-	k6 run tests/load/average.js
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} tests/load/average.js
 
 .PHONY: test-load-report
 test-load-report: ## Run k6 load test and save JSON report
 	@mkdir -p tests/load/reports
-	k6 run --out json=tests/load/reports/average-$(shell date +%Y%m%d%H%M%S).json tests/load/average.js
+	@ts=$$(date +%Y%m%d%H%M%S); \
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/average-$$ts.summary.json --out json=tests/load/reports/average-$$ts.json tests/load/average.js
 
 .PHONY: test-load-5vu-report
-test-load-5vu-report: ## Run k6 5-VU test and save HTML report
+test-load-5vu-report: ## Run k6 5-VU test and save JSON report
 	@mkdir -p tests/load/reports
-	k6 run --out json=tests/load/reports/five-users-$(shell date +%Y%m%d%H%M%S).json tests/load/five-users.js
+	@ts=$$(date +%Y%m%d%H%M%S); \
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/five-users-$$ts.summary.json --out json=tests/load/reports/five-users-$$ts.json tests/load/five-users.js
 
 # ============================================================================
 # Database
@@ -567,7 +599,23 @@ restore-validate:
 
 ## Stress test: 200 VUs, 10min ramp-up (P3.4)
 test-load-stress:
-	k6 run tests/load/stress.js
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} tests/load/stress.js
+
+.PHONY: test-load-stress-report
+
+## Stress test with JSON artifact output
+test-load-stress-report:
+	@mkdir -p tests/load/reports
+	@ts=$$(date +%Y%m%d%H%M%S); \
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/stress-$$ts.summary.json --out json=tests/load/reports/stress-$$ts.json tests/load/stress.js
+
+.PHONY: test-resilience-ollama
+test-resilience-ollama: ## Run Ollama fallback resilience test
+	@$(GRADLEW) $(GRADLE_OPTS) :backend:ai:test --tests com.atlasops.ai.infrastructure.OllamaAIAdapterResilienceTest
+
+.PHONY: test-resilience-minio
+test-resilience-minio: ## Run MinIO outage resilience test
+	@$(GRADLEW) $(GRADLE_OPTS) :backend:app-boot:resilienceTest --tests com.atlasops.boot.resilience.MinioResilienceIntegrationTest
 
 ## ─────────────────────────────────────────────────────────────────────────────
 ## Ledger Verification (P2.5, P3.13)

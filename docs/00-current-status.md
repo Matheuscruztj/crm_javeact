@@ -80,6 +80,37 @@
 
 ---
 
+## 🔄 W5/W6 Evidência Não Funcional
+
+### W5 — Runtime Resilience
+
+- `backend/app-boot/build.gradle.kts` already defines `resilienceTest` as a separate verification task.
+- `backend/app-boot/src/main/java/com/atlasops/boot/config/ResilienceConfig.java` registers circuit breaker metrics.
+- `backend/app-boot/src/test/java/com/atlasops/boot/config/ResilienceConfigResilienceTest.java` covers the baseline behavior.
+- `docs/runbooks/RESILIENCE-TESTING.md` documents the dependency-failure matrix and expected degradation.
+- `ResilienceConfigResilienceTest` now exercises open/recover state transitions for the circuit breaker baseline.
+- `backend/app-boot/src/test/java/com/atlasops/boot/resilience/MinioResilienceIntegrationTest.java` and `backend/ai/src/test/java/com/atlasops/ai/infrastructure/OllamaAIAdapterResilienceTest.java` add fault-injection and deterministic fallback coverage, with the Ollama path validated and the MinIO/Testcontainers path still being stabilized in this environment.
+- `backend/search/src/test/java/com/atlasops/search/infrastructure/OpenSearchAdapterTest.java` and `backend/auth/src/test/java/com/atlasops/auth/infrastructure/RedisRateLimiterTest.java` cover fail-closed behavior for dependency outages.
+
+### W6 — Performance and Operational Evidence
+
+- `tests/load/smoke.js`, `tests/load/average.js`, `tests/load/stress.js` and `tests/load/five-users.js` already exist.
+- `Makefile` exposes `test-load-smoke`, `test-load-5vu`, `test-load`, `test-load-report`, `test-load-5vu-report` and `test-load-stress`.
+- `Makefile` report targets now emit both JSON raw output and k6 `summary-export` artifacts.
+- The k6 scripts accept threshold overrides through env vars, which makes baseline tuning reproducible.
+- `.github/workflows/ci.yml` runs the smoke load test on push to `main`.
+- `.github/workflows/nightly.yml` runs the average load test and stores an artifact.
+- `docs/BUILD-PERFORMANCE.md` records the scenario metadata, threshold inputs and artifact layout used for comparability.
+- `docs/RELEASE-v1.0.0-rc.1.md` now references the load-test report targets as release evidence.
+
+### Remaining Gaps
+
+- Fault injection with Toxiproxy + Testcontainers is present for MinIO and Ollama, but PostgreSQL, Redis and OpenSearch outage suites still need dedicated coverage.
+- k6 reporting is still mostly JSON artifact based; there is no explicit HTML publication or release gate consumption yet.
+- Frontend critical-path load evidence is still not documented in a dedicated flow.
+
+---
+
 ## 🔧 Environment Requirements
 
 | Component  | Version       | Notes                                   |

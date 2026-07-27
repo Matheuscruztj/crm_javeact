@@ -1,7 +1,7 @@
 # Resilience Testing Runbook
 
 > **Validates:** P3.2 — Dependency failure and circuit breaker tests  
-> **Prerequisites:** `make compose-up` running
+> **Prerequisites:** `make compose-up` running for standard checks; `make compose-resilience` running for Toxiproxy-backed fault injection
 
 ---
 
@@ -38,6 +38,19 @@ curl -H "Authorization: Bearer $TOKEN" http://localhost:8080/api/v1/customers
 docker compose start postgres
 ```
 
+### P3.2.3 — MinIO Failure via Toxiproxy
+
+```bash
+# 1. Start the resilience stack
+make compose-resilience
+
+# 2. Run the integration test
+make test-resilience-minio
+
+# Expected: outage is detected, checksum succeeds before failure, delete fails while toxic is active,
+# and recovery works after toxic removal.
+```
+
 ### P3.2.4 — Ollama Fallback Verification
 
 ```bash
@@ -71,5 +84,7 @@ The following integration tests in `app-boot` cover circuit breaker behavior:
 - `AuthIntegrationTest` — verifies 401 on missing token
 - `ApprovalsIntegrationTest` — verifies cross-tenant 403
 - `AiIntegrationTest` — verifies AI endpoint requires auth
+- `MinioResilienceIntegrationTest` — verifies Toxiproxy outage and recovery for S3-compatible storage
+- `OllamaAIAdapterResilienceTest` — verifies deterministic fallback when the LLM provider is unavailable
 
-Full dependency-failure tests require Testcontainers with `withNetworkMode("none")` — planned for P3.2 automation sprint.
+Full dependency-failure tests now use Docker Compose plus Testcontainers for local orchestration and controlled fault injection.

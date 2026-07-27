@@ -165,6 +165,25 @@ options.forkOptions.jvmArgs = listOf("-Xmx1g")
 | `make verify`      | Todos os quality gates         | ~5min          |
 | `make verify-full` | Gates + integration + coverage | ~15min         |
 
+### Load Test Evidence
+
+| Comando                  | Descrição                                          | Artefatos |
+| ------------------------ | -------------------------------------------------- | --------- |
+| `make test-load-smoke-report` | Smoke load com baseline configurável e JSON summary | `*.json`, `*.summary.json` |
+| `make test-load-report`       | Average load com baseline configurável e JSON summary | `*.json`, `*.summary.json` |
+| `make test-load-5vu-report`   | 5-VU scenario com baseline configurável e JSON summary | `*.json`, `*.summary.json` |
+| `make test-load-stress-report`| Stress scenario com baseline configurável e JSON summary | `*.json`, `*.summary.json` |
+
+### Environment Metadata
+
+To compare runs reliably, each execution should capture:
+
+- `K6_BASE_URL`
+- `K6_AUTH_TOKEN` presence, not value
+- `K6_TENANT_ID`
+- threshold overrides such as `K6_P95_MS`, `K6_P99_MS`, `K6_ERROR_RATE`
+- scenario name and timestamp through the generated report filenames
+
 ---
 
 ## Benchmarks de Performance

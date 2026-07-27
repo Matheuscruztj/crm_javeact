@@ -7,6 +7,7 @@
 #   analytics      - core + TimescaleDB, ClickHouse
 #   event-sourcing - core + EventStoreDB
 #   observability  - core + Prometheus, Grafana, Loki, Tempo, MailHog
+#   resilience     - core + Toxiproxy for fault injection
 #   quality        - SonarQube + SonarQube DB (code quality analysis)
 #
 # Usage:
@@ -23,8 +24,10 @@ services:
   # ===========================================================================
 
   postgres:
-    image: pgvector/pgvector:pg16
-    # Includes pgvector extension; PostGIS can be added via init scripts
+    build:
+      context: .
+      dockerfile: infra/docker/postgres-postgis-pgvector/Dockerfile
+    image: atlasops/postgres-postgis-pgvector:16
     container_name: atlasops-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-atlasops}
@@ -85,19 +88,28 @@ services:
 
   backend-api:
     build:
-      context: ./backend/app-boot
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/app-boot/Dockerfile
     image: atlasops/backend-api:latest
     container_name: atlasops-backend-api
     environment:
+      APP_ENV: local
+      APP_PORT: 8080
+      DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-atlasops}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-atlasops}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-atlasops}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-atlasops_local}
+      REDIS_URL: redis://redis:6379
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
+      OBJECT_STORAGE_ENDPOINT: http://minio:9000
+      OBJECT_STORAGE_BUCKET: ${OBJECT_STORAGE_BUCKET:-atlasops-local}
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
+      JWT_ISSUER: ${JWT_ISSUER:-atlasops-local}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-atlasops-api}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
     ports:
       - "${APP_PORT:-8080}:8080"
     networks:
@@ -110,15 +122,16 @@ services:
       minio:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
       interval: 10s
       timeout: 5s
+      start_period: 60s
       retries: 12
 
   worker:
     build:
-      context: ./backend/worker
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/worker/Dockerfile
     image: atlasops/worker:latest
     container_name: atlasops-worker
     environment:
@@ -468,6 +481,28 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:8025"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  toxiproxy:
+    image: ghcr.io/shopify/toxiproxy:2.5.0
+    container_name: atlasops-toxiproxy
+    profiles: ["resilience"]
+    ports:
+      - "${TOXIPROXY_PROXY_PORT:-8666}:8666"
+      - "${TOXIPROXY_CONTROL_PORT:-8474}:8474"
+    networks:
+      - atlasops-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8474/version"]
       interval: 10s
       timeout: 5s
       retries: 12

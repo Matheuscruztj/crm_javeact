@@ -100,6 +100,11 @@ AtlasOps AI é um CRM multi-tenant com análise de documentos via IA local (Olla
 - [x] **Test Parallelization** — Testes unitários 60% mais rápidos (~1-2min)
 - [x] **Novos comandos de teste** (`make test-fast`, `make test-property`, `make verify-fast`)
 - [x] **Configuration Cache** e **Parallel Execution** no Gradle
+- [x] **Quality Baseline W1** — `verify-local-fast`, `verify-frontend-fast`, `verify-precommit`, `verify-prepush`, `verify-contracts`
+- [x] **Frontend Formatting Gate** — `prettier --check` integrado à CI e ao fluxo local
+- [x] **ArchUnit CI Enforcement** — remoção do bypass `|| true`
+- [x] **Frontend Quality Check** — `pnpm --dir frontend run verify:fast`, `lint`, `typecheck` e `build` verdes
+- [x] **Backend Fast Path** — `make verify-local-fast` verde após estabilização de testes e contratos
 
 ### Features de Segurança
 
@@ -146,6 +151,11 @@ AtlasOps AI é um CRM multi-tenant com análise de documentos via IA local (Olla
 - [ ] **Approval Ledger** — Append-only hash chain para auditoria
 - [ ] **Prompt Version Registry** — Versionamento de prompts de IA
 - [ ] **Operations Job UI** — Interface para retry/cancel de jobs
+
+### 🔄 W5/W6 Quality Enforcement Status
+
+- **W5 Runtime Resilience**: mostly in place. Circuit breaker baseline, dedicated `resilienceTest`, operator runbook, and initial fault-injection coverage are present; additional outage suites for PostgreSQL, Redis and OpenSearch are still pending.
+- **W6 Performance Evidence**: mostly in place. k6 scenarios, CI smoke execution, nightly average test, JSON artifact targets, and documented metadata/threshold inputs exist; HTML reporting and frontend performance evidence are still pending.
 
 ### 🟢 Baixa Prioridade (Nice-to-have P0)
 

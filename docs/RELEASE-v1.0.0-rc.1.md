@@ -99,7 +99,8 @@ make test-functional
 - [ ] `make seed-reset && make seed-demo` — seed completes without errors
 - [ ] `make verify` — all quality gates pass
 - [ ] `make test-functional` — all Playwright journeys pass
-- [ ] `make test-load-smoke` — p95 < 500ms, error rate 0%
+- [ ] `make test-load-smoke-report` — smoke baseline captured with JSON summary and configurable thresholds
+- [ ] `make test-load-5vu-report` — 5-VU baseline captured with JSON summary and configurable thresholds
 - [ ] `make verify-ledger` — no tampering detected
 - [ ] All 12 PROJECT-SCOPE success criteria verified (see PROJECT-SCOPE.md)
 
