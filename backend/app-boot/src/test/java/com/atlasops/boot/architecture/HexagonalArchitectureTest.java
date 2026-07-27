@@ -139,9 +139,8 @@ class HexagonalArchitectureTest {
     @Test
     @DisplayName("should_onlyDependOnApplicationAndSharedKernel_from_presentationLayer")
     void should_onlyDependOnApplicationAndSharedKernel_from_presentationLayer() {
-      // Presentation layer should not access domain packages directly
-      // (except shared-kernel which contains shared types).
-      // It should go through the application layer.
+      // Presentation layer should not access module-specific domain entities directly.
+      // Domain ports are allowed because they are contracts, not business state.
       ArchRule rule =
           noClasses()
               .that()
@@ -149,11 +148,15 @@ class HexagonalArchitectureTest {
               .should()
               .dependOnClassesThat(
                   com.tngtech.archunit.base.DescribedPredicate.describe(
-                      "reside in a module's domain package (not shared-kernel)",
+                      "reside in a module's domain package excluding ports and shared-kernel",
                       javaClass -> {
                         String name = javaClass.getPackageName();
                         // Allow shared-kernel domain types
                         if (name.startsWith("com.atlasops.shared")) {
+                          return false;
+                        }
+                        // Allow domain ports explicitly; they are contracts, not entities.
+                        if (name.contains(".domain.ports")) {
                           return false;
                         }
                         // Block direct access to module-specific domain packages

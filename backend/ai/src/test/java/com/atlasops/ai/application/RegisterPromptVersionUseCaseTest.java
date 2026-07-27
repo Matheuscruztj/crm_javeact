@@ -32,12 +32,12 @@ class RegisterPromptVersionUseCaseTest {
     @BeforeEach
     void setUp() {
         useCase = new RegisterPromptVersionUseCase(repository, idGenerator, clock);
-        when(idGenerator.generate()).thenReturn("pt-new");
-        when(clock.now()).thenReturn(NOW);
     }
 
     @Test
     void should_assignVersion1_when_noExistingVersions() {
+        when(idGenerator.generate()).thenReturn("pt-new");
+        when(clock.now()).thenReturn(NOW);
         when(repository.findAllByName("doc-analysis")).thenReturn(List.of());
         when(repository.save(any())).thenAnswer(i -> i.getArgument(0));
 
@@ -49,6 +49,8 @@ class RegisterPromptVersionUseCaseTest {
 
     @Test
     void should_incrementVersion_when_existingVersionsPresent() {
+        when(idGenerator.generate()).thenReturn("pt-new");
+        when(clock.now()).thenReturn(NOW);
         PromptTemplate existing = new PromptTemplate("pt-001", "doc-analysis", 2,
                 "Old content", false, NOW.minusSeconds(3600));
         when(repository.findAllByName("doc-analysis")).thenReturn(List.of(existing));

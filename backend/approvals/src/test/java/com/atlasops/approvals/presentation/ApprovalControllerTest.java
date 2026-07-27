@@ -85,10 +85,11 @@ class ApprovalControllerTest {
     @Test
     void should_rejectDocument_when_reasonProvided() {
         Approval rejected = Approval.createPending("appr-001", TENANT, "doc-001", NOW);
-        rejected.reject("analyst-001", "ANALYST", "Missing signature and date information", NOW);
+        String reason = "Missing signature and date information";
+        rejected.reject("analyst-001", reason, "corr-001", NOW);
         when(rejectDocumentUseCase.execute(any())).thenReturn(rejected);
 
-        var request = new RejectApprovalRequest("Missing signature and date information");
+        var request = new RejectApprovalRequest(reason);
         ResponseEntity<ApprovalResponse> response =
                 controller.reject(TENANT, "analyst-001", "ANALYST", "corr-001", "appr-001", request);
 
