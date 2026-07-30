@@ -87,8 +87,8 @@ tasks.named<Test>("integrationTest") {
     group = "verification"
     testClassesDirs = sourceSets["test"].output.classesDirs
     classpath = sourceSets["test"].runtimeClasspath
-    filter {
-        includeTestsMatching("*IntegrationTest")
+    useJUnitPlatform {
+        includeTags("integration")
     }
     shouldRunAfter(tasks.named("test"))
     jvmArgs("-Dtestcontainers.reuse.enable=true")

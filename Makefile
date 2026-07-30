@@ -200,9 +200,18 @@ verify-prepush: verify ## Run the blocking backend quality gates intended before
 	@echo "==> Pre-push verification passed!"
 
 .PHONY: verify-contracts
-verify-contracts: ## Placeholder for contract verification gates (added in the W3 wave)
-	@echo "==> Contract verification gates are not yet defined in Makefile."
-	@echo "==> Use the CI contract job once it is introduced."
+verify-contracts: ## Run contract verification gates (OpenAPI export + lint + AsyncAPI validation)
+	@echo "==> Exporting live OpenAPI contract..."
+	@$(GRADLEW) $(GRADLE_OPTS) :backend:app-boot:openApiContractExportTest
+	@echo "==> Linting exported OpenAPI contract..."
+	@command -v npx >/dev/null 2>&1 || { echo "ERROR: npx is required for contract linting."; exit 1; }
+	@npx -y @stoplight/spectral-cli@6.15.0 lint backend/app-boot/build/reports/openapi/openapi.json --ruleset spectral:oas
+	@echo "==> Validating AsyncAPI contract..."
+	@npx -y @asyncapi/cli@2.15.0 validate docs/asyncapi.yaml
+	@echo "==> Contract verification passed!"
+
+.PHONY: test-contract
+test-contract: verify-contracts ## Alias for contract verification gates
 
 .PHONY: verify-frontend-fast
 verify-frontend-fast: ## Fast local frontend verification (format + lint + typecheck)

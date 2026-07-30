@@ -26,11 +26,9 @@ jobs:
         run: |
           mkdir -p k6-results
           k6 run --summary-export=k6-results/average.summary.json --out json=k6-results/average.json tests/load/average.js
-        continue-on-error: true
 
       - name: Generate HTML report
         run: node tests/load/generate-report.mjs k6-results/average.summary.json k6-results/average.json k6-results/average.html
-        continue-on-error: true
 
       - name: Upload k6 results artifact
         uses: actions/upload-artifact@v4
@@ -53,12 +51,7 @@ jobs:
           cache: "gradle"
 
       - name: Run architecture tests
-        run: |
-          ./gradlew test \
-            --tests "*Architecture*" \
-            --tests "*ArchUnit*" \
-            --no-daemon \
-            --continue || true
+        run: ./gradlew test --tests "*Architecture*" --tests "*ArchUnit*" --no-daemon
 
       - name: Upload architecture test results
         uses: actions/upload-artifact@v4
@@ -82,9 +75,7 @@ jobs:
           cache: "gradle"
 
       - name: Run OWASP dependency check
-        run: |
-          ./gradlew dependencyCheckAnalyze --no-daemon || echo "Dependency check completed with warnings"
-        continue-on-error: true
+        run: ./gradlew dependencyCheckAnalyze --no-daemon
 
       - name: Upload dependency report
         uses: actions/upload-artifact@v4
@@ -146,6 +137,7 @@ jobs:
   mutation-testing:
     name: Mutation Testing (PIT)
     runs-on: ubuntu-latest
+    if: ${{ vars.PITEST_ENABLED == 'true' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -157,8 +149,7 @@ jobs:
           cache: "gradle"
 
       - name: Run mutation tests
-        run: |
-          echo "TODO: PIT mutation testing - configure pitest Gradle plugin"
+        run: ./gradlew pitest --no-daemon
 
   # P3.7.1 — SBOM generation (CycloneDX)
   sbom:
