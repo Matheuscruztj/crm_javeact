@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.core.ParameterizedTypeReference;
 
 import java.util.Locale;
 import java.util.Map;
@@ -43,7 +43,6 @@ import java.util.Map;
  *
  * <p>Validates: E2E real flow — zero mocks, real database, real Redis, real JWT
  */
-@Tag("integration")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayName("E2E: Full system flow with real infrastructure (no mocks)")
 class EndToEndFlowIntegrationTest extends AbstractIntegrationTest {
@@ -94,11 +93,11 @@ class EndToEndFlowIntegrationTest extends AbstractIntegrationTest {
                 {"name": "%s"}
                 """.formatted(tenantName);
 
-        ResponseEntity<Map> response = restTemplate.exchange(
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 "/api/v1/tenants",
                 HttpMethod.POST,
                 new HttpEntity<>(body, headers),
-                Map.class);
+                new ParameterizedTypeReference<Map<String, Object>>() {});
 
         // Accept 201 Created or 200 OK depending on security config for this endpoint
         assertThat(response.getStatusCode().value())
@@ -189,8 +188,11 @@ class EndToEndFlowIntegrationTest extends AbstractIntegrationTest {
     @Order(5)
     @DisplayName("Step 5 — Actuator health endpoint must be publicly accessible")
     void step5_should_returnOk_when_healthCheckRequested() {
-        ResponseEntity<Map> response = restTemplate.getForEntity(
-                "/actuator/health", Map.class);
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                "/actuator/health",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Map<String, Object>>() {});
 
         assertThat(response.getStatusCode())
                 .as("Actuator health must return 200 without auth")
@@ -223,8 +225,11 @@ class EndToEndFlowIntegrationTest extends AbstractIntegrationTest {
     @Order(7)
     @DisplayName("Step 7 — OpenAPI v3 docs endpoint must return JSON schema")
     void step7_should_returnOpenApiJson_when_apiDocsRequested() {
-        ResponseEntity<Map> response = restTemplate.getForEntity(
-                "/v3/api-docs", Map.class);
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                "/v3/api-docs",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Map<String, Object>>() {});
 
         assertThat(response.getStatusCode())
                 .as("OpenAPI docs must be accessible")

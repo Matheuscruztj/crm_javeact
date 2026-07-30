@@ -1,6 +1,6 @@
 package com.atlasops.search.infrastructure;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -15,8 +15,8 @@ import org.springframework.data.domain.PageRequest;
 class OpenSearchAdapterResilienceTest {
 
   @Test
-  @DisplayName("should_failFast_when_opensearchFeatureFlagIsEnabled")
-  void should_failFast_when_opensearchFeatureFlagIsEnabled() {
+  @DisplayName("should_fallback_when_opensearchFeatureFlagIsEnabled")
+  void should_fallback_when_opensearchFeatureFlagIsEnabled() {
     SearchIndexPort fallback = mock(SearchIndexPort.class);
     SearchIndexUpdatePort fallbackUpdate = mock(SearchIndexUpdatePort.class);
     FeatureFlagPort flags = mock(FeatureFlagPort.class);
@@ -24,8 +24,13 @@ class OpenSearchAdapterResilienceTest {
 
     OpenSearchAdapter adapter = new OpenSearchAdapter(fallback, fallbackUpdate, flags);
 
-    assertThatThrownBy(() -> adapter.search(SearchQuery.withoutFilter("acme", "tenant-alpha"), PageRequest.of(0, 10)))
-        .isInstanceOf(UnsupportedOperationException.class)
-        .hasMessageContaining("OpenSearch client not yet configured");
+    assertThatCode(
+            () -> adapter.search(SearchQuery.withoutFilter("acme", "tenant-alpha"), PageRequest.of(0, 10)))
+        .doesNotThrowAnyException();
+    assertThatCode(
+            () -> adapter.indexEntity("customer", "customer-1", "Acme Corp", "tenant-alpha"))
+        .doesNotThrowAnyException();
+    assertThatCode(() -> adapter.removeEntity("customer", "customer-1", "tenant-alpha"))
+        .doesNotThrowAnyException();
   }
 }

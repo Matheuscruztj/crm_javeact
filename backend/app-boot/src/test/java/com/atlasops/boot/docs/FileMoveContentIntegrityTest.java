@@ -35,10 +35,10 @@ class FileMoveContentIntegrityTest {
           "docs/architecture/HARNESS-LOOP-ENGINEERING-AND-AGENTS.md",
           "docs/architecture/DATA-ENTITIES-BY-DATABASE.md",
           "docs/diagrams/ARCHITECTURE-DIAGRAMS-C4-MERMAID.md",
-          "docs/task-plans/TASK-PLAN-P0-FOUNDATION-CORE.md",
-          "docs/task-plans/TASK-PLAN-P1-EXPERIENCE-INTEGRATIONS.md",
-          "docs/task-plans/TASK-PLAN-P2-SPECIALIZED-DATA.md",
-          "docs/task-plans/TASK-PLAN-P3-HARDENING-RELEASE.md",
+          "docs/task-plans/README.md",
+          "docs/task-plans/TASK-PLAN-01-CODE-AND-CONFIG.md",
+          "docs/task-plans/TASK-PLAN-02-VALIDATION-AND-CHECKS.md",
+          "docs/task-plans/TASK-PLAN-03-DOCS-AND-ROADMAP-CLEANUP.md",
           "docs/testing/QUALITY-TESTING-CICD.md",
           "docs/runbooks/OPERATIONS-RUNBOOK.md");
 

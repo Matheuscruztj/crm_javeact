@@ -2,8 +2,8 @@ package com.atlasops.boot.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.atlasops.auth.domain.Role;
 import com.atlasops.boot.AbstractIntegrationTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
  *
  * <p>Validates: P0.A.1.6 — Documents integration tests: upload session, storage adapter
  */
-@Tag("integration")
 class DocumentsIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -88,5 +87,38 @@ class DocumentsIntegrationTest extends AbstractIntegrationTest {
         // Either 401 (invalid token) or 403 (valid token, wrong tenant)
         assertThat(response.getStatusCode()).isIn(
                 HttpStatus.UNAUTHORIZED, HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    void should_rejectCrossTenantAccess_when_uploadIsRequestedWithValidJwt() {
+        HttpHeaders headers =
+                authenticatedHeaders("user-alpha", "tenant-alpha", Role.ADMIN, "tenant-beta");
+        headers.set("Content-Type", "application/json");
+
+        String body = """
+                {"filename":"tenant-leak.pdf","contentType":"application/pdf","sizeBytes":1024,"requestId":"req-001"}
+                """;
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/api/v1/documents/upload",
+                HttpMethod.POST,
+                new HttpEntity<>(body, headers),
+                String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    void should_rejectCrossTenantAccess_when_listingDocumentsWithValidJwt() {
+        HttpHeaders headers =
+                authenticatedHeaders("user-alpha", "tenant-alpha", Role.ADMIN, "tenant-beta");
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/api/v1/documents",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 }

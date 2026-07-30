@@ -2,8 +2,8 @@ package com.atlasops.boot.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.atlasops.auth.domain.Role;
 import com.atlasops.boot.AbstractIntegrationTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
  * Integration test: verifies tenant isolation at the API layer.
  * Validates: P0.A.1 - Testcontainers integration tests setup
  */
-@Tag("integration")
 class TenantIsolationIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -50,5 +49,19 @@ class TenantIsolationIntegrationTest extends AbstractIntegrationTest {
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void should_returnForbidden_when_tenantHeaderDoesNotMatchJwt() {
+        HttpHeaders headers =
+                authenticatedHeaders("user-alpha", "tenant-alpha", Role.ADMIN, "tenant-beta");
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/api/v1/customers",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 }

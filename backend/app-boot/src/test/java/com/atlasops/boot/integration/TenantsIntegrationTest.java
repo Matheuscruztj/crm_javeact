@@ -2,8 +2,8 @@ package com.atlasops.boot.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.atlasops.auth.domain.Role;
 import com.atlasops.boot.AbstractIntegrationTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
  *
  * <p>Validates: P0.A.1.3 — Tenants integration tests: CRUD tenant, isolation
  */
-@Tag("integration")
 class TenantsIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -52,5 +51,19 @@ class TenantsIntegrationTest extends AbstractIntegrationTest {
                 "/api/v1/tenants/some-tenant-id", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void should_rejectCrossTenantAccess_when_listingTenantsWithValidJwt() {
+        HttpHeaders headers =
+                authenticatedHeaders("user-alpha", "tenant-alpha", Role.ADMIN, "tenant-beta");
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/api/v1/tenants",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 }

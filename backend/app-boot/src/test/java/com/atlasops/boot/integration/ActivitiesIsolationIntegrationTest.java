@@ -2,8 +2,8 @@ package com.atlasops.boot.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.atlasops.auth.domain.Role;
 import com.atlasops.boot.AbstractIntegrationTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
  *
  * <p>Validates: P0.A.2.5 — Isolamento de activity feed entre tenants
  */
-@Tag("integration")
 class ActivitiesIsolationIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -66,5 +65,19 @@ class ActivitiesIsolationIntegrationTest extends AbstractIntegrationTest {
                 String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+    }
+
+    @Test
+    void should_rejectCrossTenantAccess_when_activityFeedUsesValidJwt() {
+        HttpHeaders headers =
+                authenticatedHeaders("user-alpha", "tenant-alpha", Role.ADMIN, "tenant-beta");
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/api/v1/activities",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 }

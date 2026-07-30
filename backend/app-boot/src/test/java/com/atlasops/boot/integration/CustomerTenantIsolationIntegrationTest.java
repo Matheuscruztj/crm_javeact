@@ -2,8 +2,8 @@ package com.atlasops.boot.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.atlasops.auth.domain.Role;
 import com.atlasops.boot.AbstractIntegrationTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
  *
  * <p>Validates: P0.A.2.1 — Tenant A cannot access customers of Tenant B
  */
-@Tag("integration")
 class CustomerTenantIsolationIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -51,5 +50,19 @@ class CustomerTenantIsolationIntegrationTest extends AbstractIntegrationTest {
 
         assertThat(response.getStatusCode()).isIn(
                 HttpStatus.UNAUTHORIZED, HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    void should_returnForbidden_when_customerTenantHeaderDoesNotMatchJwt() {
+        HttpHeaders headers =
+                authenticatedHeaders("user-alpha", "tenant-alpha", Role.ADMIN, "tenant-beta");
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/api/v1/customers",
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 }

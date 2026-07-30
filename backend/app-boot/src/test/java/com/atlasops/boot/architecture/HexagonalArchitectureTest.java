@@ -10,6 +10,7 @@ import com.tngtech.archunit.library.dependencies.SlicesRuleDefinition;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.Test;
  *
  * <p>Validates: Requirements 2.4, 2.5, 2.7, 2.8, 10.2
  */
+@Tag("architecture")
 class HexagonalArchitectureTest {
 
   private static JavaClasses allClasses;
@@ -178,9 +180,22 @@ class HexagonalArchitectureTest {
       // No module should access another module's infrastructure package directly.
       // Modules should interact via ports/interfaces in the domain layer.
       String[] modules = {
-        "auth", "tenants", "users", "customers", "documents",
-        "requests", "pipeline", "tasks", "workflows", "ai",
-        "analytics", "audit"
+        "auth",
+        "tenants",
+        "users",
+        "customers",
+        "documents",
+        "requests",
+        "approvals",
+        "activities",
+        "notifications",
+        "integrations",
+        "search",
+        "imports",
+        "operations",
+        "ai",
+        "analytics",
+        "audit"
       };
 
       for (String sourceModule : modules) {

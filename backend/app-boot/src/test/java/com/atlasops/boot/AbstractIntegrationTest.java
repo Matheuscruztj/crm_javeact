@@ -1,12 +1,16 @@
 package com.atlasops.boot;
 
-import org.junit.jupiter.api.Tag;
+import com.atlasops.auth.domain.Role;
+import com.atlasops.auth.domain.ports.JwtTokenPort;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.junit.jupiter.api.Tag;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
@@ -17,14 +21,18 @@ import org.testcontainers.utility.DockerImageName;
  * Base class for integration tests using Testcontainers.
  * Provides a PostgreSQL container and Redis container for all integration tests.
  *
- * Usage: extend this class and annotate with @Tag("integration")
+ * Usage: extend this class from integration tests that follow the `*IntegrationTest` naming
+ * convention.
  */
-@Tag("integration")
 @Testcontainers
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@Tag("integration")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public abstract class AbstractIntegrationTest {
+
+    @Autowired
+    protected JwtTokenPort jwtTokenPort;
 
     @Container
     static final PostgreSQLContainer<?> POSTGRES =
@@ -54,5 +62,17 @@ public abstract class AbstractIntegrationTest {
         registry.add("spring.data.redis.port", () -> REDIS.getMappedPort(6379));
         registry.add("spring.data.redis.url",
             () -> "redis://" + REDIS.getHost() + ":" + REDIS.getMappedPort(6379));
+    }
+
+    protected String generateAccessToken(String userId, String tenantId, Role role) {
+        return jwtTokenPort.generateAccessToken(userId, tenantId, role);
+    }
+
+    protected HttpHeaders authenticatedHeaders(
+            String userId, String tokenTenantId, Role role, String requestTenantId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(generateAccessToken(userId, tokenTenantId, role));
+        headers.set("X-Tenant-ID", requestTenantId);
+        return headers;
     }
 }

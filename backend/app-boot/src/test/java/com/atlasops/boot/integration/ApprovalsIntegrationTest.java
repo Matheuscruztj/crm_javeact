@@ -2,8 +2,8 @@ package com.atlasops.boot.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.atlasops.auth.domain.Role;
 import com.atlasops.boot.AbstractIntegrationTest;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -19,7 +19,6 @@ import org.springframework.http.ResponseEntity;
  * <p>Validates: P0.A.1.8 — Approvals integration tests: approval workflow
  * Validates: P0.A.2.4 — Isolamento de approvals entre tenants
  */
-@Tag("integration")
 class ApprovalsIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -84,5 +83,35 @@ class ApprovalsIntegrationTest extends AbstractIntegrationTest {
 
         assertThat(response.getStatusCode()).isIn(
                 HttpStatus.UNAUTHORIZED, HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    void should_rejectCrossTenantAccess_when_approvalCreationUsesValidJwt() {
+        HttpHeaders headers =
+                authenticatedHeaders("user-alpha", "tenant-alpha", Role.ADMIN, "tenant-beta");
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/api/v1/approvals",
+                HttpMethod.POST,
+                new HttpEntity<>("{\"documentId\":\"doc-001\"}", headers),
+                String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+    }
+
+    @Test
+    void should_rejectCrossTenantAccess_when_approvingApprovalWithValidJwt() {
+        HttpHeaders headers =
+                authenticatedHeaders("user-alpha", "tenant-alpha", Role.ADMIN, "tenant-beta");
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "/api/v1/approvals/approval-id/approve",
+                HttpMethod.POST,
+                new HttpEntity<>("{}", headers),
+                String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     }
 }

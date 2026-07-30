@@ -80,9 +80,13 @@ class DocumentStatusTest {
   // --- Terminal States ---
 
   @Test
-  void should_rejectAllTransitions_when_analyzed() {
+  void should_allowOnlyReprocess_when_analyzed() {
+    assertThat(DocumentStatus.ANALYZED.canTransitionTo(DocumentStatus.UPLOADED)).isTrue();
+
     for (DocumentStatus target : DocumentStatus.values()) {
-      assertThat(DocumentStatus.ANALYZED.canTransitionTo(target)).isFalse();
+      if (target != DocumentStatus.UPLOADED) {
+        assertThat(DocumentStatus.ANALYZED.canTransitionTo(target)).isFalse();
+      }
     }
   }
 
@@ -94,9 +98,13 @@ class DocumentStatusTest {
   }
 
   @Test
-  void should_rejectAllTransitions_when_processingFailed() {
+  void should_allowOnlyReprocess_when_processingFailed() {
+    assertThat(DocumentStatus.PROCESSING_FAILED.canTransitionTo(DocumentStatus.UPLOADED)).isTrue();
+
     for (DocumentStatus target : DocumentStatus.values()) {
-      assertThat(DocumentStatus.PROCESSING_FAILED.canTransitionTo(target)).isFalse();
+      if (target != DocumentStatus.UPLOADED) {
+        assertThat(DocumentStatus.PROCESSING_FAILED.canTransitionTo(target)).isFalse();
+      }
     }
   }
 }

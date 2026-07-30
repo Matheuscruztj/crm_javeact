@@ -13,6 +13,7 @@ import com.atlasops.auth.application.AuthenticateCommand;
 import com.atlasops.auth.application.AuthenticateUserUseCase;
 import com.atlasops.auth.application.LogoutUseCase;
 import com.atlasops.auth.application.RefreshTokenUseCase;
+import com.atlasops.auth.application.RevokeAllSessionsUseCase;
 import com.atlasops.auth.domain.AuthenticationResult;
 import com.atlasops.shared.domain.exceptions.TooManyRequestsException;
 import com.atlasops.shared.domain.exceptions.UnauthorizedException;
@@ -48,13 +49,16 @@ class AuthControllerTest {
 
   @Mock private LogoutUseCase logoutUseCase;
 
+  @Mock private RevokeAllSessionsUseCase revokeAllSessionsUseCase;
+
   private MockMvc mockMvc;
   private ObjectMapper objectMapper;
 
   @BeforeEach
   void setUp() {
     AuthController controller =
-        new AuthController(authenticateUserUseCase, refreshTokenUseCase, logoutUseCase);
+        new AuthController(
+            authenticateUserUseCase, refreshTokenUseCase, logoutUseCase, revokeAllSessionsUseCase);
 
     mockMvc =
         MockMvcBuilders.standaloneSetup(controller)
