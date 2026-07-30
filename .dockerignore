@@ -1,0 +1,17 @@
+.git
+.github
+.gradle
+.idea
+.kiro
+.next
+.pnpm-store
+.vscode
+**/build
+**/coverage
+**/dist
+**/node_modules
+**/out
+frontend/storybook-static
+frontend/test-results
+frontend/playwright-report
+tmp

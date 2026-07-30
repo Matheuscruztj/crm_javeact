@@ -21,6 +21,9 @@ import { Rate, Trend } from "k6/metrics";
 
 const BASE_URL = __ENV.K6_BASE_URL || __ENV.BASE_URL || "http://localhost:8080";
 const AUTH_TOKEN = __ENV.K6_AUTH_TOKEN || "";
+const P95_MS = Number(__ENV.K6_P95_MS || 1000);
+const P99_MS = Number(__ENV.K6_P99_MS || 2000);
+const ERROR_RATE = Number(__ENV.K6_ERROR_RATE || 0.02);
 
 export const errorRate = new Rate("errors");
 export const healthDuration = new Trend("health_duration");
@@ -32,12 +35,12 @@ export const options = {
   vus: 50,
   duration: "5m",
   thresholds: {
-    http_req_duration: ["p(95)<1000", "p(99)<2000"],
-    errors: ["rate<0.02"],
-    health_duration: ["p(95)<500"],
-    login_duration: ["p(95)<1000"],
-    list_customers_duration: ["p(95)<1500"],
-    search_duration: ["p(95)<2000"],
+    http_req_duration: [`p(95)<${P95_MS}`, `p(99)<${P99_MS}`],
+    errors: [`rate<${ERROR_RATE}`],
+    health_duration: [`p(95)<${Number(__ENV.K6_HEALTH_P95_MS || 500)}`],
+    login_duration: [`p(95)<${Number(__ENV.K6_LOGIN_P95_MS || 1000)}`],
+    list_customers_duration: [`p(95)<${Number(__ENV.K6_LIST_CUSTOMERS_P95_MS || 1500)}`],
+    search_duration: [`p(95)<${Number(__ENV.K6_SEARCH_P95_MS || 2000)}`],
   },
 };
 
@@ -47,6 +50,19 @@ function buildHeaders() {
     headers["Authorization"] = `Bearer ${AUTH_TOKEN}`;
   }
   return headers;
+}
+
+export function setup() {
+  return {
+    scenario: "average",
+    baseUrl: BASE_URL,
+    authProvided: Boolean(AUTH_TOKEN),
+    thresholds: {
+      p95: P95_MS,
+      p99: P99_MS,
+      errorRate: ERROR_RATE,
+    },
+  };
 }
 
 function scenarioHealth() {
@@ -137,4 +153,10 @@ export default function () {
     scenarioSearch();
     sleep(1.5);
   }
+}
+
+export function teardown(data) {
+  console.log(
+    `[Teardown] Scenario=${data.scenario} baseUrl=${data.baseUrl} authProvided=${data.authProvided}`,
+  );
 }

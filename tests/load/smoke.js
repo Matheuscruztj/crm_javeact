@@ -17,6 +17,9 @@ import { check, sleep } from "k6";
 import { Rate } from "k6/metrics";
 
 const BASE_URL = __ENV.K6_BASE_URL || __ENV.BASE_URL || "http://localhost:8080";
+const TENANT_ID = __ENV.K6_TENANT_ID || __ENV.TENANT_ID || "tenant-smoke";
+const P95_MS = Number(__ENV.K6_P95_MS || 2000);
+const ERROR_RATE = Number(__ENV.K6_ERROR_RATE || 0.1);
 
 export const errorRate = new Rate("errors");
 
@@ -24,8 +27,8 @@ export const options = {
   vus: 2,
   duration: "30s",
   thresholds: {
-    http_req_duration: ["p(95)<2000"],
-    errors: ["rate<0.1"],
+    http_req_duration: [`p(95)<${P95_MS}`],
+    errors: [`rate<${ERROR_RATE}`],
   },
 };
 
@@ -50,7 +53,12 @@ export default function () {
   const login = http.post(
     `${BASE_URL}/api/v1/auth/login`,
     JSON.stringify({ email: "test@example.com", password: "wrong" }),
-    { headers: { "Content-Type": "application/json" } },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "X-Tenant-ID": TENANT_ID,
+      },
+    },
   );
   const loginOk = check(login, {
     "login endpoint reachable": (r) => r.status < 500,

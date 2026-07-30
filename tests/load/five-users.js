@@ -38,6 +38,9 @@ import { Rate, Trend, Counter } from "k6/metrics";
 const BASE_URL = __ENV.K6_BASE_URL || __ENV.BASE_URL || "http://localhost:8080";
 const AUTH_TOKEN = __ENV.K6_AUTH_TOKEN || "";
 const TENANT_ID = __ENV.K6_TENANT_ID || "tenant-alpha";
+const P95_MS = Number(__ENV.K6_P95_MS || 500);
+const P99_MS = Number(__ENV.K6_P99_MS || 1500);
+const ERROR_RATE = Number(__ENV.K6_ERROR_RATE || 0.01);
 
 // ─── Custom Metrics ────────────────────────────────────────────────────────
 
@@ -58,14 +61,14 @@ export const options = {
     { duration: "30s", target: 0 }, // Ramp down
   ],
   thresholds: {
-    http_req_duration: ["p(95)<500", "p(99)<1500"],
-    errors: ["rate<0.01"],
-    health_latency_ms: ["p(95)<200"],
-    login_latency_ms: ["p(95)<800"],
-    list_resources_ms: ["p(95)<600"],
-    search_latency_ms: ["p(95)<1000"],
-    metrics_latency_ms: ["p(95)<300"],
-    http_req_failed: ["rate<0.01"],
+    http_req_duration: [`p(95)<${P95_MS}`, `p(99)<${P99_MS}`],
+    errors: [`rate<${ERROR_RATE}`],
+    health_latency_ms: [`p(95)<${Number(__ENV.K6_HEALTH_P95_MS || 200)}`],
+    login_latency_ms: [`p(95)<${Number(__ENV.K6_LOGIN_P95_MS || 800)}`],
+    list_resources_ms: [`p(95)<${Number(__ENV.K6_LIST_P95_MS || 600)}`],
+    search_latency_ms: [`p(95)<${Number(__ENV.K6_SEARCH_P95_MS || 1000)}`],
+    metrics_latency_ms: [`p(95)<${Number(__ENV.K6_METRICS_P95_MS || 300)}`],
+    http_req_failed: [`rate<${ERROR_RATE}`],
   },
 };
 
@@ -222,6 +225,9 @@ export function setup() {
   console.log(`[Setup] Tenant: ${TENANT_ID}`);
   console.log(
     `[Setup] Auth token: ${AUTH_TOKEN ? "provided" : "not provided (expect 401 on protected endpoints)"}`,
+  );
+  console.log(
+    `[Setup] Thresholds: p95=${P95_MS}ms p99=${P99_MS}ms errorRate=${ERROR_RATE}`,
   );
 
   const health = http.get(`${BASE_URL}/actuator/health`);

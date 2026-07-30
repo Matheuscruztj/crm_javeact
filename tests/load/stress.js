@@ -15,6 +15,8 @@ import http from "k6/http";
 import { check, sleep } from "k6";
 
 const BASE_URL = __ENV.K6_BASE_URL || __ENV.BASE_URL || "http://localhost:8080";
+const P95_MS = Number(__ENV.K6_P95_MS || 5000);
+const ERROR_RATE = Number(__ENV.K6_ERROR_RATE || 0.3);
 
 export const options = {
   stages: [
@@ -27,10 +29,17 @@ export const options = {
     { duration: "30s", target: 0 }, // ramp-down
   ],
   thresholds: {
-    http_req_duration: ["p(95)<5000"], // 95% of requests under 5s (relaxed for stress)
-    http_req_failed: ["rate<0.3"], // up to 30% failures acceptable under stress
+    http_req_duration: [`p(95)<${P95_MS}`], // 95% of requests under configurable limit
+    http_req_failed: [`rate<${ERROR_RATE}`], // acceptable failure envelope under stress
   },
 };
+
+export function setup() {
+  console.log(
+    `[Setup] Stress scenario baseUrl=${BASE_URL} p95=${P95_MS}ms errorRate=${ERROR_RATE}`,
+  );
+  return { scenario: "stress", baseUrl: BASE_URL };
+}
 
 export default function () {
   const res = http.get(`${BASE_URL}/actuator/health`);
@@ -41,4 +50,8 @@ export default function () {
   });
 
   sleep(0.5);
+}
+
+export function teardown(data) {
+  console.log(`[Teardown] Scenario=${data.scenario} baseUrl=${data.baseUrl}`);
 }
