@@ -35,11 +35,7 @@ export function middleware(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
 
   // Skip Next.js internals and static files
-  if (
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon") ||
-    pathname.includes(".")
-  ) {
+  if (pathname.startsWith("/_next") || pathname.startsWith("/favicon") || pathname.includes(".")) {
     return NextResponse.next();
   }
 
@@ -82,8 +78,7 @@ export function middleware(request: NextRequest): NextResponse {
 
   // Redirect root to appropriate dashboard
   if (pathname === "/" && isAuthenticated && userRole) {
-    const destination =
-      userRole === "CLIENT" ? "/portal/home" : "/admin/dashboard";
+    const destination = userRole === "CLIENT" ? "/portal/home" : "/admin/dashboard";
     return NextResponse.redirect(new URL(destination, request.url));
   }
 

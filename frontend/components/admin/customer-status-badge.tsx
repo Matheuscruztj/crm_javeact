@@ -9,10 +9,7 @@ interface CustomerStatusBadgeProps {
 }
 
 export function CustomerStatusBadge({ status, className = "" }: CustomerStatusBadgeProps) {
-  const colors =
-    status === "ACTIVE"
-      ? "bg-green-100 text-green-800"
-      : "bg-gray-100 text-gray-600";
+  const colors = status === "ACTIVE" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600";
 
   return (
     <span

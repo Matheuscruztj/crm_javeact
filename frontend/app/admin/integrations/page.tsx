@@ -5,10 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@/lib/api-client";
 import { mapApiErrorsToForm, getApiErrorMessage } from "@/lib/form-utils";
-import {
-  createWebhookSchema,
-  type CreateWebhookFormValues,
-} from "@/lib/schemas";
+import { createWebhookSchema, type CreateWebhookFormValues } from "@/lib/schemas";
 
 interface DispatchResult {
   dispatchId: string;
@@ -39,10 +36,11 @@ export default function IntegrationsPage() {
     try {
       setSubmitting(true);
       setGlobalError(null);
-      const dispatch = await api.post<DispatchResult>(
-        "/integrations/webhooks/dispatch",
-        { targetUrl: data.targetUrl, eventType: data.eventType, payload: "{}" },
-      );
+      const dispatch = await api.post<DispatchResult>("/integrations/webhooks/dispatch", {
+        targetUrl: data.targetUrl,
+        eventType: data.eventType,
+        payload: "{}",
+      });
       setResult(dispatch);
       reset();
     } catch (err) {
@@ -68,7 +66,7 @@ export default function IntegrationsPage() {
         {globalError && (
           <div
             role="alert"
-            className="mb-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive"
+            className="bg-destructive/10 text-destructive mb-4 rounded-md p-3 text-sm"
           >
             {globalError}
           </div>
@@ -76,10 +74,7 @@ export default function IntegrationsPage() {
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="mb-4">
-            <label
-              htmlFor="targetUrl"
-              className="mb-1 block text-sm font-medium"
-            >
+            <label htmlFor="targetUrl" className="mb-1 block text-sm font-medium">
               Target URL
             </label>
             <input
@@ -87,27 +82,18 @@ export default function IntegrationsPage() {
               type="url"
               {...register("targetUrl")}
               placeholder="https://example.com/webhook"
-              className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              aria-describedby={
-                errors.targetUrl ? "targetUrl-error" : undefined
-              }
+              className="focus:ring-ring w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+              aria-describedby={errors.targetUrl ? "targetUrl-error" : undefined}
             />
             {errors.targetUrl && (
-              <p
-                id="targetUrl-error"
-                role="alert"
-                className="mt-1 text-xs text-destructive"
-              >
+              <p id="targetUrl-error" role="alert" className="text-destructive mt-1 text-xs">
                 {errors.targetUrl.message}
               </p>
             )}
           </div>
 
           <div className="mb-6">
-            <label
-              htmlFor="eventType"
-              className="mb-1 block text-sm font-medium"
-            >
+            <label htmlFor="eventType" className="mb-1 block text-sm font-medium">
               Event Type
             </label>
             <input
@@ -115,17 +101,11 @@ export default function IntegrationsPage() {
               type="text"
               {...register("eventType")}
               placeholder="customer.created"
-              className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              aria-describedby={
-                errors.eventType ? "eventType-error" : undefined
-              }
+              className="focus:ring-ring w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+              aria-describedby={errors.eventType ? "eventType-error" : undefined}
             />
             {errors.eventType && (
-              <p
-                id="eventType-error"
-                role="alert"
-                className="mt-1 text-xs text-destructive"
-              >
+              <p id="eventType-error" role="alert" className="text-destructive mt-1 text-xs">
                 {errors.eventType.message}
               </p>
             )}
@@ -134,7 +114,7 @@ export default function IntegrationsPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-md bg-primary py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 w-full rounded-md py-2 text-sm font-medium disabled:opacity-50"
             aria-busy={submitting}
           >
             {submitting ? "Dispatching…" : "Dispatch Webhook"}
@@ -143,9 +123,7 @@ export default function IntegrationsPage() {
 
         {result && (
           <div className="mt-4 rounded-md bg-green-50 p-4 text-sm">
-            <p className="font-medium text-green-800">
-              Dispatch ID: {result.dispatchId}
-            </p>
+            <p className="font-medium text-green-800">Dispatch ID: {result.dispatchId}</p>
             <p className="text-green-700">
               Status: {result.status} (HTTP {result.httpStatusCode})
             </p>

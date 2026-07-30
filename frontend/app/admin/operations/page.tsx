@@ -56,9 +56,7 @@ export default function OperationsPage() {
       setError(null);
 
       // Enable live polling if there are active jobs
-      const hasActive = result.content.some(
-        (j) => j.status === "QUEUED" || j.status === "RUNNING",
-      );
+      const hasActive = result.content.some((j) => j.status === "QUEUED" || j.status === "RUNNING");
       setIsLive(hasActive);
     } catch (err) {
       setError(getApiErrorMessage(err));
@@ -136,7 +134,7 @@ export default function OperationsPage() {
           )}
           <button
             onClick={() => void loadJobs()}
-            className="rounded-md border px-4 py-2 text-sm hover:bg-accent"
+            className="hover:bg-accent rounded-md border px-4 py-2 text-sm"
             aria-label="Refresh jobs list"
           >
             Refresh
@@ -145,24 +143,17 @@ export default function OperationsPage() {
       </div>
 
       {error && (
-        <div
-          role="alert"
-          className="mb-4 rounded-md bg-destructive/10 p-4 text-destructive"
-        >
+        <div role="alert" className="bg-destructive/10 text-destructive mb-4 rounded-md p-4">
           {error}
         </div>
       )}
 
       {loading ? (
-        <div
-          aria-busy="true"
-          aria-live="polite"
-          className="text-muted-foreground"
-        >
+        <div aria-busy="true" aria-live="polite" className="text-muted-foreground">
           Loading jobs...
         </div>
       ) : jobs.length === 0 ? (
-        <div className="rounded-md border p-8 text-center text-muted-foreground">
+        <div className="text-muted-foreground rounded-md border p-8 text-center">
           No jobs found.
         </div>
       ) : (
@@ -180,10 +171,8 @@ export default function OperationsPage() {
             </thead>
             <tbody>
               {jobs.map((job) => (
-                <tr key={job.id} className="border-t hover:bg-muted/25">
-                  <td className="px-4 py-3 font-mono text-xs">
-                    {job.id.slice(0, 8)}…
-                  </td>
+                <tr key={job.id} className="hover:bg-muted/25 border-t">
+                  <td className="px-4 py-3 font-mono text-xs">{job.id.slice(0, 8)}…</td>
                   <td className="px-4 py-3">{job.type}</td>
                   <td className="px-4 py-3">
                     <span
@@ -194,18 +183,16 @@ export default function OperationsPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="h-2 w-24 overflow-hidden rounded-full bg-muted">
+                      <div className="bg-muted h-2 w-24 overflow-hidden rounded-full">
                         <div
-                          className="h-full bg-primary transition-all"
+                          className="bg-primary h-full transition-all"
                           style={{ width: `${job.progressPercent ?? 0}%` }}
                         />
                       </div>
-                      <span className="text-xs">
-                        {job.progressPercent ?? 0}%
-                      </span>
+                      <span className="text-xs">{job.progressPercent ?? 0}%</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-xs text-muted-foreground">
+                  <td className="text-muted-foreground px-4 py-3 text-xs">
                     {new Date(job.createdAt).toLocaleString()}
                   </td>
                   <td className="px-4 py-3">
@@ -214,18 +201,17 @@ export default function OperationsPage() {
                         <button
                           onClick={() => handleRetry(job.id)}
                           disabled={actionLoading === job.id}
-                          className="rounded px-2 py-1 text-xs bg-blue-100 text-blue-800 hover:bg-blue-200 disabled:opacity-50"
+                          className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-800 hover:bg-blue-200 disabled:opacity-50"
                           aria-label={`Retry job ${job.id}`}
                         >
                           {actionLoading === job.id ? "…" : "Retry"}
                         </button>
                       )}
-                      {(job.status === "QUEUED" ||
-                        job.status === "RUNNING") && (
+                      {(job.status === "QUEUED" || job.status === "RUNNING") && (
                         <button
                           onClick={() => handleCancel(job.id)}
                           disabled={actionLoading === job.id}
-                          className="rounded px-2 py-1 text-xs bg-red-100 text-red-800 hover:bg-red-200 disabled:opacity-50"
+                          className="rounded bg-red-100 px-2 py-1 text-xs text-red-800 hover:bg-red-200 disabled:opacity-50"
                           aria-label={`Cancel job ${job.id}`}
                         >
                           {actionLoading === job.id ? "…" : "Cancel"}

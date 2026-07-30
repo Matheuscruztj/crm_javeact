@@ -13,8 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAccessToken, getTenantId } from "@/lib/api-client";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
 
 const ALLOWED_FILE_TYPES = [
   "application/pdf",
@@ -86,66 +85,76 @@ export default function PortalDocumentUploadPageClient() {
     });
   }, []);
 
-  const uploadFile = useCallback(async (uploadFile: UploadFile) => {
-    const abortController = new AbortController();
-    setFiles((prev) =>
-      prev.map((f) =>
-        f.id === uploadFile.id ? { ...f, status: "uploading", abortController } : f,
-      ),
-    );
-
-    const formData = new FormData();
-    formData.append("file", uploadFile.file);
-    if (requestId) formData.append("requestId", requestId);
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/documents/upload`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${getAccessToken()}`,
-          "X-Tenant-ID": getTenantId() ?? "",
-        },
-        body: formData,
-        signal: abortController.signal,
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || "Upload failed");
-      }
-
+  const uploadFile = useCallback(
+    async (uploadFile: UploadFile) => {
+      const abortController = new AbortController();
       setFiles((prev) =>
         prev.map((f) =>
-          f.id === uploadFile.id ? { ...f, progress: 100, status: "completed" } : f,
-        ),
+          f.id === uploadFile.id ? { ...f, status: "uploading", abortController } : f
+        )
       );
-    } catch (err) {
-      if (err instanceof Error && err.name === "AbortError") {
-        setFiles((prev) => prev.filter((f) => f.id !== uploadFile.id));
-        return;
+
+      const formData = new FormData();
+      formData.append("file", uploadFile.file);
+      if (requestId) formData.append("requestId", requestId);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/documents/upload`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${getAccessToken()}`,
+            "X-Tenant-ID": getTenantId() ?? "",
+          },
+          body: formData,
+          signal: abortController.signal,
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.detail || "Upload failed");
+        }
+
+        setFiles((prev) =>
+          prev.map((f) =>
+            f.id === uploadFile.id ? { ...f, progress: 100, status: "completed" } : f
+          )
+        );
+      } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") {
+          setFiles((prev) => prev.filter((f) => f.id !== uploadFile.id));
+          return;
+        }
+        setFiles((prev) =>
+          prev.map((f) =>
+            f.id === uploadFile.id
+              ? {
+                  ...f,
+                  status: "error",
+                  error: err instanceof Error ? err.message : "Upload failed",
+                }
+              : f
+          )
+        );
       }
-      setFiles((prev) =>
-        prev.map((f) =>
-          f.id === uploadFile.id
-            ? { ...f, status: "error", error: err instanceof Error ? err.message : "Upload failed" }
-            : f,
-        ),
-      );
-    }
-  }, [requestId]);
+    },
+    [requestId]
+  );
 
   const uploadAll = useCallback(async () => {
     const pendingFiles = files.filter((f) => f.status === "pending");
     for (const file of pendingFiles) await uploadFile(file);
   }, [files, uploadFile]);
 
-  const retryFile = useCallback((id: string) => {
-    setFiles((prev) =>
-      prev.map((f) => (f.id === id ? { ...f, status: "pending", error: undefined } : f)),
-    );
-    const file = files.find((f) => f.id === id);
-    if (file) uploadFile({ ...file, status: "pending" });
-  }, [files, uploadFile]);
+  const retryFile = useCallback(
+    (id: string) => {
+      setFiles((prev) =>
+        prev.map((f) => (f.id === id ? { ...f, status: "pending", error: undefined } : f))
+      );
+      const file = files.find((f) => f.id === id);
+      if (file) uploadFile({ ...file, status: "pending" });
+    },
+    [files, uploadFile]
+  );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -157,16 +166,22 @@ export default function PortalDocumentUploadPageClient() {
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    addFiles(e.dataTransfer.files);
-  }, [addFiles]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
+      addFiles(e.dataTransfer.files);
+    },
+    [addFiles]
+  );
 
-  const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    addFiles(e.target.files);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  }, [addFiles]);
+  const handleFileInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      addFiles(e.target.files);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    },
+    [addFiles]
+  );
 
   const pendingCount = files.filter((f) => f.status === "pending").length;
   const completedCount = files.filter((f) => f.status === "completed").length;
@@ -177,7 +192,12 @@ export default function PortalDocumentUploadPageClient() {
       <div className="mb-6">
         <Button variant="ghost" size="sm" onClick={() => router.back()} className="mb-4">
           <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
           Back
         </Button>
@@ -193,18 +213,28 @@ export default function PortalDocumentUploadPageClient() {
               onDrop={handleDrop}
               className={`rounded-lg border-2 border-dashed p-8 text-center ${isDragging ? "border-primary bg-primary/5" : "border-muted"}`}
             >
-              <input ref={fileInputRef} type="file" multiple onChange={handleFileInputChange} className="hidden" />
-              <p className="mb-2 text-sm text-muted-foreground">Drop files here</p>
-              <Button type="button" onClick={() => fileInputRef.current?.click()}>Choose files</Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                onChange={handleFileInputChange}
+                className="hidden"
+              />
+              <p className="text-muted-foreground mb-2 text-sm">Drop files here</p>
+              <Button type="button" onClick={() => fileInputRef.current?.click()}>
+                Choose files
+              </Button>
             </div>
           </CardContent>
         </Card>
       </div>
       <div className="flex gap-2">
-        <Button onClick={uploadAll} disabled={pendingCount === 0}>Upload all</Button>
+        <Button onClick={uploadAll} disabled={pendingCount === 0}>
+          Upload all
+        </Button>
         <Link href="/portal/documents">Cancel</Link>
       </div>
-      <div className="mt-4 text-sm text-muted-foreground">
+      <div className="text-muted-foreground mt-4 text-sm">
         Pending: {pendingCount} Completed: {completedCount} {hasErrors ? "Errors present" : ""}
       </div>
       <div className="mt-4 space-y-2">
@@ -212,11 +242,15 @@ export default function PortalDocumentUploadPageClient() {
           <div key={file.id} className="rounded border p-3">
             <div className="flex items-center justify-between">
               <span>{file.file.name}</span>
-              <Button variant="ghost" size="sm" onClick={() => removeFile(file.id)}>Remove</Button>
+              <Button variant="ghost" size="sm" onClick={() => removeFile(file.id)}>
+                Remove
+              </Button>
             </div>
-            {file.error && <p className="text-sm text-destructive">{file.error}</p>}
+            {file.error && <p className="text-destructive text-sm">{file.error}</p>}
             {file.status === "error" && (
-              <Button variant="outline" size="sm" onClick={() => retryFile(file.id)}>Retry</Button>
+              <Button variant="outline" size="sm" onClick={() => retryFile(file.id)}>
+                Retry
+              </Button>
             )}
           </div>
         ))}

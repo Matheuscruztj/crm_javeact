@@ -104,14 +104,12 @@ function AnalystAssignment({
           variant="ghost"
           size="sm"
           disabled={isAssigning}
-          className="h-auto py-1 px-2 text-left justify-start"
+          className="h-auto justify-start px-2 py-1 text-left"
         >
           {isAssigning ? (
             "Assigning..."
           ) : request.assignedAnalystName ? (
-            <span className="truncate max-w-[120px]">
-              {request.assignedAnalystName}
-            </span>
+            <span className="max-w-[120px] truncate">{request.assignedAnalystName}</span>
           ) : (
             <span className="text-muted-foreground">Unassigned</span>
           )}
@@ -122,12 +120,7 @@ function AnalystAssignment({
             stroke="currentColor"
             aria-hidden="true"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </Button>
       </DropdownMenuTrigger>
@@ -136,10 +129,7 @@ function AnalystAssignment({
           <span className="text-muted-foreground">Unassigned</span>
         </DropdownMenuItem>
         {analysts.map((analyst) => (
-          <DropdownMenuItem
-            key={analyst.id}
-            onClick={() => handleAssign(analyst.id)}
-          >
+          <DropdownMenuItem key={analyst.id} onClick={() => handleAssign(analyst.id)}>
             {analyst.name}
           </DropdownMenuItem>
         ))}
@@ -159,7 +149,7 @@ function Pagination({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Page {page + 1} of {totalPages || 1}
       </p>
       <div className="flex gap-2">
@@ -219,9 +209,7 @@ export default function RequestsPage() {
         params.append("priority", priorityFilter);
       }
 
-      const response = await api.get<PageResponse<Request>>(
-        `/requests?${params.toString()}`,
-      );
+      const response = await api.get<PageResponse<Request>>(`/requests?${params.toString()}`);
 
       setRequests(response.content);
       setTotalPages(response.page.totalPages);
@@ -260,10 +248,7 @@ export default function RequestsPage() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const handleAssignAnalyst = async (
-    requestId: string,
-    analystId: string | null,
-  ) => {
+  const handleAssignAnalyst = async (requestId: string, analystId: string | null) => {
     try {
       await api.patch(`/requests/${requestId}/assign`, { analystId });
       // Update local state
@@ -278,7 +263,7 @@ export default function RequestsPage() {
             };
           }
           return req;
-        }),
+        })
       );
     } catch {
       setError("Failed to assign analyst");
@@ -297,9 +282,9 @@ export default function RequestsPage() {
 
       {/* Filters */}
       <div className="mb-4 flex flex-col gap-4 sm:flex-row">
-        <div className="relative flex-1 max-w-md">
+        <div className="relative max-w-md flex-1">
           <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -328,7 +313,7 @@ export default function RequestsPage() {
             setStatusFilter(e.target.value);
             setPage(0);
           }}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+          className="border-input bg-background ring-offset-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           aria-label="Filter by status"
         >
           <option value="ALL">All Statuses</option>
@@ -344,7 +329,7 @@ export default function RequestsPage() {
             setPriorityFilter(e.target.value);
             setPage(0);
           }}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+          className="border-input bg-background ring-offset-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           aria-label="Filter by priority"
         >
           <option value="ALL">All Priorities</option>
@@ -357,7 +342,7 @@ export default function RequestsPage() {
 
       {error && (
         <div
-          className="mb-4 rounded-md bg-destructive/10 p-4 text-sm text-destructive"
+          className="bg-destructive/10 text-destructive mb-4 rounded-md p-4 text-sm"
           role="alert"
         >
           {error}
@@ -365,7 +350,7 @@ export default function RequestsPage() {
       )}
 
       {/* Table for desktop */}
-      <div className="hidden lg:block rounded-md border">
+      <div className="hidden rounded-md border lg:block">
         <Table>
           <TableHeader>
             <TableRow>
@@ -403,7 +388,7 @@ export default function RequestsPage() {
               ))
             ) : requests.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8">
+                <TableCell colSpan={6} className="py-8 text-center">
                   <p className="text-muted-foreground">No requests found</p>
                 </TableCell>
               </TableRow>
@@ -418,9 +403,7 @@ export default function RequestsPage() {
                       {request.title}
                     </Link>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {request.customerName}
-                  </TableCell>
+                  <TableCell className="text-muted-foreground">{request.customerName}</TableCell>
                   <TableCell>
                     <Badge className={getStatusBadgeClass(request.status)}>
                       {request.status.replace("_", " ")}
@@ -449,10 +432,10 @@ export default function RequestsPage() {
       </div>
 
       {/* Cards for mobile/tablet */}
-      <div className="lg:hidden space-y-4">
+      <div className="space-y-4 lg:hidden">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="rounded-lg border p-4 space-y-3">
+            <div key={i} className="space-y-3 rounded-lg border p-4">
               <Skeleton className="h-5 w-48" />
               <Skeleton className="h-4 w-32" />
               <div className="flex gap-2">
@@ -466,21 +449,19 @@ export default function RequestsPage() {
             </div>
           ))
         ) : requests.length === 0 ? (
-          <div className="text-center py-8">
+          <div className="py-8 text-center">
             <p className="text-muted-foreground">No requests found</p>
           </div>
         ) : (
           requests.map((request) => (
-            <div key={request.id} className="rounded-lg border p-4 space-y-3">
+            <div key={request.id} className="space-y-3 rounded-lg border p-4">
               <Link
                 href={`/admin/requests/${request.id}`}
-                className="font-medium hover:underline block"
+                className="block font-medium hover:underline"
               >
                 {request.title}
               </Link>
-              <p className="text-sm text-muted-foreground">
-                {request.customerName}
-              </p>
+              <p className="text-muted-foreground text-sm">{request.customerName}</p>
               <div className="flex gap-2">
                 <Badge className={getStatusBadgeClass(request.status)}>
                   {request.status.replace("_", " ")}
@@ -489,18 +470,16 @@ export default function RequestsPage() {
                   {request.priority}
                 </Badge>
               </div>
-              <div className="flex items-center justify-between pt-2 border-t">
+              <div className="flex items-center justify-between border-t pt-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">
-                    Analyst:
-                  </span>
+                  <span className="text-muted-foreground text-sm">Analyst:</span>
                   <AnalystAssignment
                     request={request}
                     analysts={analysts}
                     onAssign={handleAssignAnalyst}
                   />
                 </div>
-                <span className="text-sm text-muted-foreground">
+                <span className="text-muted-foreground text-sm">
                   {new Date(request.createdAt).toLocaleDateString()}
                 </span>
               </div>
@@ -512,11 +491,7 @@ export default function RequestsPage() {
       {/* Pagination */}
       {!isLoading && requests.length > 0 && (
         <div className="mt-4">
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       )}
     </div>

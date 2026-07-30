@@ -14,8 +14,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { getAccessToken, getTenantId } from "@/lib/api-client";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
 const INITIAL_RETRY_DELAY = 1000;
 const MAX_RETRY_DELAY = 30000;
 const BACKOFF_MULTIPLIER = 2;
@@ -38,11 +37,7 @@ export interface SSEEvent {
 
 export interface SSECallbacks {
   onNotification?: (event: SSEEvent) => void;
-  onDocumentProgress?: (
-    documentId: string,
-    status: string,
-    progress?: number,
-  ) => void;
+  onDocumentProgress?: (documentId: string, status: string, progress?: number) => void;
   onRequestUpdate?: (requestId: string, status: string) => void;
   onConnected?: () => void;
   onDisconnected?: () => void;
@@ -131,10 +126,7 @@ export function useSSE(options: UseSSEOptions = {}): UseSSEReturn {
 
       // Schedule reconnection with exponential backoff
       const delay = retryDelayRef.current;
-      retryDelayRef.current = Math.min(
-        retryDelayRef.current * BACKOFF_MULTIPLIER,
-        MAX_RETRY_DELAY,
-      );
+      retryDelayRef.current = Math.min(retryDelayRef.current * BACKOFF_MULTIPLIER, MAX_RETRY_DELAY);
 
       retryTimeoutRef.current = setTimeout(() => {
         connect();
@@ -179,11 +171,7 @@ export function useSSE(options: UseSSEOptions = {}): UseSSEReturn {
           status: string;
           progress?: number;
         };
-        callbacks.onDocumentProgress?.(
-          data.documentId,
-          data.status,
-          data.progress,
-        );
+        callbacks.onDocumentProgress?.(data.documentId, data.status, data.progress);
       } catch {
         // Ignore
       }
@@ -250,21 +238,18 @@ export function useSSE(options: UseSSEOptions = {}): UseSSEReturn {
           callbacks.onDocumentProgress?.(
             event.data.documentId as string,
             event.data.status as string,
-            event.data.progress as number | undefined,
+            event.data.progress as number | undefined
           );
           break;
         case "request.updated":
-          callbacks.onRequestUpdate?.(
-            event.data.requestId as string,
-            event.data.status as string,
-          );
+          callbacks.onRequestUpdate?.(event.data.requestId as string, event.data.status as string);
           break;
         case "heartbeat":
           // Ignore heartbeat
           break;
       }
     },
-    [callbacks],
+    [callbacks]
   );
 
   const reconnect = useCallback(() => {
@@ -310,9 +295,7 @@ export function useSSE(options: UseSSEOptions = {}): UseSSEReturn {
  */
 export function useSSENotifications() {
   const [unreadCount, setUnreadCount] = useState(0);
-  const [latestNotification, setLatestNotification] = useState<SSEEvent | null>(
-    null,
-  );
+  const [latestNotification, setLatestNotification] = useState<SSEEvent | null>(null);
 
   const { isConnected, reconnect, disconnect } = useSSE({
     callbacks: {
@@ -371,7 +354,7 @@ export function useSSEDocumentProgress() {
     (documentId: string) => {
       return documentStatuses.get(documentId);
     },
-    [documentStatuses],
+    [documentStatuses]
   );
 
   return {

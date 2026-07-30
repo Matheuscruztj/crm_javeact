@@ -63,17 +63,13 @@ function useUploadManager() {
   }, []);
 
   const updateFile = useCallback((id: string, patch: Partial<UploadFile>) => {
-    setFiles((prev) =>
-      prev.map((f) => (f.id === id ? { ...f, ...patch } : f))
-    );
+    setFiles((prev) => prev.map((f) => (f.id === id ? { ...f, ...patch } : f)));
   }, []);
 
   const startUpload = useCallback(
     async (uploadId: string, requestId?: string) => {
       setFiles((prev) =>
-        prev.map((f) =>
-          f.id === uploadId ? { ...f, status: "uploading", error: null } : f
-        )
+        prev.map((f) => (f.id === uploadId ? { ...f, status: "uploading", error: null } : f))
       );
 
       const file = files.find((f) => f.id === uploadId);
@@ -102,11 +98,8 @@ function useUploadManager() {
         updateFile(uploadId, { progress: 20 });
 
         // Step 3: Upload to presigned URL with progress
-        await uploadWithProgress(
-          presignedUrl,
-          file.file,
-          controller.signal,
-          (p) => updateFile(uploadId, { progress: 20 + Math.round(p * 0.7) })
+        await uploadWithProgress(presignedUrl, file.file, controller.signal, (p) =>
+          updateFile(uploadId, { progress: 20 + Math.round(p * 0.7) })
         );
 
         updateFile(uploadId, { progress: 90 });
@@ -133,10 +126,13 @@ function useUploadManager() {
     [files, updateFile]
   );
 
-  const pauseUpload = useCallback((uploadId: string) => {
-    abortControllers.current.get(uploadId)?.abort();
-    updateFile(uploadId, { status: "paused" });
-  }, [updateFile]);
+  const pauseUpload = useCallback(
+    (uploadId: string) => {
+      abortControllers.current.get(uploadId)?.abort();
+      updateFile(uploadId, { status: "paused" });
+    },
+    [updateFile]
+  );
 
   const cancelUpload = useCallback((uploadId: string) => {
     abortControllers.current.get(uploadId)?.abort();
@@ -198,11 +194,7 @@ const STATUS_COLORS: Record<UploadFile["status"], string> = {
   cancelled: "bg-gray-100 text-gray-500",
 };
 
-export function UploadManager({
-  requestId,
-  onComplete,
-  maxFileSizeMb = 500,
-}: UploadManagerProps) {
+export function UploadManager({ requestId, onComplete, maxFileSizeMb = 500 }: UploadManagerProps) {
   const { files, addFiles, startUpload, pauseUpload, cancelUpload, retryUpload } =
     useUploadManager();
   const dropRef = useRef<HTMLDivElement>(null);
@@ -219,9 +211,7 @@ export function UploadManager({
   };
 
   const handleStartAll = () => {
-    files
-      .filter((f) => f.status === "pending")
-      .forEach((f) => startUpload(f.id, requestId));
+    files.filter((f) => f.status === "pending").forEach((f) => startUpload(f.id, requestId));
   };
 
   return (
@@ -231,7 +221,7 @@ export function UploadManager({
         ref={dropRef}
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
-        className="rounded-lg border-2 border-dashed border-muted-foreground/30 p-8 text-center transition hover:border-primary"
+        className="border-muted-foreground/30 hover:border-primary rounded-lg border-2 border-dashed p-8 text-center transition"
       >
         <input
           id="file-input"
@@ -241,12 +231,9 @@ export function UploadManager({
           className="hidden"
           aria-label="Upload files"
         />
-        <label
-          htmlFor="file-input"
-          className="cursor-pointer text-sm text-muted-foreground"
-        >
+        <label htmlFor="file-input" className="text-muted-foreground cursor-pointer text-sm">
           Drag &amp; drop files here or{" "}
-          <span className="font-medium text-primary underline">browse</span>
+          <span className="text-primary font-medium underline">browse</span>
           <br />
           <span className="text-xs">Max {maxFileSizeMb} MB per file</span>
         </label>
@@ -260,7 +247,7 @@ export function UploadManager({
             <button
               onClick={handleStartAll}
               disabled={!files.some((f) => f.status === "pending")}
-              className="rounded-md bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-1.5 text-xs font-medium disabled:opacity-50"
               aria-label="Upload all pending files"
             >
               Upload All
@@ -287,7 +274,7 @@ export function UploadManager({
               {(f.status === "uploading" || f.status === "paused") && (
                 <div className="mt-2">
                   <div
-                    className="h-1.5 overflow-hidden rounded-full bg-muted"
+                    className="bg-muted h-1.5 overflow-hidden rounded-full"
                     role="progressbar"
                     aria-valuenow={f.progress}
                     aria-valuemin={0}
@@ -295,16 +282,16 @@ export function UploadManager({
                     aria-label={`Upload progress: ${f.progress}%`}
                   >
                     <div
-                      className="h-full bg-primary transition-all"
+                      className="bg-primary h-full transition-all"
                       style={{ width: `${f.progress}%` }}
                     />
                   </div>
-                  <span className="text-xs text-muted-foreground">{f.progress}%</span>
+                  <span className="text-muted-foreground text-xs">{f.progress}%</span>
                 </div>
               )}
 
               {f.error && (
-                <p role="alert" className="mt-1 text-xs text-destructive">
+                <p role="alert" className="text-destructive mt-1 text-xs">
                   {f.error}
                 </p>
               )}
@@ -314,7 +301,7 @@ export function UploadManager({
                 {f.status === "pending" && (
                   <button
                     onClick={() => startUpload(f.id, requestId)}
-                    className="text-xs text-primary hover:underline"
+                    className="text-primary text-xs hover:underline"
                     aria-label={`Start uploading ${f.file.name}`}
                   >
                     Start
@@ -332,7 +319,7 @@ export function UploadManager({
                 {f.status === "paused" && (
                   <button
                     onClick={() => startUpload(f.id, requestId)}
-                    className="text-xs text-primary hover:underline"
+                    className="text-primary text-xs hover:underline"
                     aria-label={`Resume uploading ${f.file.name}`}
                   >
                     Resume
@@ -341,7 +328,7 @@ export function UploadManager({
                 {f.status === "error" && (
                   <button
                     onClick={() => retryUpload(f.id, requestId)}
-                    className="text-xs text-primary hover:underline"
+                    className="text-primary text-xs hover:underline"
                     aria-label={`Retry uploading ${f.file.name}`}
                   >
                     Retry
@@ -359,7 +346,7 @@ export function UploadManager({
                 {f.status !== "complete" && (
                   <button
                     onClick={() => cancelUpload(f.id)}
-                    className="text-xs text-destructive hover:underline"
+                    className="text-destructive text-xs hover:underline"
                     aria-label={`Cancel ${f.file.name}`}
                   >
                     Cancel

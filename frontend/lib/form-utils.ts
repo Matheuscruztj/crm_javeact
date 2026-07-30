@@ -21,7 +21,7 @@ import { ApiError } from "./api-client";
  */
 export function mapApiErrorsToForm<T extends FieldValues>(
   error: ApiError | unknown,
-  setError: UseFormSetError<T>,
+  setError: UseFormSetError<T>
 ): void {
   const apiError = error as ApiError;
   if (!apiError?.violations) return;

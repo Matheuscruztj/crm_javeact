@@ -57,7 +57,16 @@ export function useApiQuery<T>(url: string | null): UseApiQueryResult<T> {
             /* fall through to setError */
           }
         }
-        setError(apiErr ?? { status: 500, title: "Unknown error", code: "INTERNAL", detail: "", traceId: "", type: "" });
+        setError(
+          apiErr ?? {
+            status: 500,
+            title: "Unknown error",
+            code: "INTERNAL",
+            detail: "",
+            traceId: "",
+            type: "",
+          }
+        );
       }
     } finally {
       if (!controller.signal.aborted) setLoading(false);
@@ -83,7 +92,7 @@ interface UsePagedQueryResult<T> extends UseApiQueryResult<PageResponse<T>> {
 export function usePagedQuery<T>(
   baseUrl: string | null,
   initialPage = 0,
-  pageSize = 20,
+  pageSize = 20
 ): UsePagedQueryResult<T> {
   const [page, setPage] = useState(initialPage);
   const url = baseUrl ? `${baseUrl}?page=${page}&size=${pageSize}` : null;
@@ -105,7 +114,7 @@ type HttpMutationMethod = "post" | "put" | "patch" | "delete";
 
 export function useMutation<TData = void, TInput = unknown>(
   url: string,
-  method: HttpMutationMethod = "post",
+  method: HttpMutationMethod = "post"
 ): UseMutationResult<TData, TInput> {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
@@ -125,7 +134,7 @@ export function useMutation<TData = void, TInput = unknown>(
         setLoading(false);
       }
     },
-    [url, method],
+    [url, method]
   );
 
   return { mutate, loading, error, reset: () => setError(null) };
@@ -167,26 +176,21 @@ export interface Notification {
   createdAt: string;
 }
 
-export const useCustomers = (page = 0) =>
-  usePagedQuery<Customer>("/customers", page);
+export const useCustomers = (page = 0) => usePagedQuery<Customer>("/customers", page);
 
 export const useCustomer = (id: string | null) =>
   useApiQuery<Customer>(id ? `/customers/${id}` : null);
 
-export const useRequests = (page = 0) =>
-  usePagedQuery<ServiceRequest>("/requests", page);
+export const useRequests = (page = 0) => usePagedQuery<ServiceRequest>("/requests", page);
 
 export const useRequest = (id: string | null) =>
   useApiQuery<ServiceRequest>(id ? `/requests/${id}` : null);
 
-export const useDocuments = (page = 0) =>
-  usePagedQuery<Document>("/documents", page);
+export const useDocuments = (page = 0) => usePagedQuery<Document>("/documents", page);
 
 export const useDocument = (id: string | null) =>
   useApiQuery<Document>(id ? `/documents/${id}` : null);
 
-export const useNotifications = (page = 0) =>
-  usePagedQuery<Notification>("/notifications", page);
+export const useNotifications = (page = 0) => usePagedQuery<Notification>("/notifications", page);
 
-export const useUnreadCount = () =>
-  useApiQuery<{ count: number }>("/notifications/unread-count");
+export const useUnreadCount = () => useApiQuery<{ count: number }>("/notifications/unread-count");

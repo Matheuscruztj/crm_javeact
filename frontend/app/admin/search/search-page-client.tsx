@@ -52,7 +52,7 @@ export default function SearchPageClient() {
     try {
       setLoading(true);
       const data = await api.get<SearchPage>(
-        `/search?q=${encodeURIComponent(q)}&page=${pageNum}&size=20`,
+        `/search?q=${encodeURIComponent(q)}&page=${pageNum}&size=20`
       );
       setResults(data.content ?? []);
       setTotalElements(data.page?.totalElements ?? 0);
@@ -92,56 +92,44 @@ export default function SearchPageClient() {
             setPage(0);
           }}
           placeholder="Search customers, requests, documents…"
-          className="w-full rounded-lg border px-4 py-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          className="focus:ring-primary w-full rounded-lg border px-4 py-3 pr-10 text-sm focus:ring-2 focus:outline-none"
           aria-label="Search query"
           autoFocus
         />
         {loading && (
-          <span
-            className="absolute right-3 top-3 text-xs text-muted-foreground"
-            aria-live="polite"
-          >
+          <span className="text-muted-foreground absolute top-3 right-3 text-xs" aria-live="polite">
             Searching…
           </span>
         )}
       </div>
 
       {error && (
-        <div
-          className="mb-4 rounded bg-destructive/10 p-3 text-sm text-destructive"
-          role="alert"
-        >
+        <div className="bg-destructive/10 text-destructive mb-4 rounded p-3 text-sm" role="alert">
           {error}
         </div>
       )}
 
       {!loading && query && results.length === 0 && (
-        <p className="py-12 text-center text-muted-foreground">
-          No results for "{query}"
-        </p>
+        <p className="text-muted-foreground py-12 text-center">No results for "{query}"</p>
       )}
 
       {Object.entries(grouped).map(([type, items]) => (
         <section key={type} className="mb-6">
-          <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          <h2 className="text-muted-foreground mb-2 flex items-center gap-2 text-sm font-semibold tracking-wide uppercase">
             <span>{ENTITY_ICONS[type]}</span>
             <span>{type}S</span>
-            <span className="rounded-full bg-muted px-2 py-0.5 text-xs">
-              {items.length}
-            </span>
+            <span className="bg-muted rounded-full px-2 py-0.5 text-xs">{items.length}</span>
           </h2>
           <ul className="divide-y rounded-lg border">
             {items.map((r) => (
               <li key={r.id}>
                 <button
                   onClick={() => router.push(`${ENTITY_ROUTES[r.entityType]}/${r.id}`)}
-                  className="w-full px-4 py-3 text-left transition-colors hover:bg-muted/30"
+                  className="hover:bg-muted/30 w-full px-4 py-3 text-left transition-colors"
                 >
                   <p className="text-sm font-medium">{r.title}</p>
                   {r.snippet && (
-                    <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">
-                      {r.snippet}
-                    </p>
+                    <p className="text-muted-foreground mt-0.5 line-clamp-2 text-xs">{r.snippet}</p>
                   )}
                 </button>
               </li>
@@ -159,9 +147,7 @@ export default function SearchPageClient() {
           >
             Previous
           </button>
-          <span className="px-3 py-1 text-sm text-muted-foreground">
-            Page {page + 1}
-          </span>
+          <span className="text-muted-foreground px-3 py-1 text-sm">Page {page + 1}</span>
           <button
             onClick={() => setPage((p) => p + 1)}
             disabled={(page + 1) * 20 >= totalElements}

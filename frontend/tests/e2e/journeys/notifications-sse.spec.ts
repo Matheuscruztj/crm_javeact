@@ -5,9 +5,7 @@ import { test, expect } from "../fixtures/test-fixtures";
  * Validates: P0.B.2 — Critical user journeys
  */
 test.describe("CLIENT: Notifications via SSE", () => {
-  test("should redirect unauthenticated user trying to access notifications", async ({
-    page,
-  }) => {
+  test("should redirect unauthenticated user trying to access notifications", async ({ page }) => {
     await page.goto("/portal");
     await expect(page).toHaveURL(/login|portal/);
   });

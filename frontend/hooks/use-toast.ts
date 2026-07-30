@@ -83,7 +83,7 @@ export function useToast(): UseToastReturn {
 
       return id;
     },
-    [dismiss],
+    [dismiss]
   );
 
   // Cleanup all timers on unmount
@@ -100,12 +100,25 @@ export function useToast(): UseToastReturn {
  * Convenience helpers for common toast variants.
  */
 export const toastHelpers = {
-  success: (title: string, description?: string) =>
-    ({ title, description, variant: "success" as ToastVariant }),
-  error: (title: string, description?: string) =>
-    ({ title, description, variant: "error" as ToastVariant, duration: 6000 }),
-  warning: (title: string, description?: string) =>
-    ({ title, description, variant: "warning" as ToastVariant }),
-  info: (title: string, description?: string) =>
-    ({ title, description, variant: "info" as ToastVariant }),
+  success: (title: string, description?: string) => ({
+    title,
+    description,
+    variant: "success" as ToastVariant,
+  }),
+  error: (title: string, description?: string) => ({
+    title,
+    description,
+    variant: "error" as ToastVariant,
+    duration: 6000,
+  }),
+  warning: (title: string, description?: string) => ({
+    title,
+    description,
+    variant: "warning" as ToastVariant,
+  }),
+  info: (title: string, description?: string) => ({
+    title,
+    description,
+    variant: "info" as ToastVariant,
+  }),
 };

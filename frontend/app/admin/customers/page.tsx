@@ -64,11 +64,7 @@ function getStatusBadgeClass(status: Customer["status"]): string {
   }
 }
 
-function CreateCustomerDialog({
-  onCustomerCreated,
-}: {
-  onCustomerCreated: () => void;
-}) {
+function CreateCustomerDialog({ onCustomerCreated }: { onCustomerCreated: () => void }) {
   const [isOpen, setIsOpen] = useState(false);
   const [form, setForm] = useState<CreateCustomerForm>({ name: "", email: "" });
   const [errors, setErrors] = useState<FormErrors>({});
@@ -141,12 +137,7 @@ function CreateCustomerDialog({
             stroke="currentColor"
             aria-hidden="true"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 4v16m8-8H4"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
           New Customer
         </Button>
@@ -161,7 +152,7 @@ function CreateCustomerDialog({
         <form onSubmit={handleSubmit}>
           {errors.general && (
             <div
-              className="mb-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive"
+              className="bg-destructive/10 text-destructive mb-4 rounded-md p-3 text-sm"
               role="alert"
             >
               {errors.general}
@@ -170,10 +161,7 @@ function CreateCustomerDialog({
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label
-                htmlFor="customer-name"
-                className="text-sm font-medium leading-none"
-              >
+              <label htmlFor="customer-name" className="text-sm leading-none font-medium">
                 Name
               </label>
               <Input
@@ -186,17 +174,14 @@ function CreateCustomerDialog({
                 aria-describedby={errors.name ? "name-error" : undefined}
               />
               {errors.name && (
-                <p id="name-error" className="text-sm text-destructive">
+                <p id="name-error" className="text-destructive text-sm">
                   {errors.name}
                 </p>
               )}
             </div>
 
             <div className="space-y-2">
-              <label
-                htmlFor="customer-email"
-                className="text-sm font-medium leading-none"
-              >
+              <label htmlFor="customer-email" className="text-sm leading-none font-medium">
                 Email
               </label>
               <Input
@@ -210,7 +195,7 @@ function CreateCustomerDialog({
                 aria-describedby={errors.email ? "email-error" : undefined}
               />
               {errors.email && (
-                <p id="email-error" className="text-sm text-destructive">
+                <p id="email-error" className="text-destructive text-sm">
                   {errors.email}
                 </p>
               )}
@@ -251,7 +236,7 @@ function Pagination({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Page {page + 1} of {totalPages || 1}
       </p>
       <div className="flex gap-2">
@@ -305,9 +290,7 @@ export default function CustomersPage() {
         params.append("status", statusFilter);
       }
 
-      const response = await api.get<PageResponse<Customer>>(
-        `/customers?${params.toString()}`,
-      );
+      const response = await api.get<PageResponse<Customer>>(`/customers?${params.toString()}`);
 
       setCustomers(response.content);
       setTotalPages(response.page.totalPages);
@@ -342,8 +325,7 @@ export default function CustomersPage() {
         <div>
           <h1 className="text-2xl font-bold">Customers</h1>
           <p className="text-muted-foreground">
-            Manage customer accounts and profiles.{" "}
-            {totalElements > 0 && `(${totalElements} total)`}
+            Manage customer accounts and profiles. {totalElements > 0 && `(${totalElements} total)`}
           </p>
         </div>
         <CreateCustomerDialog onCustomerCreated={fetchCustomers} />
@@ -351,9 +333,9 @@ export default function CustomersPage() {
 
       {/* Filters */}
       <div className="mb-4 flex flex-col gap-4 sm:flex-row">
-        <div className="relative flex-1 max-w-md">
+        <div className="relative max-w-md flex-1">
           <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -379,7 +361,7 @@ export default function CustomersPage() {
         <select
           value={statusFilter}
           onChange={(e) => handleStatusChange(e.target.value)}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+          className="border-input bg-background ring-offset-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           aria-label="Filter by status"
         >
           <option value="ALL">All Statuses</option>
@@ -391,7 +373,7 @@ export default function CustomersPage() {
 
       {error && (
         <div
-          className="mb-4 rounded-md bg-destructive/10 p-4 text-sm text-destructive"
+          className="bg-destructive/10 text-destructive mb-4 rounded-md p-4 text-sm"
           role="alert"
         >
           {error}
@@ -399,7 +381,7 @@ export default function CustomersPage() {
       )}
 
       {/* Table for desktop */}
-      <div className="hidden md:block rounded-md border">
+      <div className="hidden rounded-md border md:block">
         <Table>
           <TableHeader>
             <TableRow>
@@ -429,7 +411,7 @@ export default function CustomersPage() {
               ))
             ) : customers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8">
+                <TableCell colSpan={4} className="py-8 text-center">
                   <p className="text-muted-foreground">No customers found</p>
                 </TableCell>
               </TableRow>
@@ -454,10 +436,10 @@ export default function CustomersPage() {
       </div>
 
       {/* Cards for mobile */}
-      <div className="md:hidden space-y-4">
+      <div className="space-y-4 md:hidden">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="rounded-lg border p-4 space-y-2">
+            <div key={i} className="space-y-2 rounded-lg border p-4">
               <Skeleton className="h-5 w-32" />
               <Skeleton className="h-4 w-48" />
               <div className="flex justify-between">
@@ -467,19 +449,17 @@ export default function CustomersPage() {
             </div>
           ))
         ) : customers.length === 0 ? (
-          <div className="text-center py-8">
+          <div className="py-8 text-center">
             <p className="text-muted-foreground">No customers found</p>
           </div>
         ) : (
           customers.map((customer) => (
-            <div key={customer.id} className="rounded-lg border p-4 space-y-2">
+            <div key={customer.id} className="space-y-2 rounded-lg border p-4">
               <p className="font-medium">{customer.name}</p>
-              <p className="text-sm text-muted-foreground">{customer.email}</p>
+              <p className="text-muted-foreground text-sm">{customer.email}</p>
               <div className="flex items-center justify-between">
-                <Badge className={getStatusBadgeClass(customer.status)}>
-                  {customer.status}
-                </Badge>
-                <span className="text-sm text-muted-foreground">
+                <Badge className={getStatusBadgeClass(customer.status)}>{customer.status}</Badge>
+                <span className="text-muted-foreground text-sm">
                   {new Date(customer.createdAt).toLocaleDateString()}
                 </span>
               </div>
@@ -491,11 +471,7 @@ export default function CustomersPage() {
       {/* Pagination */}
       {!isLoading && customers.length > 0 && (
         <div className="mt-4">
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       )}
     </div>

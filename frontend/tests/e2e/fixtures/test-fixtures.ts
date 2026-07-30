@@ -56,7 +56,7 @@ export const test = base.extend<AtlasOpsFixtures>({
     await loginPage.goto();
     await loginPage.loginAndWait(
       process.env.ADMIN_EMAIL ?? "admin@atlasops.test",
-      process.env.ADMIN_PASSWORD ?? "admin-password",
+      process.env.ADMIN_PASSWORD ?? "admin-password"
     );
     await use();
   },
@@ -65,7 +65,7 @@ export const test = base.extend<AtlasOpsFixtures>({
     await loginPage.goto();
     await loginPage.loginAndWait(
       process.env.CLIENT_EMAIL ?? "client@atlasops.test",
-      process.env.CLIENT_PASSWORD ?? "client-password",
+      process.env.CLIENT_PASSWORD ?? "client-password"
     );
     await use();
   },
@@ -74,7 +74,7 @@ export const test = base.extend<AtlasOpsFixtures>({
     await loginPage.goto();
     await loginPage.loginAndWait(
       process.env.ANALYST_EMAIL ?? "analyst@atlasops.test",
-      process.env.ANALYST_PASSWORD ?? "analyst-password",
+      process.env.ANALYST_PASSWORD ?? "analyst-password"
     );
     await use();
   },

@@ -5,9 +5,7 @@ import { test, expect } from "../fixtures/test-fixtures";
  * Validates: P0.B.2 — Critical user journeys
  */
 test.describe("ADMIN: Operations page and job monitoring", () => {
-  test("should redirect unauthenticated user from operations", async ({
-    page,
-  }) => {
+  test("should redirect unauthenticated user from operations", async ({ page }) => {
     await page.goto("/admin/operations");
     await expect(page).toHaveURL(/login/);
   });

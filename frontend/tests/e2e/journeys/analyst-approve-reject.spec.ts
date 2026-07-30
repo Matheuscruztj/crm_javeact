@@ -5,9 +5,7 @@ import { test, expect } from "../fixtures/test-fixtures";
  * Validates: P0.B.2 — Critical user journeys
  */
 test.describe("ANALYST: Approve and reject documents", () => {
-  test("should redirect unauthenticated user to login from approvals", async ({
-    page,
-  }) => {
+  test("should redirect unauthenticated user to login from approvals", async ({ page }) => {
     await page.goto("/admin/approvals");
     await expect(page).toHaveURL(/login/);
   });

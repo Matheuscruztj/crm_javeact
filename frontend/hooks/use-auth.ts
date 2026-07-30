@@ -56,10 +56,8 @@ function setStoredUser(user: User | null): void {
   } else {
     localStorage.removeItem(USER_STORAGE_KEY);
     // Clear cookies
-    document.cookie =
-      "atlasops_user_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    document.cookie =
-      "atlasops_refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "atlasops_user_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "atlasops_refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
   }
 }
 
@@ -95,31 +93,28 @@ export function useAuth(): UseAuthReturn {
     }
   }, []);
 
-  const login = useCallback(
-    async (credentials: LoginRequest): Promise<void> => {
-      setState((prev) => ({ ...prev, isLoading: true }));
+  const login = useCallback(async (credentials: LoginRequest): Promise<void> => {
+    setState((prev) => ({ ...prev, isLoading: true }));
 
-      try {
-        const response: LoginResponse = await apiLogin(credentials);
-        const user: User = response.user;
+    try {
+      const response: LoginResponse = await apiLogin(credentials);
+      const user: User = response.user;
 
-        setStoredUser(user);
-        setState({
-          user,
-          isLoading: false,
-          isAuthenticated: true,
-        });
-      } catch (error) {
-        setState({
-          user: null,
-          isLoading: false,
-          isAuthenticated: false,
-        });
-        throw error;
-      }
-    },
-    [],
-  );
+      setStoredUser(user);
+      setState({
+        user,
+        isLoading: false,
+        isAuthenticated: true,
+      });
+    } catch (error) {
+      setState({
+        user: null,
+        isLoading: false,
+        isAuthenticated: false,
+      });
+      throw error;
+    }
+  }, []);
 
   const logout = useCallback(async (): Promise<void> => {
     setState((prev) => ({ ...prev, isLoading: true }));

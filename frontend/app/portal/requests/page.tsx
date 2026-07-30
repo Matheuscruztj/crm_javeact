@@ -13,13 +13,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -140,9 +134,7 @@ function CreateRequestForm({ onSuccess, onCancel }: CreateRequestFormProps) {
       });
       onSuccess();
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Falha ao criar solicitação",
-      );
+      setError(err instanceof Error ? err.message : "Falha ao criar solicitação");
     } finally {
       setIsSubmitting(false);
     }
@@ -151,9 +143,7 @@ function CreateRequestForm({ onSuccess, onCancel }: CreateRequestFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-          {error}
-        </div>
+        <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">{error}</div>
       )}
 
       <div className="space-y-2">
@@ -179,7 +169,7 @@ function CreateRequestForm({ onSuccess, onCancel }: CreateRequestFormProps) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Descreva detalhadamente sua solicitação..."
-          className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[120px] w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           disabled={isSubmitting}
           required
         />
@@ -193,7 +183,7 @@ function CreateRequestForm({ onSuccess, onCancel }: CreateRequestFormProps) {
           id="priority"
           value={priority}
           onChange={(e) => setPriority(e.target.value as Request["priority"])}
-          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          className="border-input bg-background ring-offset-background focus:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           disabled={isSubmitting}
         >
           <option value="LOW">Baixa</option>
@@ -204,12 +194,7 @@ function CreateRequestForm({ onSuccess, onCancel }: CreateRequestFormProps) {
       </div>
 
       <DialogFooter className="gap-2 sm:gap-0">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          disabled={isSubmitting}
-        >
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
           Cancelar
         </Button>
         <Button type="submit" disabled={isSubmitting}>
@@ -223,12 +208,10 @@ function CreateRequestForm({ onSuccess, onCancel }: CreateRequestFormProps) {
 function RequestCard({ request }: { request: Request }) {
   return (
     <Link href={`/portal/requests/${request.id}`}>
-      <Card className="transition-colors hover:bg-accent/50">
+      <Card className="hover:bg-accent/50 transition-colors">
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between gap-2">
-            <CardTitle className="text-base line-clamp-2">
-              {request.title}
-            </CardTitle>
+            <CardTitle className="line-clamp-2 text-base">{request.title}</CardTitle>
             <div className="flex flex-shrink-0 gap-2">
               <Badge className={getStatusBadgeClass(request.status)}>
                 {getStatusLabel(request.status)}
@@ -238,12 +221,10 @@ function RequestCard({ request }: { request: Request }) {
               </Badge>
             </div>
           </div>
-          <CardDescription className="line-clamp-2">
-            {request.description}
-          </CardDescription>
+          <CardDescription className="line-clamp-2">{request.description}</CardDescription>
         </CardHeader>
         <CardContent className="pt-0">
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-4 text-xs">
             <span className="flex items-center gap-1">
               <svg
                 className="h-4 w-4"
@@ -313,7 +294,7 @@ function Pagination({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Página {page + 1} de {totalPages || 1}
       </p>
       <div className="flex gap-2">
@@ -363,9 +344,7 @@ export default function PortalRequestsPage() {
         params.append("status", statusFilter);
       }
 
-      const response = await api.get<PageResponse<Request>>(
-        `/requests/my?${params.toString()}`,
-      );
+      const response = await api.get<PageResponse<Request>>(`/requests/my?${params.toString()}`);
 
       setRequests(response.content);
       setTotalPages(response.page.totalPages);
@@ -422,8 +401,7 @@ export default function PortalRequestsPage() {
             <DialogHeader>
               <DialogTitle>Nova Solicitação</DialogTitle>
               <DialogDescription>
-                Preencha os dados abaixo para abrir uma nova solicitação de
-                serviço.
+                Preencha os dados abaixo para abrir uma nova solicitação de serviço.
               </DialogDescription>
             </DialogHeader>
             <CreateRequestForm
@@ -442,7 +420,7 @@ export default function PortalRequestsPage() {
             setStatusFilter(e.target.value);
             setPage(0);
           }}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+          className="border-input bg-background ring-offset-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           aria-label="Filtrar por status"
         >
           <option value="ALL">Todos os Status</option>
@@ -455,7 +433,7 @@ export default function PortalRequestsPage() {
 
       {error && (
         <div
-          className="mb-4 rounded-md bg-destructive/10 p-4 text-sm text-destructive"
+          className="bg-destructive/10 text-destructive mb-4 rounded-md p-4 text-sm"
           role="alert"
         >
           {error}
@@ -489,33 +467,21 @@ export default function PortalRequestsPage() {
         ) : requests.length === 0 ? (
           <Card>
             <CardContent className="py-8 text-center">
-              <p className="text-muted-foreground">
-                Nenhuma solicitação encontrada.
-              </p>
-              <Button
-                variant="link"
-                onClick={() => setIsCreateDialogOpen(true)}
-                className="mt-2"
-              >
+              <p className="text-muted-foreground">Nenhuma solicitação encontrada.</p>
+              <Button variant="link" onClick={() => setIsCreateDialogOpen(true)} className="mt-2">
                 Criar primeira solicitação
               </Button>
             </CardContent>
           </Card>
         ) : (
-          requests.map((request) => (
-            <RequestCard key={request.id} request={request} />
-          ))
+          requests.map((request) => <RequestCard key={request.id} request={request} />)
         )}
       </div>
 
       {/* Pagination */}
       {!isLoading && requests.length > 0 && (
         <div className="mt-4">
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       )}
     </div>

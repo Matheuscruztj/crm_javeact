@@ -6,6 +6,7 @@
  * Validates: P3.10.2 — Conflict resolution dialog
  */
 
+import React from "react";
 import { useEffect, useRef } from "react";
 import { handleFocusTrap } from "@/lib/accessibility";
 
@@ -43,7 +44,10 @@ export function ConflictDialog({
     if (!el) return;
 
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { onCancel(); return; }
+      if (e.key === "Escape") {
+        onCancel();
+        return;
+      }
       handleFocusTrap(e, el);
     };
     window.addEventListener("keydown", handler);
@@ -71,7 +75,7 @@ export function ConflictDialog({
         aria-modal="true"
         aria-labelledby="conflict-title"
         aria-describedby="conflict-desc"
-        className="mx-4 max-w-md rounded-lg bg-background p-6 shadow-xl"
+        className="bg-background mx-4 max-w-md rounded-lg p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Icon */}
@@ -95,22 +99,22 @@ export function ConflictDialog({
         <h2 id="conflict-title" className="mb-2 text-lg font-semibold">
           Version Conflict
         </h2>
-        <p id="conflict-desc" className="mb-6 text-sm text-muted-foreground">
-          The {resourceType} was modified by another user while you were editing.
-          Your changes could not be saved. You can reload the latest version and try again.
+        <p id="conflict-desc" className="text-muted-foreground mb-6 text-sm">
+          The {resourceType} was modified by another user while you were editing. Your changes could
+          not be saved. You can reload the latest version and try again.
         </p>
 
         <div className="flex flex-col gap-2 sm:flex-row-reverse">
           <button
             onClick={onReload}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-2 text-sm font-medium"
             aria-label="Reload latest version"
           >
             Reload Latest
           </button>
           <button
             onClick={onCancel}
-            className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-muted"
+            className="hover:bg-muted rounded-md border px-4 py-2 text-sm font-medium"
             aria-label="Cancel and keep editing"
           >
             Cancel

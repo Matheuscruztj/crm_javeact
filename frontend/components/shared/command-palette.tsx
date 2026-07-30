@@ -34,9 +34,7 @@ interface SearchResponse {
   };
 }
 
-function getEntityIcon(
-  entityType: SearchResult["entityType"],
-): React.ReactNode {
+function getEntityIcon(entityType: SearchResult["entityType"]): React.ReactNode {
   switch (entityType) {
     case "CUSTOMER":
       return (
@@ -144,7 +142,7 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
       acc[result.entityType].push(result);
       return acc;
     },
-    {} as Record<string, SearchResult[]>,
+    {} as Record<string, SearchResult[]>
   );
 
   // Flatten for keyboard navigation
@@ -161,7 +159,7 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
       setIsLoading(true);
       try {
         const response = await api.get<SearchResponse>(
-          `/search?q=${encodeURIComponent(query)}&size=20`,
+          `/search?q=${encodeURIComponent(query)}&size=20`
         );
         setResults(response.content);
         setSelectedIndex(0);
@@ -202,9 +200,7 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
   // Scroll selected item into view
   useEffect(() => {
     if (listRef.current && flatResults.length > 0) {
-      const selectedElement = listRef.current.querySelector(
-        `[data-index="${selectedIndex}"]`,
-      );
+      const selectedElement = listRef.current.querySelector(`[data-index="${selectedIndex}"]`);
       if (selectedElement) {
         selectedElement.scrollIntoView({ block: "nearest" });
       }
@@ -216,7 +212,7 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
       setIsOpen(false);
       router.push(getEntityPath(result, isPortal));
     },
-    [router, isPortal],
+    [router, isPortal]
   );
 
   const handleKeyDown = useCallback(
@@ -224,9 +220,7 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
       switch (e.key) {
         case "ArrowDown":
           e.preventDefault();
-          setSelectedIndex((prev) =>
-            prev < flatResults.length - 1 ? prev + 1 : prev,
-          );
+          setSelectedIndex((prev) => (prev < flatResults.length - 1 ? prev + 1 : prev));
           break;
         case "ArrowUp":
           e.preventDefault();
@@ -244,7 +238,7 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
           break;
       }
     },
-    [flatResults, selectedIndex, handleSelect],
+    [flatResults, selectedIndex, handleSelect]
   );
 
   let flatIndex = 0;
@@ -254,7 +248,7 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+        className="border-input bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground flex items-center gap-2 rounded-md border px-3 py-2 text-sm"
       >
         <svg
           className="h-4 w-4"
@@ -271,7 +265,7 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
           />
         </svg>
         <span className="hidden sm:inline">Buscar...</span>
-        <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-xs font-medium opacity-100 sm:flex">
+        <kbd className="bg-muted pointer-events-none hidden h-5 items-center gap-1 rounded border px-1.5 font-mono text-xs font-medium opacity-100 select-none sm:flex">
           <span className="text-xs">⌘</span>K
         </kbd>
       </button>
@@ -282,7 +276,7 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
           {/* Search Input */}
           <div className="flex items-center border-b px-3">
             <svg
-              className="mr-2 h-4 w-4 shrink-0 text-muted-foreground"
+              className="text-muted-foreground mr-2 h-4 w-4 shrink-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -305,7 +299,7 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
             />
             {isLoading && (
               <svg
-                className="h-4 w-4 animate-spin text-muted-foreground"
+                className="text-muted-foreground h-4 w-4 animate-spin"
                 fill="none"
                 viewBox="0 0 24 24"
               >
@@ -329,24 +323,21 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
           {/* Results */}
           <div ref={listRef} className="max-h-96 overflow-y-auto p-2">
             {query.length < 2 ? (
-              <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+              <div className="text-muted-foreground px-4 py-8 text-center text-sm">
                 Digite pelo menos 2 caracteres para buscar
               </div>
             ) : isLoading ? (
               <div className="space-y-4 p-2">
                 {["Clientes", "Solicitações", "Documentos"].map((group) => (
                   <div key={group}>
-                    <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                    <div className="text-muted-foreground px-2 py-1.5 text-xs font-medium">
                       {group}
                     </div>
                     {Array.from({ length: 2 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center gap-3 px-2 py-2"
-                      >
+                      <div key={i} className="flex items-center gap-3 px-2 py-2">
                         <Skeleton className="h-4 w-4" />
                         <div className="flex-1">
-                          <Skeleton className="h-4 w-32 mb-1" />
+                          <Skeleton className="mb-1 h-4 w-32" />
                           <Skeleton className="h-3 w-24" />
                         </div>
                       </div>
@@ -355,13 +346,13 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
                 ))}
               </div>
             ) : results.length === 0 ? (
-              <div className="px-4 py-8 text-center text-sm text-muted-foreground">
+              <div className="text-muted-foreground px-4 py-8 text-center text-sm">
                 Nenhum resultado encontrado para "{query}"
               </div>
             ) : (
               Object.entries(groupedResults).map(([entityType, items]) => (
                 <div key={entityType} className="mb-4">
-                  <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                  <div className="text-muted-foreground px-2 py-1.5 text-xs font-medium">
                     {getEntityLabel(entityType as SearchResult["entityType"])}
                   </div>
                   {items.map((result) => {
@@ -375,22 +366,20 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
                           "flex w-full items-center gap-3 rounded-md px-2 py-2 text-left text-sm transition-colors",
                           currentIndex === selectedIndex
                             ? "bg-accent text-accent-foreground"
-                            : "hover:bg-accent/50",
+                            : "hover:bg-accent/50"
                         )}
                       >
                         <span className="text-muted-foreground">
                           {getEntityIcon(result.entityType)}
                         </span>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium truncate">
-                            {result.title}
-                          </div>
-                          <div className="text-xs text-muted-foreground truncate">
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate font-medium">{result.title}</div>
+                          <div className="text-muted-foreground truncate text-xs">
                             {result.subtitle}
                           </div>
                         </div>
                         <svg
-                          className="h-4 w-4 text-muted-foreground"
+                          className="text-muted-foreground h-4 w-4"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -412,16 +401,16 @@ export function CommandPalette({ isPortal = false }: CommandPaletteProps) {
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between border-t px-3 py-2 text-xs text-muted-foreground">
+          <div className="text-muted-foreground flex items-center justify-between border-t px-3 py-2 text-xs">
             <div className="flex gap-2">
               <span className="flex items-center gap-1">
-                <kbd className="rounded border bg-muted px-1">↑↓</kbd> navegar
+                <kbd className="bg-muted rounded border px-1">↑↓</kbd> navegar
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="rounded border bg-muted px-1">↵</kbd> selecionar
+                <kbd className="bg-muted rounded border px-1">↵</kbd> selecionar
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="rounded border bg-muted px-1">esc</kbd> fechar
+                <kbd className="bg-muted rounded border px-1">esc</kbd> fechar
               </span>
             </div>
             {results.length > 0 && <span>{results.length} resultado(s)</span>}

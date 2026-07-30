@@ -22,7 +22,7 @@ interface UseOptimisticReturn<T> {
   optimisticUpdate: (
     nextData: T,
     mutation: () => Promise<T>,
-    onSuccess?: (result: T) => void,
+    onSuccess?: (result: T) => void
   ) => Promise<void>;
   reset: () => void;
 }
@@ -34,11 +34,7 @@ export function useOptimistic<T>(initialData: T): UseOptimisticReturn<T> {
   const [error, setError] = useState<string | null>(null);
 
   const optimisticUpdate = useCallback(
-    async (
-      nextData: T,
-      mutation: () => Promise<T>,
-      onSuccess?: (result: T) => void,
-    ) => {
+    async (nextData: T, mutation: () => Promise<T>, onSuccess?: (result: T) => void) => {
       // 1. Save current state for rollback
       setPreviousData(data);
       // 2. Optimistically apply the update
@@ -60,7 +56,7 @@ export function useOptimistic<T>(initialData: T): UseOptimisticReturn<T> {
         setIsOptimistic(false);
       }
     },
-    [data, previousData],
+    [data, previousData]
   );
 
   const reset = useCallback(() => {

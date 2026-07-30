@@ -25,11 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { api, type PageResponse } from "@/lib/api-client";
 
 type DocumentStatus =
-  | "UPLOADED"
-  | "TEXT_EXTRACTED"
-  | "ANALYZING"
-  | "ANALYZED"
-  | "PROCESSING_FAILED";
+  "UPLOADED" | "TEXT_EXTRACTED" | "ANALYZING" | "ANALYZED" | "PROCESSING_FAILED";
 
 interface Document {
   id: string;
@@ -145,7 +141,7 @@ function Pagination({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Page {page + 1} of {totalPages || 1}
       </p>
       <div className="flex gap-2">
@@ -199,9 +195,7 @@ export default function DocumentsPage() {
         params.append("status", statusFilter);
       }
 
-      const response = await api.get<PageResponse<Document>>(
-        `/documents?${params.toString()}`,
-      );
+      const response = await api.get<PageResponse<Document>>(`/documents?${params.toString()}`);
 
       setDocuments(response.content);
       setTotalPages(response.page.totalPages);
@@ -230,16 +224,15 @@ export default function DocumentsPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Documents</h1>
         <p className="text-muted-foreground">
-          Browse and manage uploaded documents.{" "}
-          {totalElements > 0 && `(${totalElements} total)`}
+          Browse and manage uploaded documents. {totalElements > 0 && `(${totalElements} total)`}
         </p>
       </div>
 
       {/* Filters */}
       <div className="mb-4 flex flex-col gap-4 sm:flex-row">
-        <div className="relative flex-1 max-w-md">
+        <div className="relative max-w-md flex-1">
           <svg
-            className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -268,7 +261,7 @@ export default function DocumentsPage() {
             setStatusFilter(e.target.value);
             setPage(0);
           }}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+          className="border-input bg-background ring-offset-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           aria-label="Filter by status"
         >
           <option value="ALL">All Statuses</option>
@@ -282,7 +275,7 @@ export default function DocumentsPage() {
 
       {error && (
         <div
-          className="mb-4 rounded-md bg-destructive/10 p-4 text-sm text-destructive"
+          className="bg-destructive/10 text-destructive mb-4 rounded-md p-4 text-sm"
           role="alert"
         >
           {error}
@@ -290,7 +283,7 @@ export default function DocumentsPage() {
       )}
 
       {/* Table for desktop */}
-      <div className="hidden lg:block rounded-md border">
+      <div className="hidden rounded-md border lg:block">
         <Table>
           <TableHeader>
             <TableRow>
@@ -335,7 +328,7 @@ export default function DocumentsPage() {
               ))
             ) : documents.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8">
+                <TableCell colSpan={7} className="py-8 text-center">
                   <p className="text-muted-foreground">No documents found</p>
                 </TableCell>
               </TableRow>
@@ -347,7 +340,7 @@ export default function DocumentsPage() {
                       {getFileIcon(doc.contentType)}
                       <Link
                         href={`/admin/documents/${doc.id}`}
-                        className="font-medium hover:underline truncate max-w-[200px]"
+                        className="max-w-[200px] truncate font-medium hover:underline"
                         title={doc.filename}
                       >
                         {doc.filename}
@@ -357,7 +350,7 @@ export default function DocumentsPage() {
                   <TableCell>
                     <Link
                       href={`/admin/requests/${doc.requestId}`}
-                      className="text-muted-foreground hover:underline truncate max-w-[150px] block"
+                      className="text-muted-foreground block max-w-[150px] truncate hover:underline"
                       title={doc.requestTitle}
                     >
                       {doc.requestTitle}
@@ -370,9 +363,7 @@ export default function DocumentsPage() {
                   </TableCell>
                   <TableCell>
                     {doc.hasApproval && doc.approvalStatus ? (
-                      <Badge
-                        className={getApprovalBadgeClass(doc.approvalStatus)}
-                      >
+                      <Badge className={getApprovalBadgeClass(doc.approvalStatus)}>
                         {doc.approvalStatus}
                       </Badge>
                     ) : (
@@ -402,10 +393,10 @@ export default function DocumentsPage() {
       </div>
 
       {/* Cards for mobile/tablet */}
-      <div className="lg:hidden space-y-4">
+      <div className="space-y-4 lg:hidden">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="rounded-lg border p-4 space-y-3">
+            <div key={i} className="space-y-3 rounded-lg border p-4">
               <div className="flex items-center gap-2">
                 <Skeleton className="h-5 w-5" />
                 <Skeleton className="h-5 w-48" />
@@ -422,24 +413,24 @@ export default function DocumentsPage() {
             </div>
           ))
         ) : documents.length === 0 ? (
-          <div className="text-center py-8">
+          <div className="py-8 text-center">
             <p className="text-muted-foreground">No documents found</p>
           </div>
         ) : (
           documents.map((doc) => (
-            <div key={doc.id} className="rounded-lg border p-4 space-y-3">
+            <div key={doc.id} className="space-y-3 rounded-lg border p-4">
               <div className="flex items-center gap-2">
                 {getFileIcon(doc.contentType)}
                 <Link
                   href={`/admin/documents/${doc.id}`}
-                  className="font-medium hover:underline truncate"
+                  className="truncate font-medium hover:underline"
                 >
                   {doc.filename}
                 </Link>
               </div>
               <Link
                 href={`/admin/requests/${doc.requestId}`}
-                className="text-sm text-muted-foreground hover:underline block"
+                className="text-muted-foreground block text-sm hover:underline"
               >
                 {doc.requestTitle}
               </Link>
@@ -453,11 +444,9 @@ export default function DocumentsPage() {
                   </Badge>
                 )}
               </div>
-              <div className="flex items-center justify-between pt-2 border-t">
-                <span className="text-sm text-muted-foreground">
-                  {formatFileSize(doc.size)}
-                </span>
-                <span className="text-sm text-muted-foreground">
+              <div className="flex items-center justify-between border-t pt-2">
+                <span className="text-muted-foreground text-sm">{formatFileSize(doc.size)}</span>
+                <span className="text-muted-foreground text-sm">
                   {new Date(doc.uploadedAt).toLocaleDateString()}
                 </span>
               </div>
@@ -476,11 +465,7 @@ export default function DocumentsPage() {
       {/* Pagination */}
       {!isLoading && documents.length > 0 && (
         <div className="mt-4">
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       )}
     </div>

@@ -188,8 +188,7 @@ components:
   schemas:
     NotificationPayload:
       type: object
-      required:
-        [eventType, id, recipientUserId, tenantId, title, message, createdAt]
+      required: [eventType, id, recipientUserId, tenantId, title, message, createdAt]
       properties:
         eventType:
           type: string
@@ -234,15 +233,7 @@ components:
 
     ApprovalDecisionPayload:
       type: object
-      required:
-        [
-          eventType,
-          documentId,
-          decision,
-          analystId,
-          decisionTimestamp,
-          tenantId,
-        ]
+      required: [eventType, documentId, decision, analystId, decisionTimestamp, tenantId]
       properties:
         eventType:
           type: string
@@ -276,16 +267,7 @@ components:
           type: string
         status:
           type: string
-          enum:
-            [
-              OPEN,
-              IN_PROGRESS,
-              PENDING_APPROVAL,
-              APPROVED,
-              REJECTED,
-              CLOSED,
-              CANCELLED,
-            ]
+          enum: [OPEN, IN_PROGRESS, PENDING_APPROVAL, APPROVED, REJECTED, CLOSED, CANCELLED]
         updatedAt:
           type: string
           format: date-time

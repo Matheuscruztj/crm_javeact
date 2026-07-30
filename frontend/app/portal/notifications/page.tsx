@@ -10,10 +10,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, type PageResponse } from "@/lib/api-client";
 import { cn } from "@/lib/utils";
@@ -41,12 +38,7 @@ function getNotificationIcon(type: Notification["type"]): React.ReactNode {
             stroke="currentColor"
             aria-hidden="true"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M5 13l4 4L19 7"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
       );
@@ -126,7 +118,7 @@ function NotificationItem({
       className={cn(
         "flex items-start gap-4 rounded-lg border p-4 transition-colors",
         !notification.read && "bg-primary/5 border-primary/20",
-        selected && "ring-2 ring-primary",
+        selected && "ring-primary ring-2"
       )}
     >
       <input
@@ -137,29 +129,20 @@ function NotificationItem({
         aria-label={`Selecionar notificação: ${notification.title}`}
       />
 
-      <div className="flex-shrink-0">
-        {getNotificationIcon(notification.type)}
-      </div>
+      <div className="flex-shrink-0">{getNotificationIcon(notification.type)}</div>
 
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <h3
-              className={cn(
-                "font-medium",
-                !notification.read && "font-semibold",
-              )}
-            >
+            <h3 className={cn("font-medium", !notification.read && "font-semibold")}>
               {notification.title}
               {!notification.read && (
-                <span className="ml-2 inline-flex h-2 w-2 rounded-full bg-primary" />
+                <span className="bg-primary ml-2 inline-flex h-2 w-2 rounded-full" />
               )}
             </h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              {notification.message}
-            </p>
+            <p className="text-muted-foreground mt-1 text-sm">{notification.message}</p>
           </div>
-          <span className="text-xs text-muted-foreground whitespace-nowrap">
+          <span className="text-muted-foreground text-xs whitespace-nowrap">
             {new Date(notification.createdAt).toLocaleDateString("pt-BR", {
               day: "2-digit",
               month: "short",
@@ -195,7 +178,7 @@ function Pagination({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Página {page + 1} de {totalPages || 1}
       </p>
       <div className="flex gap-2">
@@ -246,9 +229,7 @@ export default function PortalNotificationsPage() {
       }
 
       const [notifsRes, countRes] = await Promise.all([
-        api.get<PageResponse<Notification>>(
-          `/notifications?${params.toString()}`,
-        ),
+        api.get<PageResponse<Notification>>(`/notifications?${params.toString()}`),
         api.get<{ unreadCount: number }>("/notifications/unread-count"),
       ]);
 
@@ -270,9 +251,7 @@ export default function PortalNotificationsPage() {
   const markAsRead = useCallback(async (id: string) => {
     try {
       await api.patch("/notifications/mark-read", { ids: [id] });
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
-      );
+      setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch {
       // Silently fail
@@ -286,11 +265,9 @@ export default function PortalNotificationsPage() {
       const ids = Array.from(selectedIds);
       await api.patch("/notifications/mark-read", { ids });
       setNotifications((prev) =>
-        prev.map((n) => (selectedIds.has(n.id) ? { ...n, read: true } : n)),
+        prev.map((n) => (selectedIds.has(n.id) ? { ...n, read: true } : n))
       );
-      const unreadSelected = notifications.filter(
-        (n) => selectedIds.has(n.id) && !n.read,
-      ).length;
+      const unreadSelected = notifications.filter((n) => selectedIds.has(n.id) && !n.read).length;
       setUnreadCount((prev) => Math.max(0, prev - unreadSelected));
       setSelectedIds(new Set());
     } catch {
@@ -336,7 +313,7 @@ export default function PortalNotificationsPage() {
           <p className="text-muted-foreground">
             Acompanhe atualizações e alertas sobre suas solicitações.
             {unreadCount > 0 && (
-              <span className="ml-2 inline-flex items-center rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">
+              <span className="bg-primary text-primary-foreground ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-xs">
                 {unreadCount} não lida{unreadCount > 1 ? "s" : ""}
               </span>
             )}
@@ -359,7 +336,7 @@ export default function PortalNotificationsPage() {
               setFilter(e.target.value as "ALL" | "UNREAD");
               setPage(0);
             }}
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+            className="border-input bg-background ring-offset-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             aria-label="Filtrar notificações"
           >
             <option value="ALL">Todas</option>
@@ -388,7 +365,7 @@ export default function PortalNotificationsPage() {
 
       {error && (
         <div
-          className="mb-4 rounded-md bg-destructive/10 p-4 text-sm text-destructive"
+          className="bg-destructive/10 text-destructive mb-4 rounded-md p-4 text-sm"
           role="alert"
         >
           {error}
@@ -404,7 +381,7 @@ export default function PortalNotificationsPage() {
                 <div className="flex items-start gap-4">
                   <Skeleton className="h-10 w-10 rounded-full" />
                   <div className="flex-1">
-                    <Skeleton className="h-5 w-48 mb-2" />
+                    <Skeleton className="mb-2 h-5 w-48" />
                     <Skeleton className="h-4 w-full" />
                   </div>
                 </div>
@@ -415,7 +392,7 @@ export default function PortalNotificationsPage() {
           <Card>
             <CardContent className="py-8 text-center">
               <svg
-                className="mx-auto h-12 w-12 text-muted-foreground mb-4"
+                className="text-muted-foreground mx-auto mb-4 h-12 w-12"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -451,11 +428,7 @@ export default function PortalNotificationsPage() {
       {/* Pagination */}
       {!isLoading && notifications.length > 0 && (
         <div className="mt-4">
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       )}
     </div>

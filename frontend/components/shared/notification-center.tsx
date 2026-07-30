@@ -24,7 +24,7 @@ function NotificationItem({
 }) {
   return (
     <div
-      className={`flex items-start gap-3 border-b px-4 py-3 transition-colors hover:bg-muted/25 ${
+      className={`hover:bg-muted/25 flex items-start gap-3 border-b px-4 py-3 transition-colors ${
         notification.read ? "opacity-60" : "bg-primary/5"
       }`}
       role="listitem"
@@ -32,14 +32,14 @@ function NotificationItem({
       {/* Unread dot */}
       {!notification.read && (
         <span
-          className="mt-1.5 h-2 w-2 flex-shrink-0 rounded-full bg-primary"
+          className="bg-primary mt-1.5 h-2 w-2 flex-shrink-0 rounded-full"
           aria-label="Unread"
         />
       )}
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">{notification.title}</p>
-        <p className="truncate text-xs text-muted-foreground">{notification.message}</p>
-        <p className="mt-0.5 text-xs text-muted-foreground">
+        <p className="text-muted-foreground truncate text-xs">{notification.message}</p>
+        <p className="text-muted-foreground mt-0.5 text-xs">
           {new Date(notification.createdAt).toLocaleString()}
         </p>
       </div>
@@ -47,7 +47,7 @@ function NotificationItem({
         {notification.link && (
           <Link
             href={notification.link}
-            className="text-xs text-primary hover:underline"
+            className="text-primary text-xs hover:underline"
             aria-label={`View: ${notification.title}`}
           >
             View
@@ -56,7 +56,7 @@ function NotificationItem({
         {!notification.read && (
           <button
             onClick={() => onMarkRead(notification.id)}
-            className="text-xs text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground hover:text-foreground text-xs"
             aria-label={`Mark as read: ${notification.title}`}
           >
             Mark read
@@ -113,7 +113,7 @@ export function NotificationCenter() {
       {/* Bell button */}
       <button
         onClick={() => setOpen((o) => !o)}
-        className="relative rounded-md p-2 hover:bg-muted"
+        className="hover:bg-muted relative rounded-md p-2"
         aria-label={`Notifications${unreadCount > 0 ? ` — ${unreadCount} unread` : ""}`}
         aria-expanded={open}
         aria-haspopup="true"
@@ -138,7 +138,7 @@ export function NotificationCenter() {
         {/* Badge */}
         {unreadCount > 0 && (
           <span
-            className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground"
+            className="bg-destructive text-destructive-foreground absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold"
             aria-hidden="true"
           >
             {unreadCount > 99 ? "99+" : unreadCount}
@@ -149,18 +149,18 @@ export function NotificationCenter() {
       {/* Dropdown */}
       {open && (
         <div
-          className="absolute right-0 top-full z-50 mt-2 w-80 overflow-hidden rounded-md border bg-background shadow-lg"
+          className="bg-background absolute top-full right-0 z-50 mt-2 w-80 overflow-hidden rounded-md border shadow-lg"
           role="dialog"
           aria-label="Notifications"
           aria-modal="false"
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b px-4 py-3">
-            <h3 className="font-semibold text-sm">Notifications</h3>
+            <h3 className="text-sm font-semibold">Notifications</h3>
             {unreadCount > 0 && (
               <button
                 onClick={handleMarkAllRead}
-                className="text-xs text-primary hover:underline"
+                className="text-primary text-xs hover:underline"
                 aria-label="Mark all notifications as read"
               >
                 Mark all read
@@ -169,22 +169,14 @@ export function NotificationCenter() {
           </div>
 
           {/* List */}
-          <div
-            className="max-h-80 overflow-y-auto"
-            role="list"
-            aria-label="Notification list"
-          >
+          <div className="max-h-80 overflow-y-auto" role="list" aria-label="Notification list">
             {notifications.length === 0 ? (
-              <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+              <p className="text-muted-foreground px-4 py-6 text-center text-sm">
                 No notifications
               </p>
             ) : (
               notifications.map((n) => (
-                <NotificationItem
-                  key={n.id}
-                  notification={n}
-                  onMarkRead={handleMarkRead}
-                />
+                <NotificationItem key={n.id} notification={n} onMarkRead={handleMarkRead} />
               ))
             )}
           </div>
@@ -193,7 +185,7 @@ export function NotificationCenter() {
           <div className="border-t px-4 py-2 text-center">
             <Link
               href="/portal/notifications"
-              className="text-xs text-primary hover:underline"
+              className="text-primary text-xs hover:underline"
               onClick={() => setOpen(false)}
             >
               View all notifications

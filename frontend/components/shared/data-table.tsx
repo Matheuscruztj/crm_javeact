@@ -48,7 +48,7 @@ function SkeletonRow({ cols }: { cols: number }) {
     <tr aria-hidden="true">
       {Array.from({ length: cols }).map((_, i) => (
         <td key={i} className="px-4 py-3">
-          <div className="h-4 animate-pulse rounded bg-muted" />
+          <div className="bg-muted h-4 animate-pulse rounded" />
         </td>
       ))}
     </tr>
@@ -78,7 +78,7 @@ export function DataTable<T extends { id: string }>({
 
   if (error) {
     return (
-      <div role="alert" className="rounded-md bg-destructive/10 p-4 text-sm text-destructive">
+      <div role="alert" className="bg-destructive/10 text-destructive rounded-md p-4 text-sm">
         {error}
       </div>
     );
@@ -109,15 +109,10 @@ export function DataTable<T extends { id: string }>({
           </thead>
           <tbody>
             {loading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <SkeletonRow key={i} cols={colCount} />
-              ))
+              Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} cols={colCount} />)
             ) : content.length === 0 ? (
               <tr>
-                <td
-                  colSpan={colCount}
-                  className="px-4 py-10 text-center text-muted-foreground"
-                >
+                <td colSpan={colCount} className="text-muted-foreground px-4 py-10 text-center">
                   {emptyMessage}
                 </td>
               </tr>
@@ -125,7 +120,7 @@ export function DataTable<T extends { id: string }>({
               content.map((row) => (
                 <tr
                   key={row.id}
-                  className={`border-t transition-colors hover:bg-muted/25 ${
+                  className={`hover:bg-muted/25 border-t transition-colors ${
                     onRowClick ? "cursor-pointer" : ""
                   }`}
                   onClick={() => onRowClick?.(row)}
@@ -139,10 +134,7 @@ export function DataTable<T extends { id: string }>({
                   }}
                 >
                   {columns.map((col) => (
-                    <td
-                      key={String(col.key)}
-                      className={`px-4 py-3 ${col.className ?? ""}`}
-                    >
+                    <td key={String(col.key)} className={`px-4 py-3 ${col.className ?? ""}`}>
                       {col.render
                         ? col.render(row)
                         : String((row as Record<string, unknown>)[String(col.key)] ?? "")}
@@ -150,10 +142,7 @@ export function DataTable<T extends { id: string }>({
                   ))}
                   {rowActions && (
                     <td className="px-4 py-3">
-                      <div
-                        className="flex gap-2"
-                        onClick={(e) => e.stopPropagation()}
-                      >
+                      <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                         {rowActions(row)}
                       </div>
                     </td>
@@ -169,14 +158,13 @@ export function DataTable<T extends { id: string }>({
       {!loading && totalPages > 1 && (
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground">
-            {totalElements} result{totalElements !== 1 ? "s" : ""} — Page{" "}
-            {page + 1} of {totalPages}
+            {totalElements} result{totalElements !== 1 ? "s" : ""} — Page {page + 1} of {totalPages}
           </span>
           <div className="flex gap-2">
             <button
               onClick={handlePrev}
               disabled={page === 0}
-              className="rounded-md border px-3 py-1.5 text-xs hover:bg-muted disabled:opacity-40"
+              className="hover:bg-muted rounded-md border px-3 py-1.5 text-xs disabled:opacity-40"
               aria-label="Previous page"
             >
               ← Prev
@@ -184,7 +172,7 @@ export function DataTable<T extends { id: string }>({
             <button
               onClick={handleNext}
               disabled={page >= totalPages - 1}
-              className="rounded-md border px-3 py-1.5 text-xs hover:bg-muted disabled:opacity-40"
+              className="hover:bg-muted rounded-md border px-3 py-1.5 text-xs disabled:opacity-40"
               aria-label="Next page"
             >
               Next →

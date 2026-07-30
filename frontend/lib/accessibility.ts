@@ -19,7 +19,7 @@ export function generateId(prefix: string): string {
  * Use on containers that update without page navigation.
  */
 export function liveRegionProps(
-  politeness: "polite" | "assertive" = "polite",
+  politeness: "polite" | "assertive" = "polite"
 ): React.AriaAttributes {
   return {
     "aria-live": politeness,
@@ -71,10 +71,7 @@ export function getFocusableElements(container: HTMLElement): HTMLElement[] {
 /**
  * Handles keyboard navigation inside a focus trap (modals).
  */
-export function handleFocusTrap(
-  e: KeyboardEvent,
-  container: HTMLElement,
-): void {
+export function handleFocusTrap(e: KeyboardEvent, container: HTMLElement): void {
   if (e.key !== "Tab") return;
   const focusable = getFocusableElements(container);
   if (focusable.length === 0) return;

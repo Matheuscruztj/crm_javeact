@@ -49,7 +49,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="p-6 space-y-8 max-w-2xl">
+    <div className="max-w-2xl space-y-8 p-6">
       <div>
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-muted-foreground">System configuration and tenant preferences.</p>
@@ -57,11 +57,14 @@ export default function SettingsPage() {
 
       {/* Branding Section */}
       <section aria-labelledby="branding-heading">
-        <h2 id="branding-heading" className="mb-4 text-lg font-semibold border-b pb-2">
+        <h2 id="branding-heading" className="mb-4 border-b pb-2 text-lg font-semibold">
           Branding
         </h2>
         {globalError && (
-          <div role="alert" className="mb-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+          <div
+            role="alert"
+            className="bg-destructive/10 text-destructive mb-4 rounded-md p-3 text-sm"
+          >
             {globalError}
           </div>
         )}
@@ -72,7 +75,7 @@ export default function SettingsPage() {
         )}
         <form onSubmit={handleSubmit(onBrandingSubmit)} noValidate className="space-y-4">
           <div>
-            <label htmlFor="logoUrl" className="block text-sm font-medium mb-1">
+            <label htmlFor="logoUrl" className="mb-1 block text-sm font-medium">
               Logo URL
             </label>
             <input
@@ -80,17 +83,17 @@ export default function SettingsPage() {
               type="url"
               {...register("logoUrl")}
               placeholder="https://your-domain.com/logo.png"
-              className="w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              className="focus:ring-ring w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
               aria-describedby={errors.logoUrl ? "logoUrl-error" : undefined}
             />
             {errors.logoUrl && (
-              <p id="logoUrl-error" role="alert" className="mt-1 text-xs text-destructive">
+              <p id="logoUrl-error" role="alert" className="text-destructive mt-1 text-xs">
                 {errors.logoUrl.message}
               </p>
             )}
           </div>
           <div>
-            <label htmlFor="primaryColor" className="block text-sm font-medium mb-1">
+            <label htmlFor="primaryColor" className="mb-1 block text-sm font-medium">
               Primary Color
             </label>
             <div className="flex items-center gap-2">
@@ -100,12 +103,12 @@ export default function SettingsPage() {
                 {...register("primaryColor")}
                 placeholder="#3B82F6"
                 maxLength={7}
-                className="w-32 rounded-md border px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-ring"
+                className="focus:ring-ring w-32 rounded-md border px-3 py-2 font-mono text-sm focus:ring-2 focus:outline-none"
                 aria-describedby={errors.primaryColor ? "primaryColor-error" : undefined}
               />
               <input
                 type="color"
-                className="h-9 w-9 rounded cursor-pointer border"
+                className="h-9 w-9 cursor-pointer rounded border"
                 aria-label="Color picker"
                 onChange={(e) => {
                   const input = document.getElementById("primaryColor") as HTMLInputElement;
@@ -114,7 +117,7 @@ export default function SettingsPage() {
               />
             </div>
             {errors.primaryColor && (
-              <p id="primaryColor-error" role="alert" className="mt-1 text-xs text-destructive">
+              <p id="primaryColor-error" role="alert" className="text-destructive mt-1 text-xs">
                 {errors.primaryColor.message}
               </p>
             )}
@@ -122,7 +125,7 @@ export default function SettingsPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-6 py-2 text-sm font-medium disabled:opacity-50"
             aria-busy={isSubmitting}
           >
             {isSubmitting ? "Saving…" : "Save Branding"}
@@ -132,12 +135,12 @@ export default function SettingsPage() {
 
       {/* Feature Flags Section (read-only display) */}
       <section aria-labelledby="features-heading">
-        <h2 id="features-heading" className="mb-4 text-lg font-semibold border-b pb-2">
+        <h2 id="features-heading" className="mb-4 border-b pb-2 text-lg font-semibold">
           Feature Flags
         </h2>
-        <p className="text-sm text-muted-foreground mb-3">
-          Feature flags are configured via environment variables or Redis keys.
-          Contact your administrator to enable specialized data stores.
+        <p className="text-muted-foreground mb-3 text-sm">
+          Feature flags are configured via environment variables or Redis keys. Contact your
+          administrator to enable specialized data stores.
         </p>
         <div className="grid grid-cols-2 gap-2 text-sm">
           {[
@@ -151,7 +154,7 @@ export default function SettingsPage() {
             <div key={f.name} className="flex items-center gap-2 rounded border p-2">
               <span className="h-2 w-2 rounded-full bg-gray-300" aria-hidden="true" />
               <span className="font-medium">{f.name}</span>
-              <span className="ml-auto font-mono text-xs text-muted-foreground">{f.env}</span>
+              <span className="text-muted-foreground ml-auto font-mono text-xs">{f.env}</span>
             </div>
           ))}
         </div>

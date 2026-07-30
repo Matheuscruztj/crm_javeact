@@ -47,9 +47,7 @@ export default function ImportsPage() {
     lines.slice(1).forEach((line, i) => {
       const cols = line.split(",").length;
       if (cols !== header.length) {
-        validationErrors.push(
-          `Row ${i + 2}: expected ${header.length} columns, got ${cols}`,
-        );
+        validationErrors.push(`Row ${i + 2}: expected ${header.length} columns, got ${cols}`);
       }
     });
     setErrors(validationErrors);
@@ -81,10 +79,7 @@ export default function ImportsPage() {
       </div>
 
       {error && (
-        <div
-          role="alert"
-          className="mb-4 rounded-md bg-destructive/10 p-4 text-destructive"
-        >
+        <div role="alert" className="bg-destructive/10 text-destructive mb-4 rounded-md p-4">
           {error}
         </div>
       )}
@@ -101,13 +96,11 @@ export default function ImportsPage() {
         />
         <label
           htmlFor="csv-upload"
-          className="cursor-pointer rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer rounded-md px-6 py-3 text-sm font-medium"
         >
           Select CSV file
         </label>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Drag & drop or click to upload
-        </p>
+        <p className="text-muted-foreground mt-2 text-sm">Drag & drop or click to upload</p>
       </div>
 
       {schema.length > 0 && (
@@ -115,10 +108,7 @@ export default function ImportsPage() {
           <h2 className="mb-2 font-semibold">Detected Schema</h2>
           <div className="flex flex-wrap gap-2">
             {schema.map((col) => (
-              <span
-                key={col}
-                className="rounded-full bg-muted px-3 py-1 text-xs"
-              >
+              <span key={col} className="bg-muted rounded-full px-3 py-1 text-xs">
                 {col}
               </span>
             ))}
@@ -128,9 +118,7 @@ export default function ImportsPage() {
 
       {errors.length > 0 && (
         <div role="alert" className="mb-4 rounded-md bg-yellow-50 p-4">
-          <h3 className="mb-2 font-medium text-yellow-800">
-            Validation Issues
-          </h3>
+          <h3 className="mb-2 font-medium text-yellow-800">Validation Issues</h3>
           <ul className="list-disc pl-4 text-sm text-yellow-700">
             {errors.map((e, i) => (
               <li key={i}>{e}</li>
@@ -173,7 +161,7 @@ export default function ImportsPage() {
         <button
           onClick={handleImport}
           disabled={loading}
-          className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-6 py-2 text-sm font-medium disabled:opacity-50"
           aria-busy={loading}
         >
           {loading ? "Importing…" : "Start Import"}
@@ -184,9 +172,7 @@ export default function ImportsPage() {
         <div className="mt-6 rounded-md bg-green-50 p-4">
           <h3 className="font-medium text-green-800">Import started</h3>
           <p className="text-sm text-green-700">Job ID: {importResult.jobId}</p>
-          <p className="text-sm text-green-700">
-            Status: {importResult.status}
-          </p>
+          <p className="text-sm text-green-700">Status: {importResult.status}</p>
         </div>
       )}
     </div>

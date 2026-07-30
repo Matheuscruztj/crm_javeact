@@ -10,13 +10,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/api-client";
 
@@ -41,18 +35,12 @@ interface StatCardProps {
   isLoading?: boolean;
 }
 
-function StatCard({
-  title,
-  value,
-  description,
-  icon,
-  isLoading,
-}: StatCardProps) {
+function StatCard({ title, value, description, icon, isLoading }: StatCardProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <div className="h-4 w-4 text-muted-foreground">{icon}</div>
+        <div className="text-muted-foreground h-4 w-4">{icon}</div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -60,9 +48,7 @@ function StatCard({
         ) : (
           <div className="text-2xl font-bold">{value}</div>
         )}
-        {description && (
-          <p className="text-xs text-muted-foreground">{description}</p>
-        )}
+        {description && <p className="text-muted-foreground text-xs">{description}</p>}
       </CardContent>
     </Card>
   );
@@ -85,9 +71,7 @@ function RequestStatusCard({
   return (
     <Card className="col-span-full lg:col-span-2">
       <CardHeader>
-        <CardTitle className="text-sm font-medium">
-          Requests by Status
-        </CardTitle>
+        <CardTitle className="text-sm font-medium">Requests by Status</CardTitle>
         <CardDescription>Distribution of service requests</CardDescription>
       </CardHeader>
       <CardContent>
@@ -109,12 +93,10 @@ function RequestStatusCard({
               return (
                 <div key={status.key} className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      {status.label}
-                    </span>
+                    <span className="text-muted-foreground">{status.label}</span>
                     <span className="font-medium">{count}</span>
                   </div>
-                  <div className="h-2 w-full rounded-full bg-secondary">
+                  <div className="bg-secondary h-2 w-full rounded-full">
                     <div
                       className={`h-2 rounded-full ${status.color}`}
                       style={{ width: `${percentage}%` }}
@@ -142,32 +124,26 @@ export default function DashboardPage() {
 
       try {
         // Fetch all stats in parallel
-        const [customersRes, requestsRes, documentsRes, approvalsRes] =
-          await Promise.allSettled([
-            api.get<{ totalActive: number }>("/customers/stats"),
-            api.get<{
-              total: number;
-              byStatus: DashboardStats["requestsByStatus"];
-            }>("/requests/stats"),
-            api.get<{ processed: number }>("/documents/stats"),
-            api.get<{ pending: number }>("/approvals/stats"),
-          ]);
+        const [customersRes, requestsRes, documentsRes, approvalsRes] = await Promise.allSettled([
+          api.get<{ totalActive: number }>("/customers/stats"),
+          api.get<{
+            total: number;
+            byStatus: DashboardStats["requestsByStatus"];
+          }>("/requests/stats"),
+          api.get<{ processed: number }>("/documents/stats"),
+          api.get<{ pending: number }>("/approvals/stats"),
+        ]);
 
         // Extract values with fallbacks
         const activeCustomers =
-          customersRes.status === "fulfilled"
-            ? customersRes.value.totalActive
-            : 0;
-        const totalRequests =
-          requestsRes.status === "fulfilled" ? requestsRes.value.total : 0;
+          customersRes.status === "fulfilled" ? customersRes.value.totalActive : 0;
+        const totalRequests = requestsRes.status === "fulfilled" ? requestsRes.value.total : 0;
         const requestsByStatus =
           requestsRes.status === "fulfilled"
             ? requestsRes.value.byStatus
             : { OPEN: 0, IN_PROGRESS: 0, RESOLVED: 0, CLOSED: 0 };
         const documentsProcessed =
-          documentsRes.status === "fulfilled"
-            ? documentsRes.value.processed
-            : 0;
+          documentsRes.status === "fulfilled" ? documentsRes.value.processed : 0;
         const pendingApprovals =
           approvalsRes.status === "fulfilled" ? approvalsRes.value.pending : 0;
 
@@ -192,14 +168,12 @@ export default function DashboardPage() {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">
-          Overview of system metrics and recent activity.
-        </p>
+        <p className="text-muted-foreground">Overview of system metrics and recent activity.</p>
       </div>
 
       {error && (
         <div
-          className="mb-6 rounded-md bg-destructive/10 p-4 text-sm text-destructive"
+          className="bg-destructive/10 text-destructive mb-6 rounded-md p-4 text-sm"
           role="alert"
         >
           {error}
@@ -213,12 +187,7 @@ export default function DashboardPage() {
           description="Total registered customers"
           isLoading={isLoading}
           icon={
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -235,12 +204,7 @@ export default function DashboardPage() {
           description="All service requests"
           isLoading={isLoading}
           icon={
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -257,12 +221,7 @@ export default function DashboardPage() {
           description="AI-analyzed documents"
           isLoading={isLoading}
           icon={
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -279,12 +238,7 @@ export default function DashboardPage() {
           description="Awaiting decision"
           isLoading={isLoading}
           icon={
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

@@ -11,16 +11,10 @@ export const metadata: Metadata = {
  * All routes inherit this layout. Section-specific layouts
  * (admin, portal) layer their own chrome on top of this.
  */
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen bg-background font-sans antialiased">
-        {children}
-      </body>
+      <body className="bg-background min-h-screen font-sans antialiased">{children}</body>
     </html>
   );
 }

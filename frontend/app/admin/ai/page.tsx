@@ -63,22 +63,34 @@ export default function AIAdminPage() {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="mx-auto max-w-4xl p-6">
       <h1 className="mb-6 text-2xl font-bold">AI Management</h1>
 
-      {error && <div className="mb-4 rounded bg-destructive/10 p-3 text-sm text-destructive" role="alert">{error}</div>}
-      {successMsg && <div className="mb-4 rounded bg-green-50 p-3 text-sm text-green-700">{successMsg}</div>}
+      {error && (
+        <div className="bg-destructive/10 text-destructive mb-4 rounded p-3 text-sm" role="alert">
+          {error}
+        </div>
+      )}
+      {successMsg && (
+        <div className="mb-4 rounded bg-green-50 p-3 text-sm text-green-700">{successMsg}</div>
+      )}
 
       {/* Lookup active prompt */}
       <section className="mb-8 rounded-lg border p-4">
         <h2 className="mb-3 text-sm font-semibold">Lookup Active Prompt</h2>
         <div className="flex gap-2">
-          <input value={lookupName} onChange={(e) => setLookupName(e.target.value)}
+          <input
+            value={lookupName}
+            onChange={(e) => setLookupName(e.target.value)}
             placeholder="Prompt name (e.g. document-analysis)"
             className="flex-1 rounded border px-3 py-2 text-sm"
-            aria-label="Prompt name to look up" />
-          <button onClick={lookupActivePrompt} disabled={loading || !lookupName.trim()}
-            className="rounded bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-50">
+            aria-label="Prompt name to look up"
+          />
+          <button
+            onClick={lookupActivePrompt}
+            disabled={loading || !lookupName.trim()}
+            className="bg-primary text-primary-foreground rounded px-4 py-2 text-sm disabled:opacity-50"
+          >
             {loading ? "Loading…" : "Look up"}
           </button>
         </div>
@@ -88,10 +100,18 @@ export default function AIAdminPage() {
             {prompts.map((p) => (
               <li key={p.id} className="flex items-center justify-between px-4 py-3">
                 <div>
-                  <p className="text-sm font-medium">{p.name} <span className="text-muted-foreground">v{p.version}</span></p>
-                  <p className="text-xs text-muted-foreground">{new Date(p.createdAt).toLocaleString()}</p>
+                  <p className="text-sm font-medium">
+                    {p.name} <span className="text-muted-foreground">v{p.version}</span>
+                  </p>
+                  <p className="text-muted-foreground text-xs">
+                    {new Date(p.createdAt).toLocaleString()}
+                  </p>
                 </div>
-                {p.active && <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">Active</span>}
+                {p.active && (
+                  <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">
+                    Active
+                  </span>
+                )}
               </li>
             ))}
           </ul>
@@ -102,15 +122,26 @@ export default function AIAdminPage() {
       <section className="rounded-lg border p-4">
         <h2 className="mb-3 text-sm font-semibold">Register New Prompt Version</h2>
         <div className="space-y-3">
-          <input value={newName} onChange={(e) => setNewName(e.target.value)}
-            placeholder="Prompt name" className="w-full rounded border px-3 py-2 text-sm"
-            aria-label="New prompt name" />
-          <textarea value={newContent} onChange={(e) => setNewContent(e.target.value)}
+          <input
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            placeholder="Prompt name"
+            className="w-full rounded border px-3 py-2 text-sm"
+            aria-label="New prompt name"
+          />
+          <textarea
+            value={newContent}
+            onChange={(e) => setNewContent(e.target.value)}
             placeholder="Prompt template content (use {{variable}} for placeholders)"
-            rows={6} className="w-full rounded border px-3 py-2 text-sm font-mono"
-            aria-label="Prompt template content" />
-          <button onClick={registerNewVersion} disabled={registering || !newName.trim() || !newContent.trim()}
-            className="rounded bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-50">
+            rows={6}
+            className="w-full rounded border px-3 py-2 font-mono text-sm"
+            aria-label="Prompt template content"
+          />
+          <button
+            onClick={registerNewVersion}
+            disabled={registering || !newName.trim() || !newContent.trim()}
+            className="bg-primary text-primary-foreground rounded px-4 py-2 text-sm disabled:opacity-50"
+          >
             {registering ? "Registering…" : "Register & Activate"}
           </button>
         </div>

@@ -13,7 +13,14 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -101,13 +108,14 @@ function RejectDialog({
         <DialogHeader>
           <DialogTitle>Reject Approval</DialogTitle>
           <DialogDescription>
-            Please provide a reason for rejecting this document. The reason will be shared with the customer.
+            Please provide a reason for rejecting this document. The reason will be shared with the
+            customer.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="rejection-reason" className="text-sm font-medium leading-none">
+              <label htmlFor="rejection-reason" className="text-sm leading-none font-medium">
                 Rejection Reason
               </label>
               <textarea
@@ -117,15 +125,15 @@ function RejectDialog({
                 onChange={(e) => setReason(e.target.value)}
                 disabled={isSubmitting}
                 rows={4}
-                className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 aria-invalid={!!error}
                 aria-describedby={error ? "reason-error" : "reason-hint"}
               />
-              <p id="reason-hint" className="text-xs text-muted-foreground">
+              <p id="reason-hint" className="text-muted-foreground text-xs">
                 {reason.length}/1000 characters
               </p>
               {error && (
-                <p id="reason-error" className="text-sm text-destructive">
+                <p id="reason-error" className="text-destructive text-sm">
                   {error}
                 </p>
               )}
@@ -135,7 +143,11 @@ function RejectDialog({
             <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button type="submit" variant="destructive" disabled={isSubmitting || reason.length < 10}>
+            <Button
+              type="submit"
+              variant="destructive"
+              disabled={isSubmitting || reason.length < 10}
+            >
               {isSubmitting ? "Rejecting..." : "Reject"}
             </Button>
           </DialogFooter>
@@ -156,14 +168,24 @@ function Pagination({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Page {page + 1} of {totalPages || 1}
       </p>
       <div className="flex gap-2">
-        <Button variant="outline" size="sm" onClick={() => onPageChange(page - 1)} disabled={page === 0}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(page - 1)}
+          disabled={page === 0}
+        >
           Previous
         </Button>
-        <Button variant="outline" size="sm" onClick={() => onPageChange(page + 1)} disabled={page >= totalPages - 1}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(page + 1)}
+          disabled={page >= totalPages - 1}
+        >
           Next
         </Button>
       </div>
@@ -220,7 +242,7 @@ export default function ApprovalsPageClient() {
     try {
       await api.post(`/approvals/${approvalId}/approve`);
       setApprovals((prev) =>
-        prev.map((a) => (a.id === approvalId ? { ...a, status: "APPROVED" as ApprovalStatus } : a)),
+        prev.map((a) => (a.id === approvalId ? { ...a, status: "APPROVED" as ApprovalStatus } : a))
       );
     } catch {
       setError("Failed to approve document");
@@ -236,7 +258,9 @@ export default function ApprovalsPageClient() {
     try {
       await api.post(`/approvals/${rejectDialogApproval.id}/reject`, { reason });
       setApprovals((prev) =>
-        prev.map((a) => (a.id === rejectDialogApproval.id ? { ...a, status: "REJECTED" as ApprovalStatus } : a)),
+        prev.map((a) =>
+          a.id === rejectDialogApproval.id ? { ...a, status: "REJECTED" as ApprovalStatus } : a
+        )
       );
       setRejectDialogApproval(null);
     } catch {
@@ -251,7 +275,8 @@ export default function ApprovalsPageClient() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Approvals</h1>
         <p className="text-muted-foreground">
-          Review and approve or reject analyzed documents. {totalElements > 0 && `(${totalElements} total)`}
+          Review and approve or reject analyzed documents.{" "}
+          {totalElements > 0 && `(${totalElements} total)`}
         </p>
       </div>
 
@@ -262,7 +287,7 @@ export default function ApprovalsPageClient() {
             setStatusFilter(e.target.value);
             setPage(0);
           }}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+          className="border-input bg-background ring-offset-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           aria-label="Filter by status"
         >
           <option value="ALL">All Statuses</option>
@@ -273,7 +298,7 @@ export default function ApprovalsPageClient() {
         </select>
 
         {documentIdFilter && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <span>Filtered by document</span>
             <Link href="/admin/approvals" className="text-primary hover:underline">
               Clear filter
@@ -283,7 +308,10 @@ export default function ApprovalsPageClient() {
       </div>
 
       {error && (
-        <div className="mb-4 rounded-md bg-destructive/10 p-4 text-sm text-destructive" role="alert">
+        <div
+          className="bg-destructive/10 text-destructive mb-4 rounded-md p-4 text-sm"
+          role="alert"
+        >
           {error}
         </div>
       )}
@@ -306,13 +334,27 @@ export default function ApprovalsPageClient() {
             {isLoading ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i}>
-                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-40" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-28" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-12" /></TableCell>
-                  <TableCell><Skeleton className="h-6 w-20" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-40" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-28" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-12" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-6 w-20" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20" />
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Skeleton className="h-8 w-16" />

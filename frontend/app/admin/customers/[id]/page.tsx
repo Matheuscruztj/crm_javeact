@@ -66,7 +66,7 @@ export default function CustomerDetailPage() {
   const handleActivate = async () => {
     try {
       await api.patch(`/customers/${id}/activate`, {});
-      setCustomer((c) => c ? { ...c, status: "ACTIVE" } : c);
+      setCustomer((c) => (c ? { ...c, status: "ACTIVE" } : c));
     } catch (err) {
       setError(getApiErrorMessage(err));
     }
@@ -75,37 +75,59 @@ export default function CustomerDetailPage() {
   const handleDeactivate = async () => {
     try {
       await api.patch(`/customers/${id}/deactivate`, {});
-      setCustomer((c) => c ? { ...c, status: "INACTIVE" } : c);
+      setCustomer((c) => (c ? { ...c, status: "INACTIVE" } : c));
     } catch (err) {
       setError(getApiErrorMessage(err));
     }
   };
 
-  if (loading) return <div className="p-6 text-muted-foreground" aria-busy="true">Loading...</div>;
-  if (error) return <div className="p-6 text-destructive" role="alert">{error}</div>;
+  if (loading)
+    return (
+      <div className="text-muted-foreground p-6" aria-busy="true">
+        Loading...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="text-destructive p-6" role="alert">
+        {error}
+      </div>
+    );
   if (!customer) return <div className="p-6">Customer not found.</div>;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="mx-auto max-w-4xl p-6">
       {/* Header */}
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <button onClick={() => router.back()} className="mb-2 text-sm text-muted-foreground hover:underline" aria-label="Go back">
+          <button
+            onClick={() => router.back()}
+            className="text-muted-foreground mb-2 text-sm hover:underline"
+            aria-label="Go back"
+          >
             ← Back
           </button>
           <h1 className="text-2xl font-bold">{customer.name}</h1>
           <p className="text-muted-foreground">{customer.email}</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className={`rounded-full px-3 py-1 text-xs font-medium ${customer.status === "ACTIVE" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"}`}>
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-medium ${customer.status === "ACTIVE" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"}`}
+          >
             {customer.status}
           </span>
           {customer.status === "ACTIVE" ? (
-            <button onClick={handleDeactivate} className="rounded border px-3 py-1 text-xs hover:bg-destructive/10">
+            <button
+              onClick={handleDeactivate}
+              className="hover:bg-destructive/10 rounded border px-3 py-1 text-xs"
+            >
               Deactivate
             </button>
           ) : (
-            <button onClick={handleActivate} className="rounded border px-3 py-1 text-xs hover:bg-green-50">
+            <button
+              onClick={handleActivate}
+              className="rounded border px-3 py-1 text-xs hover:bg-green-50"
+            >
               Activate
             </button>
           )}
@@ -118,7 +140,7 @@ export default function CustomerDetailPage() {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`pb-2 text-sm capitalize ${tab === t ? "border-b-2 border-primary font-medium" : "text-muted-foreground"}`}
+            className={`pb-2 text-sm capitalize ${tab === t ? "border-primary border-b-2 font-medium" : "text-muted-foreground"}`}
             aria-current={tab === t ? "true" : undefined}
           >
             {t}
@@ -129,9 +151,18 @@ export default function CustomerDetailPage() {
       {/* Tab content */}
       {tab === "info" && (
         <dl className="grid gap-4 sm:grid-cols-2">
-          <div><dt className="text-xs text-muted-foreground">ID</dt><dd className="font-mono text-sm">{customer.id}</dd></div>
-          <div><dt className="text-xs text-muted-foreground">Tenant</dt><dd className="text-sm">{customer.tenantId}</dd></div>
-          <div><dt className="text-xs text-muted-foreground">Created</dt><dd className="text-sm">{new Date(customer.createdAt).toLocaleString()}</dd></div>
+          <div>
+            <dt className="text-muted-foreground text-xs">ID</dt>
+            <dd className="font-mono text-sm">{customer.id}</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground text-xs">Tenant</dt>
+            <dd className="text-sm">{customer.tenantId}</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground text-xs">Created</dt>
+            <dd className="text-sm">{new Date(customer.createdAt).toLocaleString()}</dd>
+          </div>
         </dl>
       )}
 
@@ -142,9 +173,14 @@ export default function CustomerDetailPage() {
           ) : (
             <ul className="divide-y rounded border">
               {requests.map((r) => (
-                <li key={r.id} className="flex items-center justify-between px-4 py-3 hover:bg-muted/25">
+                <li
+                  key={r.id}
+                  className="hover:bg-muted/25 flex items-center justify-between px-4 py-3"
+                >
                   <span className="text-sm">{r.title}</span>
-                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium bg-muted`}>{r.status}</span>
+                  <span className={`bg-muted rounded-full px-2 py-0.5 text-xs font-medium`}>
+                    {r.status}
+                  </span>
                 </li>
               ))}
             </ul>

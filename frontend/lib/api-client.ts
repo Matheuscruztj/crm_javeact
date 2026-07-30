@@ -4,8 +4,7 @@
  * Task 21.3: API client hook with auth headers and tenant context.
  */
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
 
 // Token storage (in-memory for access token, localStorage for refresh token)
 let accessToken: string | null = null;
@@ -41,10 +40,7 @@ export function setTokens(tokens: TokenPair): void {
   accessToken = tokens.accessToken;
   if (typeof window !== "undefined") {
     localStorage.setItem("atlasops_refresh_token", tokens.refreshToken);
-    localStorage.setItem(
-      "atlasops_token_expires",
-      String(Date.now() + tokens.expiresIn * 1000),
-    );
+    localStorage.setItem("atlasops_token_expires", String(Date.now() + tokens.expiresIn * 1000));
     // Set cookie for middleware route protection (P0.L.1)
     document.cookie = `atlasops_refresh_token=${tokens.refreshToken}; path=/; SameSite=Lax`;
   }
@@ -57,8 +53,7 @@ export function clearTokens(): void {
     localStorage.removeItem("atlasops_token_expires");
     localStorage.removeItem("atlasops_tenant_id");
     // Clear cookies used by middleware (P0.L.1)
-    document.cookie =
-      "atlasops_refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "atlasops_refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
   }
 }
 
@@ -120,10 +115,7 @@ async function refreshAccessToken(): Promise<boolean> {
 }
 
 // API request function with auth and tenant headers
-async function apiRequest<T>(
-  endpoint: string,
-  options: RequestInit = {},
-): Promise<T> {
+async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   // Auto-refresh expired tokens before making request
   if (isTokenExpired() && getRefreshToken()) {
     const refreshed = await refreshAccessToken();
@@ -139,8 +131,7 @@ async function apiRequest<T>(
 
   // Add Authorization header if we have a token
   if (accessToken) {
-    (headers as Record<string, string>)["Authorization"] =
-      `Bearer ${accessToken}`;
+    (headers as Record<string, string>)["Authorization"] = `Bearer ${accessToken}`;
   }
 
   // Add X-Tenant-ID header if we have a tenant
@@ -150,8 +141,7 @@ async function apiRequest<T>(
   }
 
   // Add X-Correlation-ID for tracing (P0.L.2.4)
-  (headers as Record<string, string>)["X-Correlation-ID"] =
-    crypto.randomUUID();
+  (headers as Record<string, string>)["X-Correlation-ID"] = crypto.randomUUID();
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
@@ -163,8 +153,7 @@ async function apiRequest<T>(
     const refreshed = await refreshAccessToken();
     if (refreshed) {
       // Retry the request with new token
-      (headers as Record<string, string>)["Authorization"] =
-        `Bearer ${accessToken}`;
+      (headers as Record<string, string>)["Authorization"] = `Bearer ${accessToken}`;
       const retryResponse = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
         headers,
@@ -213,8 +202,7 @@ export const api = {
       body: JSON.stringify(body),
     }),
 
-  delete: <T>(endpoint: string) =>
-    apiRequest<T>(endpoint, { method: "DELETE" }),
+  delete: <T>(endpoint: string) => apiRequest<T>(endpoint, { method: "DELETE" }),
 };
 
 // Auth API

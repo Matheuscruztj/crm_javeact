@@ -66,7 +66,7 @@ export default function DocumentDetailPage() {
     try {
       setReprocessing(true);
       await api.post(`/documents/${id}/reprocess`, {});
-      setDoc((d) => d ? { ...d, status: "PROCESSING" } : d);
+      setDoc((d) => (d ? { ...d, status: "PROCESSING" } : d));
     } catch (err) {
       setError(getApiErrorMessage(err));
     } finally {
@@ -82,24 +82,48 @@ export default function DocumentDetailPage() {
     PROCESSING: "bg-purple-100 text-purple-800",
   };
 
-  if (loading) return <div className="p-6 text-muted-foreground" aria-busy="true">Loading...</div>;
-  if (error) return <div className="p-6 text-destructive" role="alert">{error}</div>;
+  if (loading)
+    return (
+      <div className="text-muted-foreground p-6" aria-busy="true">
+        Loading...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="text-destructive p-6" role="alert">
+        {error}
+      </div>
+    );
   if (!doc) return <div className="p-6">Document not found.</div>;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <button onClick={() => router.back()} className="mb-3 text-sm text-muted-foreground hover:underline">← Back</button>
+    <div className="mx-auto max-w-4xl p-6">
+      <button
+        onClick={() => router.back()}
+        className="text-muted-foreground mb-3 text-sm hover:underline"
+      >
+        ← Back
+      </button>
 
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold">{doc.filename}</h1>
-          <p className="text-sm text-muted-foreground">{doc.contentType} · {(doc.sizeBytes / 1024).toFixed(1)} KB</p>
+          <p className="text-muted-foreground text-sm">
+            {doc.contentType} · {(doc.sizeBytes / 1024).toFixed(1)} KB
+          </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_COLORS[doc.status] ?? "bg-muted"}`}>{doc.status}</span>
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_COLORS[doc.status] ?? "bg-muted"}`}
+          >
+            {doc.status}
+          </span>
           {(doc.status === "ANALYZED" || doc.status === "FAILED") && (
-            <button onClick={handleReprocess} disabled={reprocessing}
-              className="rounded border px-3 py-1 text-xs hover:bg-muted disabled:opacity-50">
+            <button
+              onClick={handleReprocess}
+              disabled={reprocessing}
+              className="hover:bg-muted rounded border px-3 py-1 text-xs disabled:opacity-50"
+            >
               {reprocessing ? "Reprocessing…" : "Reprocess"}
             </button>
           )}
@@ -110,9 +134,18 @@ export default function DocumentDetailPage() {
       <section className="mb-6">
         <h2 className="mb-2 text-sm font-semibold">Metadata</h2>
         <dl className="grid gap-3 sm:grid-cols-2">
-          <div><dt className="text-xs text-muted-foreground">Document ID</dt><dd className="font-mono text-sm">{doc.id}</dd></div>
-          <div><dt className="text-xs text-muted-foreground">Tenant</dt><dd className="text-sm">{doc.tenantId}</dd></div>
-          <div><dt className="text-xs text-muted-foreground">Created</dt><dd className="text-sm">{new Date(doc.createdAt).toLocaleString()}</dd></div>
+          <div>
+            <dt className="text-muted-foreground text-xs">Document ID</dt>
+            <dd className="font-mono text-sm">{doc.id}</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground text-xs">Tenant</dt>
+            <dd className="text-sm">{doc.tenantId}</dd>
+          </div>
+          <div>
+            <dt className="text-muted-foreground text-xs">Created</dt>
+            <dd className="text-sm">{new Date(doc.createdAt).toLocaleString()}</dd>
+          </div>
         </dl>
       </section>
 
@@ -121,20 +154,37 @@ export default function DocumentDetailPage() {
         <section className="rounded border p-4">
           <h2 className="mb-3 text-sm font-semibold">AI Analysis</h2>
           <dl className="space-y-2">
-            {analysis.summary && <div><dt className="text-xs text-muted-foreground">Summary</dt><dd className="text-sm">{analysis.summary}</dd></div>}
-            {analysis.category && <div><dt className="text-xs text-muted-foreground">Category</dt><dd className="text-sm">{analysis.category}</dd></div>}
+            {analysis.summary && (
+              <div>
+                <dt className="text-muted-foreground text-xs">Summary</dt>
+                <dd className="text-sm">{analysis.summary}</dd>
+              </div>
+            )}
+            {analysis.category && (
+              <div>
+                <dt className="text-muted-foreground text-xs">Category</dt>
+                <dd className="text-sm">{analysis.category}</dd>
+              </div>
+            )}
             {analysis.confidenceScore !== undefined && (
               <div>
-                <dt className="text-xs text-muted-foreground">Confidence</dt>
-                <dd className="text-sm">{(analysis.confidenceScore * 100).toFixed(1)}%{analysis.fallback && " (fallback)"}</dd>
+                <dt className="text-muted-foreground text-xs">Confidence</dt>
+                <dd className="text-sm">
+                  {(analysis.confidenceScore * 100).toFixed(1)}%{analysis.fallback && " (fallback)"}
+                </dd>
               </div>
             )}
             {analysis.riskIndicators && analysis.riskIndicators.length > 0 && (
               <div>
-                <dt className="text-xs text-muted-foreground">Risk Indicators</dt>
-                <dd className="flex flex-wrap gap-1 mt-1">
+                <dt className="text-muted-foreground text-xs">Risk Indicators</dt>
+                <dd className="mt-1 flex flex-wrap gap-1">
                   {analysis.riskIndicators.map((r) => (
-                    <span key={r} className="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-800">{r}</span>
+                    <span
+                      key={r}
+                      className="rounded-full bg-red-100 px-2 py-0.5 text-xs text-red-800"
+                    >
+                      {r}
+                    </span>
                   ))}
                 </dd>
               </div>

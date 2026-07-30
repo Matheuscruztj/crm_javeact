@@ -43,14 +43,17 @@ function ControlledStory() {
     <div>
       <button
         onClick={() => setOpen(true)}
-        className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground"
+        className="bg-primary text-primary-foreground rounded-md px-4 py-2 text-sm"
       >
         Trigger Conflict
       </button>
       <ConflictDialog
         open={open}
         resourceType="request"
-        onReload={() => { setOpen(false); alert("Reloading..."); }}
+        onReload={() => {
+          setOpen(false);
+          alert("Reloading...");
+        }}
         onCancel={() => setOpen(false)}
       />
     </div>

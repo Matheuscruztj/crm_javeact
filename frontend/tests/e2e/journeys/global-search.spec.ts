@@ -10,10 +10,7 @@ test.describe("ADMIN: Global search and command palette", () => {
     await expect(page).toHaveURL(/login/);
   });
 
-  test("should show admin layout with command palette trigger", async ({
-    adminLogin,
-    page,
-  }) => {
+  test("should show admin layout with command palette trigger", async ({ adminLogin, page }) => {
     await page.goto("/admin");
     await expect(page).not.toHaveURL(/login/);
     // Look for the search/command palette trigger (K shortcut hint or search button)

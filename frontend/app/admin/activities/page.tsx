@@ -220,29 +220,24 @@ function ActivityItem({ activity }: { activity: Activity }) {
   const entityLink = getEntityLink(activity.entityType, activity.entityId);
 
   return (
-    <div className="flex gap-3 p-4 hover:bg-muted/50 transition-colors">
+    <div className="hover:bg-muted/50 flex gap-3 p-4 transition-colors">
       {getActivityIcon(activity.activityType)}
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
           <p className="text-sm">
             <span className="font-medium">{activity.actorName}</span>{" "}
-            <span className="text-muted-foreground">
-              {activity.description}
-            </span>
+            <span className="text-muted-foreground">{activity.description}</span>
           </p>
-          <span className="text-xs text-muted-foreground whitespace-nowrap">
+          <span className="text-muted-foreground text-xs whitespace-nowrap">
             {formatRelativeTime(activity.occurredAt)}
           </span>
         </div>
         {entityLink ? (
-          <Link
-            href={entityLink}
-            className="text-xs text-primary hover:underline"
-          >
+          <Link href={entityLink} className="text-primary text-xs hover:underline">
             {activity.entityType}: {activity.entityName || activity.entityId}
           </Link>
         ) : (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             {activity.entityType}: {activity.entityName || activity.entityId}
           </p>
         )}
@@ -254,7 +249,7 @@ function ActivityItem({ activity }: { activity: Activity }) {
 function ActivitySkeleton() {
   return (
     <div className="flex gap-3 p-4">
-      <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+      <Skeleton className="h-8 w-8 shrink-0 rounded-full" />
       <div className="flex-1 space-y-2">
         <Skeleton className="h-4 w-3/4" />
         <Skeleton className="h-3 w-1/2" />
@@ -307,9 +302,7 @@ export default function ActivitiesPage() {
           params.append("entityType", entityTypeFilter);
         }
 
-        const response = await api.get<PageResponse<Activity>>(
-          `/activities?${params.toString()}`,
-        );
+        const response = await api.get<PageResponse<Activity>>(`/activities?${params.toString()}`);
 
         if (append) {
           setActivities((prev) => [...prev, ...response.content]);
@@ -325,7 +318,7 @@ export default function ActivitiesPage() {
         setIsLoadingMore(false);
       }
     },
-    [entityTypeFilter],
+    [entityTypeFilter]
   );
 
   // Initial load and filter changes
@@ -340,18 +333,13 @@ export default function ActivitiesPage() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (
-          entries[0].isIntersecting &&
-          hasMore &&
-          !isLoading &&
-          !isLoadingMore
-        ) {
+        if (entries[0].isIntersecting && hasMore && !isLoading && !isLoadingMore) {
           const nextPage = page + 1;
           setPage(nextPage);
           fetchActivities(nextPage, true);
         }
       },
-      { threshold: 0.1 },
+      { threshold: 0.1 }
     );
 
     const currentTarget = observerTarget.current;
@@ -370,9 +358,7 @@ export default function ActivitiesPage() {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Activity Feed</h1>
-        <p className="text-muted-foreground">
-          Recent activity across the system.
-        </p>
+        <p className="text-muted-foreground">Recent activity across the system.</p>
       </div>
 
       {/* Filters */}
@@ -380,7 +366,7 @@ export default function ActivitiesPage() {
         <select
           value={entityTypeFilter}
           onChange={(e) => setEntityTypeFilter(e.target.value)}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+          className="border-input bg-background ring-offset-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           aria-label="Filter by entity type"
         >
           <option value="ALL">All Activities</option>
@@ -394,7 +380,7 @@ export default function ActivitiesPage() {
 
       {error && (
         <div
-          className="mb-4 rounded-md bg-destructive/10 p-4 text-sm text-destructive"
+          className="bg-destructive/10 text-destructive mb-4 rounded-md p-4 text-sm"
           role="alert"
         >
           {error}
@@ -402,13 +388,13 @@ export default function ActivitiesPage() {
       )}
 
       {/* Activity Feed */}
-      <div className="rounded-md border divide-y">
+      <div className="divide-y rounded-md border">
         {isLoading ? (
           Array.from({ length: 10 }).map((_, i) => <ActivitySkeleton key={i} />)
         ) : activities.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="py-12 text-center">
             <svg
-              className="mx-auto h-12 w-12 text-muted-foreground"
+              className="text-muted-foreground mx-auto h-12 w-12"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -420,7 +406,7 @@ export default function ActivitiesPage() {
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <p className="mt-4 text-muted-foreground">No activities found</p>
+            <p className="text-muted-foreground mt-4">No activities found</p>
           </div>
         ) : (
           <>
@@ -445,7 +431,7 @@ export default function ActivitiesPage() {
 
       {/* End of feed indicator */}
       {!isLoading && !hasMore && activities.length > 0 && (
-        <p className="text-center text-sm text-muted-foreground py-4">
+        <p className="text-muted-foreground py-4 text-center text-sm">
           You&apos;ve reached the end of the activity feed
         </p>
       )}

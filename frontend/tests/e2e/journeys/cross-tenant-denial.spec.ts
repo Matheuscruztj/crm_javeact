@@ -10,16 +10,12 @@ test.describe("Security: Cross-tenant access denial", () => {
     await expect(page).toHaveURL(/login/);
   });
 
-  test("should redirect unauthenticated portal users to login", async ({
-    page,
-  }) => {
+  test("should redirect unauthenticated portal users to login", async ({ page }) => {
     await page.goto("/portal/requests");
     await expect(page).toHaveURL(/login/);
   });
 
-  test("should not expose tenant data in page source without auth", async ({
-    page,
-  }) => {
+  test("should not expose tenant data in page source without auth", async ({ page }) => {
     const response = await page.goto("/api/v1/customers", {
       waitUntil: "domcontentloaded",
     });
@@ -27,26 +23,18 @@ test.describe("Security: Cross-tenant access denial", () => {
     expect(response?.status()).toBe(401);
   });
 
-  test("should return 401 when accessing documents without token", async ({
-    page,
-  }) => {
+  test("should return 401 when accessing documents without token", async ({ page }) => {
     const response = await page.request.get("/api/v1/documents");
     expect(response.status()).toBe(401);
   });
 
-  test("should return 401 when accessing approvals without token", async ({
-    page,
-  }) => {
+  test("should return 401 when accessing approvals without token", async ({ page }) => {
     const response = await page.request.get("/api/v1/approvals");
     expect(response.status()).toBe(401);
   });
 
-  test("should return 401 when accessing analytics without token", async ({
-    page,
-  }) => {
-    const response = await page.request.get(
-      "/api/v1/analytics/dashboard",
-    );
+  test("should return 401 when accessing analytics without token", async ({ page }) => {
+    const response = await page.request.get("/api/v1/analytics/dashboard");
     expect(response.status()).toBe(401);
   });
 });

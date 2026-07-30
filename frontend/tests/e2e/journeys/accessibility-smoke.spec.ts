@@ -13,16 +13,14 @@ test.describe("Accessibility: Public pages", () => {
 
     // Email input must have an accessible label
     const emailInput = page.locator("input[type='email'], input[name='email'], input#email");
-    if (await emailInput.count() > 0) {
+    if ((await emailInput.count()) > 0) {
       const id = await emailInput.first().getAttribute("id");
       if (id) {
         const label = page.locator(`label[for="${id}"]`);
         const ariaLabel = await emailInput.first().getAttribute("aria-label");
         const ariaLabelledBy = await emailInput.first().getAttribute("aria-labelledby");
         // At least one labelling mechanism must exist
-        expect(
-          (await label.count()) > 0 || !!ariaLabel || !!ariaLabelledBy,
-        ).toBeTruthy();
+        expect((await label.count()) > 0 || !!ariaLabel || !!ariaLabelledBy).toBeTruthy();
       }
     }
   });
@@ -59,9 +57,7 @@ test.describe("Accessibility: Public pages", () => {
     expect(skipExists).toBeGreaterThanOrEqual(0);
   });
 
-  test("login page has no interactive elements without accessible names", async ({
-    page,
-  }) => {
+  test("login page has no interactive elements without accessible names", async ({ page }) => {
     await page.goto("/login");
 
     // Check buttons have accessible names
@@ -94,10 +90,7 @@ test.describe("Accessibility: Portal pages (authenticated)", () => {
     await expect(page).not.toHaveURL(/login/);
   });
 
-  test("portal notifications page loads without a11y errors", async ({
-    clientLogin,
-    page,
-  }) => {
+  test("portal notifications page loads without a11y errors", async ({ clientLogin, page }) => {
     await page.goto("/portal/notifications");
     // Page should render without JavaScript errors
     const errors: string[] = [];

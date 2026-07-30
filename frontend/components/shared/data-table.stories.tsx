@@ -16,9 +16,27 @@ interface SampleRow {
 
 const sampleData = {
   content: [
-    { id: "1", name: "Acme Corp", email: "info@acme.com", status: "ACTIVE" as const, createdAt: "2025-01-15" },
-    { id: "2", name: "Globex Inc", email: "hello@globex.com", status: "INACTIVE" as const, createdAt: "2025-01-16" },
-    { id: "3", name: "Initech LLC", email: "contact@initech.com", status: "ACTIVE" as const, createdAt: "2025-01-17" },
+    {
+      id: "1",
+      name: "Acme Corp",
+      email: "info@acme.com",
+      status: "ACTIVE" as const,
+      createdAt: "2025-01-15",
+    },
+    {
+      id: "2",
+      name: "Globex Inc",
+      email: "hello@globex.com",
+      status: "INACTIVE" as const,
+      createdAt: "2025-01-16",
+    },
+    {
+      id: "3",
+      name: "Initech LLC",
+      email: "contact@initech.com",
+      status: "ACTIVE" as const,
+      createdAt: "2025-01-17",
+    },
   ],
   page: { number: 0, size: 20, totalElements: 3, totalPages: 1 },
 };
@@ -30,9 +48,11 @@ const columns: Column<SampleRow>[] = [
     key: "status",
     header: "Status",
     render: (row) => (
-      <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-        row.status === "ACTIVE" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-700"
-      }`}>
+      <span
+        className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+          row.status === "ACTIVE" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-700"
+        }`}
+      >
         {row.status}
       </span>
     ),
@@ -45,7 +65,9 @@ const meta: Meta<typeof DataTable<SampleRow>> = {
   component: DataTable,
   parameters: {
     layout: "padded",
-    docs: { description: { component: "Generic server-side paginated data table with skeleton states." } },
+    docs: {
+      description: { component: "Generic server-side paginated data table with skeleton states." },
+    },
   },
   tags: ["autodocs"],
 };
@@ -62,7 +84,11 @@ export const Loading: Story = {
 };
 
 export const Empty: Story = {
-  args: { columns, data: { content: [], page: { number: 0, size: 20, totalElements: 0, totalPages: 0 } }, loading: false },
+  args: {
+    columns,
+    data: { content: [], page: { number: 0, size: 20, totalElements: 0, totalPages: 0 } },
+    loading: false,
+  },
 };
 
 export const WithError: Story = {

@@ -11,10 +11,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api, type PageResponse } from "@/lib/api-client";
 
@@ -24,12 +21,7 @@ interface Document {
   fileSize: number;
   contentType: string;
   status:
-    | "UPLOADED"
-    | "TEXT_EXTRACTED"
-    | "ANALYZED"
-    | "APPROVED"
-    | "REJECTED"
-    | "PROCESSING_FAILED";
+    "UPLOADED" | "TEXT_EXTRACTED" | "ANALYZED" | "APPROVED" | "REJECTED" | "PROCESSING_FAILED";
   uploadedAt: string;
   requestId?: string;
   requestTitle?: string;
@@ -156,17 +148,15 @@ function formatFileSize(bytes: number): string {
 
 function DocumentCard({ document }: { document: Document }) {
   return (
-    <Card className="transition-colors hover:bg-accent/50">
+    <Card className="hover:bg-accent/50 transition-colors">
       <CardContent className="p-4">
         <div className="flex items-start gap-4">
-          <div className="flex-shrink-0">
-            {getFileIcon(document.contentType)}
-          </div>
-          <div className="flex-1 min-w-0">
+          <div className="flex-shrink-0">{getFileIcon(document.contentType)}</div>
+          <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h3 className="font-medium truncate">{document.fileName}</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="truncate font-medium">{document.fileName}</h3>
+                <p className="text-muted-foreground text-sm">
                   {formatFileSize(document.fileSize)} •{" "}
                   {new Date(document.uploadedAt).toLocaleDateString("pt-BR")}
                 </p>
@@ -178,7 +168,7 @@ function DocumentCard({ document }: { document: Document }) {
             {document.requestTitle && (
               <Link
                 href={`/portal/requests/${document.requestId}`}
-                className="mt-2 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                className="text-primary mt-2 inline-flex items-center gap-1 text-xs hover:underline"
               >
                 <svg
                   className="h-3 w-3"
@@ -215,7 +205,7 @@ function Pagination({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Página {page + 1} de {totalPages || 1}
       </p>
       <div className="flex gap-2">
@@ -264,9 +254,7 @@ export default function PortalDocumentsPage() {
         params.append("status", statusFilter);
       }
 
-      const response = await api.get<PageResponse<Document>>(
-        `/documents/my?${params.toString()}`,
-      );
+      const response = await api.get<PageResponse<Document>>(`/documents/my?${params.toString()}`);
 
       setDocuments(response.content);
       setTotalPages(response.page.totalPages);
@@ -322,7 +310,7 @@ export default function PortalDocumentsPage() {
             setStatusFilter(e.target.value);
             setPage(0);
           }}
-          className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+          className="border-input bg-background ring-offset-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           aria-label="Filtrar por status"
         >
           <option value="ALL">Todos os Status</option>
@@ -337,7 +325,7 @@ export default function PortalDocumentsPage() {
 
       {error && (
         <div
-          className="mb-4 rounded-md bg-destructive/10 p-4 text-sm text-destructive"
+          className="bg-destructive/10 text-destructive mb-4 rounded-md p-4 text-sm"
           role="alert"
         >
           {error}
@@ -353,7 +341,7 @@ export default function PortalDocumentsPage() {
                 <div className="flex items-start gap-4">
                   <Skeleton className="h-8 w-8" />
                   <div className="flex-1">
-                    <Skeleton className="h-5 w-32 mb-2" />
+                    <Skeleton className="mb-2 h-5 w-32" />
                     <Skeleton className="h-4 w-24" />
                   </div>
                 </div>
@@ -365,7 +353,7 @@ export default function PortalDocumentsPage() {
             <Card>
               <CardContent className="py-8 text-center">
                 <svg
-                  className="mx-auto h-12 w-12 text-muted-foreground mb-4"
+                  className="text-muted-foreground mx-auto mb-4 h-12 w-12"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -378,9 +366,7 @@ export default function PortalDocumentsPage() {
                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   />
                 </svg>
-                <p className="text-muted-foreground mb-4">
-                  Nenhum documento encontrado.
-                </p>
+                <p className="text-muted-foreground mb-4">Nenhum documento encontrado.</p>
                 <Link href="/portal/documents/upload">
                   <Button>Enviar primeiro documento</Button>
                 </Link>
@@ -395,11 +381,7 @@ export default function PortalDocumentsPage() {
       {/* Pagination */}
       {!isLoading && documents.length > 0 && (
         <div className="mt-4">
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       )}
     </div>

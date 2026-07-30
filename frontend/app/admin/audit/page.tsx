@@ -86,7 +86,7 @@ function Pagination({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <p className="text-sm text-muted-foreground">
+      <p className="text-muted-foreground text-sm">
         Page {page + 1} of {totalPages || 1}
       </p>
       <div className="flex gap-2">
@@ -153,9 +153,7 @@ export default function AuditPage() {
         params.append("to", endDate.toISOString());
       }
 
-      const response = await api.get<PageResponse<AuditEntry>>(
-        `/audit?${params.toString()}`,
-      );
+      const response = await api.get<PageResponse<AuditEntry>>(`/audit?${params.toString()}`);
 
       setEntries(response.content);
       setTotalPages(response.page.totalPages);
@@ -180,18 +178,14 @@ export default function AuditPage() {
   };
 
   const hasFilters =
-    actionTypeFilter !== "ALL" ||
-    actorFilter.trim() !== "" ||
-    fromDate !== "" ||
-    toDate !== "";
+    actionTypeFilter !== "ALL" || actorFilter.trim() !== "" || fromDate !== "" || toDate !== "";
 
   return (
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Audit Log</h1>
         <p className="text-muted-foreground">
-          View system activity and audit trail.{" "}
-          {totalElements > 0 && `(${totalElements} total)`}
+          View system activity and audit trail. {totalElements > 0 && `(${totalElements} total)`}
         </p>
       </div>
 
@@ -204,7 +198,7 @@ export default function AuditPage() {
               setActionTypeFilter(e.target.value);
               setPage(0);
             }}
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring"
+            className="border-input bg-background ring-offset-background focus:ring-ring rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             aria-label="Filter by action type"
           >
             <option value="ALL">All Actions</option>
@@ -232,10 +226,7 @@ export default function AuditPage() {
           />
 
           <div className="flex items-center gap-2">
-            <label
-              htmlFor="from-date"
-              className="text-sm text-muted-foreground"
-            >
+            <label htmlFor="from-date" className="text-muted-foreground text-sm">
               From:
             </label>
             <Input
@@ -251,7 +242,7 @@ export default function AuditPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <label htmlFor="to-date" className="text-sm text-muted-foreground">
+            <label htmlFor="to-date" className="text-muted-foreground text-sm">
               To:
             </label>
             <Input
@@ -276,7 +267,7 @@ export default function AuditPage() {
 
       {error && (
         <div
-          className="mb-4 rounded-md bg-destructive/10 p-4 text-sm text-destructive"
+          className="bg-destructive/10 text-destructive mb-4 rounded-md p-4 text-sm"
           role="alert"
         >
           {error}
@@ -284,7 +275,7 @@ export default function AuditPage() {
       )}
 
       {/* Table for desktop */}
-      <div className="hidden lg:block rounded-md border">
+      <div className="hidden rounded-md border lg:block">
         <Table>
           <TableHeader>
             <TableRow>
@@ -322,10 +313,8 @@ export default function AuditPage() {
               ))
             ) : entries.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8">
-                  <p className="text-muted-foreground">
-                    No audit entries found
-                  </p>
+                <TableCell colSpan={6} className="py-8 text-center">
+                  <p className="text-muted-foreground">No audit entries found</p>
                 </TableCell>
               </TableRow>
             ) : (
@@ -337,33 +326,26 @@ export default function AuditPage() {
                   <TableCell>
                     <div>
                       <p className="font-medium">{entry.actorName}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {entry.actorRole}
-                      </p>
+                      <p className="text-muted-foreground text-xs">{entry.actorRole}</p>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      className={getActionTypeBadgeClass(entry.actionType)}
-                    >
+                    <Badge className={getActionTypeBadgeClass(entry.actionType)}>
                       {entry.actionType}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <div>
                       <p className="font-medium">{entry.entityType}</p>
-                      <p className="text-xs text-muted-foreground truncate max-w-[150px]">
+                      <p className="text-muted-foreground max-w-[150px] truncate text-xs">
                         {entry.entityId}
                       </p>
                     </div>
                   </TableCell>
-                  <TableCell
-                    className="max-w-[250px] truncate"
-                    title={entry.description}
-                  >
+                  <TableCell className="max-w-[250px] truncate" title={entry.description}>
                     {entry.description}
                   </TableCell>
-                  <TableCell className="font-mono text-sm text-muted-foreground">
+                  <TableCell className="text-muted-foreground font-mono text-sm">
                     {entry.ipAddress}
                   </TableCell>
                 </TableRow>
@@ -374,10 +356,10 @@ export default function AuditPage() {
       </div>
 
       {/* Cards for mobile/tablet */}
-      <div className="lg:hidden space-y-4">
+      <div className="space-y-4 lg:hidden">
         {isLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="rounded-lg border p-4 space-y-3">
+            <div key={i} className="space-y-3 rounded-lg border p-4">
               <div className="flex justify-between">
                 <Skeleton className="h-6 w-20" />
                 <Skeleton className="h-4 w-32" />
@@ -387,35 +369,31 @@ export default function AuditPage() {
             </div>
           ))
         ) : entries.length === 0 ? (
-          <div className="text-center py-8">
+          <div className="py-8 text-center">
             <p className="text-muted-foreground">No audit entries found</p>
           </div>
         ) : (
           entries.map((entry) => (
-            <div key={entry.id} className="rounded-lg border p-4 space-y-3">
+            <div key={entry.id} className="space-y-3 rounded-lg border p-4">
               <div className="flex items-center justify-between">
                 <Badge className={getActionTypeBadgeClass(entry.actionType)}>
                   {entry.actionType}
                 </Badge>
-                <span className="text-sm text-muted-foreground font-mono">
+                <span className="text-muted-foreground font-mono text-sm">
                   {formatTimestamp(entry.timestamp)}
                 </span>
               </div>
               <div>
                 <p className="font-medium">
                   {entry.actorName}{" "}
-                  <span className="text-muted-foreground font-normal">
-                    ({entry.actorRole})
-                  </span>
+                  <span className="text-muted-foreground font-normal">({entry.actorRole})</span>
                 </p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {entry.entityType}: {entry.entityId}
                 </p>
               </div>
               <p className="text-sm">{entry.description}</p>
-              <p className="text-xs text-muted-foreground font-mono">
-                IP: {entry.ipAddress}
-              </p>
+              <p className="text-muted-foreground font-mono text-xs">IP: {entry.ipAddress}</p>
             </div>
           ))
         )}
@@ -424,11 +402,7 @@ export default function AuditPage() {
       {/* Pagination */}
       {!isLoading && entries.length > 0 && (
         <div className="mt-4">
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       )}
     </div>

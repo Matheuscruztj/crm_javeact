@@ -31,7 +31,9 @@ export function useCommandPalette(): UseCommandPaletteReturn {
   useEffect(() => {
     const handler = (value: boolean) => setLocalOpen(value);
     subscribers.add(handler);
-    return () => { subscribers.delete(handler); };
+    return () => {
+      subscribers.delete(handler);
+    };
   }, []);
 
   const setOpen = useCallback((value: boolean) => setGlobalOpen(value), []);

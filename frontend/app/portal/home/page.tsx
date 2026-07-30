@@ -11,13 +11,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/api-client";
@@ -32,12 +26,7 @@ interface RecentDocument {
   id: string;
   fileName: string;
   status:
-    | "UPLOADED"
-    | "TEXT_EXTRACTED"
-    | "ANALYZED"
-    | "APPROVED"
-    | "REJECTED"
-    | "PROCESSING_FAILED";
+    "UPLOADED" | "TEXT_EXTRACTED" | "ANALYZED" | "APPROVED" | "REJECTED" | "PROCESSING_FAILED";
   uploadedAt: string;
 }
 
@@ -88,20 +77,13 @@ interface StatCardProps {
   isLoading?: boolean;
 }
 
-function StatCard({
-  title,
-  value,
-  description,
-  icon,
-  href,
-  isLoading,
-}: StatCardProps) {
+function StatCard({ title, value, description, icon, href, isLoading }: StatCardProps) {
   return (
     <Link href={href}>
-      <Card className="transition-colors hover:bg-accent/50">
+      <Card className="hover:bg-accent/50 transition-colors">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
-          <div className="h-5 w-5 text-muted-foreground">{icon}</div>
+          <div className="text-muted-foreground h-5 w-5">{icon}</div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -109,7 +91,7 @@ function StatCard({
           ) : (
             <div className="text-2xl font-bold">{value}</div>
           )}
-          <p className="text-xs text-muted-foreground">{description}</p>
+          <p className="text-muted-foreground text-xs">{description}</p>
         </CardContent>
       </Card>
     </Link>
@@ -140,12 +122,9 @@ function RecentDocumentsCard({
             ))}
           </div>
         ) : documents.length === 0 ? (
-          <div className="py-4 text-center text-sm text-muted-foreground">
+          <div className="text-muted-foreground py-4 text-center text-sm">
             Nenhum documento enviado ainda.
-            <Link
-              href="/portal/documents/upload"
-              className="ml-1 text-primary hover:underline"
-            >
+            <Link href="/portal/documents/upload" className="text-primary ml-1 hover:underline">
               Enviar primeiro documento
             </Link>
           </div>
@@ -155,11 +134,11 @@ function RecentDocumentsCard({
               <Link
                 key={doc.id}
                 href={`/portal/documents/${doc.id}`}
-                className="flex items-center justify-between rounded-md p-2 transition-colors hover:bg-accent/50"
+                className="hover:bg-accent/50 flex items-center justify-between rounded-md p-2 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <svg
-                    className="h-5 w-5 text-muted-foreground"
+                    className="text-muted-foreground h-5 w-5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -173,10 +152,8 @@ function RecentDocumentsCard({
                     />
                   </svg>
                   <div>
-                    <p className="text-sm font-medium truncate max-w-[200px]">
-                      {doc.fileName}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="max-w-[200px] truncate text-sm font-medium">{doc.fileName}</p>
+                    <p className="text-muted-foreground text-xs">
                       {new Date(doc.uploadedAt).toLocaleDateString("pt-BR")}
                     </p>
                   </div>
@@ -189,11 +166,8 @@ function RecentDocumentsCard({
           </div>
         )}
         {documents.length > 0 && (
-          <div className="mt-4 pt-4 border-t">
-            <Link
-              href="/portal/documents"
-              className="text-sm text-primary hover:underline"
-            >
+          <div className="mt-4 border-t pt-4">
+            <Link href="/portal/documents" className="text-primary text-sm hover:underline">
               Ver todos os documentos →
             </Link>
           </div>
@@ -215,23 +189,18 @@ export default function PortalHomePage() {
 
       try {
         // Fetch all summary data in parallel
-        const [requestsRes, documentsRes, notificationsRes] =
-          await Promise.allSettled([
-            api.get<{ openCount: number }>("/requests/my/stats"),
-            api.get<{ content: RecentDocument[] }>(
-              "/documents/my?size=5&sort=uploadedAt,desc",
-            ),
-            api.get<{ unreadCount: number }>("/notifications/unread-count"),
-          ]);
+        const [requestsRes, documentsRes, notificationsRes] = await Promise.allSettled([
+          api.get<{ openCount: number }>("/requests/my/stats"),
+          api.get<{ content: RecentDocument[] }>("/documents/my?size=5&sort=uploadedAt,desc"),
+          api.get<{ unreadCount: number }>("/notifications/unread-count"),
+        ]);
 
         const openRequestsCount =
           requestsRes.status === "fulfilled" ? requestsRes.value.openCount : 0;
         const recentDocuments =
           documentsRes.status === "fulfilled" ? documentsRes.value.content : [];
         const unreadNotificationsCount =
-          notificationsRes.status === "fulfilled"
-            ? notificationsRes.value.unreadCount
-            : 0;
+          notificationsRes.status === "fulfilled" ? notificationsRes.value.unreadCount : 0;
 
         setSummary({
           openRequestsCount,
@@ -252,14 +221,12 @@ export default function PortalHomePage() {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Início</h1>
-        <p className="text-muted-foreground">
-          Bem-vindo ao portal do cliente AtlasOps.
-        </p>
+        <p className="text-muted-foreground">Bem-vindo ao portal do cliente AtlasOps.</p>
       </div>
 
       {error && (
         <div
-          className="mb-6 rounded-md bg-destructive/10 p-4 text-sm text-destructive"
+          className="bg-destructive/10 text-destructive mb-6 rounded-md p-4 text-sm"
           role="alert"
         >
           {error}
@@ -274,12 +241,7 @@ export default function PortalHomePage() {
           href="/portal/requests"
           isLoading={isLoading}
           icon={
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -297,12 +259,7 @@ export default function PortalHomePage() {
           href="/portal/notifications"
           isLoading={isLoading}
           icon={
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -320,12 +277,7 @@ export default function PortalHomePage() {
           href="/portal/documents"
           isLoading={isLoading}
           icon={
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -338,22 +290,19 @@ export default function PortalHomePage() {
       </div>
 
       <div className="mt-6">
-        <RecentDocumentsCard
-          documents={summary?.recentDocuments ?? []}
-          isLoading={isLoading}
-        />
+        <RecentDocumentsCard documents={summary?.recentDocuments ?? []} isLoading={isLoading} />
       </div>
 
       {/* Quick Actions */}
       <div className="mt-6">
-        <h2 className="text-lg font-semibold mb-4">Ações Rápidas</h2>
+        <h2 className="mb-4 text-lg font-semibold">Ações Rápidas</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Link href="/portal/requests/new">
-            <Card className="transition-colors hover:bg-accent/50 cursor-pointer">
+            <Card className="hover:bg-accent/50 cursor-pointer transition-colors">
               <CardContent className="flex items-center gap-4 pt-6">
-                <div className="rounded-full bg-primary/10 p-3">
+                <div className="bg-primary/10 rounded-full p-3">
                   <svg
-                    className="h-6 w-6 text-primary"
+                    className="text-primary h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -369,20 +318,18 @@ export default function PortalHomePage() {
                 </div>
                 <div>
                   <p className="font-medium">Nova Solicitação</p>
-                  <p className="text-sm text-muted-foreground">
-                    Abrir nova solicitação de serviço
-                  </p>
+                  <p className="text-muted-foreground text-sm">Abrir nova solicitação de serviço</p>
                 </div>
               </CardContent>
             </Card>
           </Link>
 
           <Link href="/portal/documents/upload">
-            <Card className="transition-colors hover:bg-accent/50 cursor-pointer">
+            <Card className="hover:bg-accent/50 cursor-pointer transition-colors">
               <CardContent className="flex items-center gap-4 pt-6">
-                <div className="rounded-full bg-primary/10 p-3">
+                <div className="bg-primary/10 rounded-full p-3">
                   <svg
-                    className="h-6 w-6 text-primary"
+                    className="text-primary h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -398,20 +345,18 @@ export default function PortalHomePage() {
                 </div>
                 <div>
                   <p className="font-medium">Enviar Documento</p>
-                  <p className="text-sm text-muted-foreground">
-                    Upload de novo documento
-                  </p>
+                  <p className="text-muted-foreground text-sm">Upload de novo documento</p>
                 </div>
               </CardContent>
             </Card>
           </Link>
 
           <Link href="/portal/notifications">
-            <Card className="transition-colors hover:bg-accent/50 cursor-pointer">
+            <Card className="hover:bg-accent/50 cursor-pointer transition-colors">
               <CardContent className="flex items-center gap-4 pt-6">
-                <div className="rounded-full bg-primary/10 p-3">
+                <div className="bg-primary/10 rounded-full p-3">
                   <svg
-                    className="h-6 w-6 text-primary"
+                    className="text-primary h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -427,9 +372,7 @@ export default function PortalHomePage() {
                 </div>
                 <div>
                   <p className="font-medium">Ver Notificações</p>
-                  <p className="text-sm text-muted-foreground">
-                    Acompanhar atualizações
-                  </p>
+                  <p className="text-muted-foreground text-sm">Acompanhar atualizações</p>
                 </div>
               </CardContent>
             </Card>

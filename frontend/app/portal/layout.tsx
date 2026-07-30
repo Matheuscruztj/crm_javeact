@@ -12,17 +12,13 @@ const portalNavItems = [
   { href: "/portal/notifications", label: "Notificações", icon: "🔔" },
 ];
 
-export default function PortalLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       {/* Desktop sidebar - hidden below lg */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r bg-card lg:block">
+      <aside className="bg-card fixed inset-y-0 left-0 z-30 hidden w-64 border-r lg:block">
         <div className="flex h-14 items-center border-b px-4">
           <span className="text-lg font-semibold">AtlasOps Portal</span>
         </div>
@@ -32,10 +28,10 @@ export default function PortalLayout({
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                "hover:bg-accent hover:text-accent-foreground flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                 pathname.startsWith(item.href)
                   ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground",
+                  : "text-muted-foreground"
               )}
             >
               <span>{item.icon}</span>
@@ -47,7 +43,7 @@ export default function PortalLayout({
         <div className="p-4">
           <Link
             href="/portal/documents/upload"
-            className="flex w-full items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 flex w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium"
           >
             Enviar Documento
           </Link>
@@ -57,7 +53,7 @@ export default function PortalLayout({
       {/* Main content area */}
       <div className="lg:pl-64">
         {/* Mobile header */}
-        <header className="sticky top-0 z-20 flex h-14 items-center border-b bg-card px-4 lg:hidden">
+        <header className="bg-card sticky top-0 z-20 flex h-14 items-center border-b px-4 lg:hidden">
           <span className="text-lg font-semibold">AtlasOps Portal</span>
         </header>
 
@@ -66,7 +62,7 @@ export default function PortalLayout({
       </div>
 
       {/* Mobile bottom navigation - visible below lg */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 border-t bg-card lg:hidden">
+      <nav className="bg-card fixed inset-x-0 bottom-0 z-30 border-t lg:hidden">
         <div className="flex items-center justify-around py-2">
           {portalNavItems.map((item) => (
             <Link
@@ -74,9 +70,7 @@ export default function PortalLayout({
               href={item.href}
               className={cn(
                 "flex flex-col items-center gap-1 px-3 py-1 text-xs font-medium transition-colors",
-                pathname.startsWith(item.href)
-                  ? "text-primary"
-                  : "text-muted-foreground",
+                pathname.startsWith(item.href) ? "text-primary" : "text-muted-foreground"
               )}
             >
               <span className="text-lg">{item.icon}</span>

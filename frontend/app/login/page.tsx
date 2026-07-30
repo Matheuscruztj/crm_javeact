@@ -14,13 +14,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth, getRedirectPath } from "@/hooks/use-auth";
 import type { ApiError } from "@/lib/api-client";
 
@@ -103,19 +97,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <div className="bg-background flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold">AtlasOps</CardTitle>
-          <CardDescription>
-            Enter your credentials to access the system
-          </CardDescription>
+          <CardDescription>Enter your credentials to access the system</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {errors.general && (
               <div
-                className="rounded-md bg-destructive/10 p-3 text-sm text-destructive"
+                className="bg-destructive/10 text-destructive rounded-md p-3 text-sm"
                 role="alert"
               >
                 {errors.general}
@@ -125,7 +117,7 @@ export default function LoginPage() {
             <div className="space-y-2">
               <label
                 htmlFor="email"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Email
               </label>
@@ -142,7 +134,7 @@ export default function LoginPage() {
                 autoFocus
               />
               {errors.email && (
-                <p id="email-error" className="text-sm text-destructive">
+                <p id="email-error" className="text-destructive text-sm">
                   {errors.email}
                 </p>
               )}
@@ -151,7 +143,7 @@ export default function LoginPage() {
             <div className="space-y-2">
               <label
                 htmlFor="password"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Password
               </label>
@@ -163,13 +155,11 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isSubmitting || isLoading}
                 aria-invalid={!!errors.password}
-                aria-describedby={
-                  errors.password ? "password-error" : undefined
-                }
+                aria-describedby={errors.password ? "password-error" : undefined}
                 autoComplete="current-password"
               />
               {errors.password && (
-                <p id="password-error" className="text-sm text-destructive">
+                <p id="password-error" className="text-destructive text-sm">
                   {errors.password}
                 </p>
               )}
@@ -177,7 +167,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 w-full"
               disabled={isSubmitting || isLoading}
             >
               {isSubmitting ? (

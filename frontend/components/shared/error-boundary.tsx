@@ -20,10 +20,7 @@ interface ErrorBoundaryProps {
   section?: string;
 }
 
-export class ErrorBoundary extends React.Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -37,7 +34,7 @@ export class ErrorBoundary extends React.Component<
     console.error(
       `[ErrorBoundary${this.props.section ? ` — ${this.props.section}` : ""}]`,
       error,
-      info.componentStack,
+      info.componentStack
     );
   }
 
@@ -54,10 +51,10 @@ export class ErrorBoundary extends React.Component<
           role="alert"
           className="flex flex-col items-center justify-center gap-4 p-8 text-center"
         >
-          <div className="rounded-full bg-destructive/10 p-4">
+          <div className="bg-destructive/10 rounded-full p-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8 text-destructive"
+              className="text-destructive h-8 w-8"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -73,20 +70,20 @@ export class ErrorBoundary extends React.Component<
           </div>
           <div>
             <h2 className="text-lg font-semibold">Something went wrong</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-sm">
               {this.props.section
                 ? `An error occurred in the ${this.props.section} section.`
                 : "An unexpected error occurred."}
             </p>
             {this.state.error?.message && (
-              <p className="mt-2 rounded bg-muted px-3 py-1 font-mono text-xs text-muted-foreground">
+              <p className="bg-muted text-muted-foreground mt-2 rounded px-3 py-1 font-mono text-xs">
                 {this.state.error.message}
               </p>
             )}
           </div>
           <button
             onClick={this.reset}
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-2 text-sm font-medium"
           >
             Try again
           </button>

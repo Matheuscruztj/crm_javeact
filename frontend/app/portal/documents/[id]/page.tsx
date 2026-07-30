@@ -50,37 +50,72 @@ export default function PortalDocumentDetailPage() {
     PROCESSING: "bg-purple-100 text-purple-800",
   };
 
-  if (loading) return <div className="p-4 text-muted-foreground" aria-busy="true">Loading...</div>;
-  if (error) return <div className="p-4 text-destructive" role="alert">{error}</div>;
+  if (loading)
+    return (
+      <div className="text-muted-foreground p-4" aria-busy="true">
+        Loading...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="text-destructive p-4" role="alert">
+        {error}
+      </div>
+    );
   if (!doc) return <div className="p-4">Document not found.</div>;
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <button onClick={() => router.back()} className="mb-3 text-sm text-muted-foreground hover:underline">← My Documents</button>
+    <div className="mx-auto max-w-2xl p-4">
+      <button
+        onClick={() => router.back()}
+        className="text-muted-foreground mb-3 text-sm hover:underline"
+      >
+        ← My Documents
+      </button>
 
       <div className="mb-4 flex items-start justify-between">
         <h1 className="text-xl font-bold">{doc.filename}</h1>
-        <span className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_COLORS[doc.status] ?? "bg-muted"}`}>{doc.status}</span>
+        <span
+          className={`rounded-full px-3 py-1 text-xs font-medium ${STATUS_COLORS[doc.status] ?? "bg-muted"}`}
+        >
+          {doc.status}
+        </span>
       </div>
 
-      <dl className="grid gap-3 sm:grid-cols-2 text-sm">
-        <div><dt className="text-xs text-muted-foreground">Type</dt><dd>{doc.contentType}</dd></div>
-        <div><dt className="text-xs text-muted-foreground">Size</dt><dd>{(doc.sizeBytes / 1024).toFixed(1)} KB</dd></div>
-        <div><dt className="text-xs text-muted-foreground">Uploaded</dt><dd>{new Date(doc.createdAt).toLocaleString()}</dd></div>
-        <div><dt className="text-xs text-muted-foreground">Document ID</dt><dd className="font-mono">{doc.id}</dd></div>
+      <dl className="grid gap-3 text-sm sm:grid-cols-2">
+        <div>
+          <dt className="text-muted-foreground text-xs">Type</dt>
+          <dd>{doc.contentType}</dd>
+        </div>
+        <div>
+          <dt className="text-muted-foreground text-xs">Size</dt>
+          <dd>{(doc.sizeBytes / 1024).toFixed(1)} KB</dd>
+        </div>
+        <div>
+          <dt className="text-muted-foreground text-xs">Uploaded</dt>
+          <dd>{new Date(doc.createdAt).toLocaleString()}</dd>
+        </div>
+        <div>
+          <dt className="text-muted-foreground text-xs">Document ID</dt>
+          <dd className="font-mono">{doc.id}</dd>
+        </div>
       </dl>
 
       {doc.status === "ANALYZED" && (
         <div className="mt-4 rounded border p-4">
           <p className="text-sm font-medium text-green-700">✓ Analysis complete</p>
-          <p className="mt-1 text-xs text-muted-foreground">This document has been analyzed by our AI pipeline.</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            This document has been analyzed by our AI pipeline.
+          </p>
         </div>
       )}
 
       {doc.status === "FAILED" && (
-        <div className="mt-4 rounded border border-destructive/30 p-4 bg-destructive/5">
-          <p className="text-sm font-medium text-destructive">Analysis failed</p>
-          <p className="mt-1 text-xs text-muted-foreground">Please contact support if this issue persists.</p>
+        <div className="border-destructive/30 bg-destructive/5 mt-4 rounded border p-4">
+          <p className="text-destructive text-sm font-medium">Analysis failed</p>
+          <p className="text-muted-foreground mt-1 text-xs">
+            Please contact support if this issue persists.
+          </p>
         </div>
       )}
     </div>

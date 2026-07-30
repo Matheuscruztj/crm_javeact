@@ -46,8 +46,18 @@ export default function AnalyticsPage() {
     void load();
   }, []);
 
-  if (loading) return <div className="p-6 text-muted-foreground" aria-busy="true">Loading analytics…</div>;
-  if (error) return <div className="p-6 text-destructive" role="alert">{error}</div>;
+  if (loading)
+    return (
+      <div className="text-muted-foreground p-6" aria-busy="true">
+        Loading analytics…
+      </div>
+    );
+  if (error)
+    return (
+      <div className="text-destructive p-6" role="alert">
+        {error}
+      </div>
+    );
 
   const metrics = data?.metrics ?? {};
 
@@ -55,10 +65,12 @@ export default function AnalyticsPage() {
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-2xl font-bold">Analytics</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Key metrics for your tenant.
           {data?.computedAt && (
-            <span className="ml-2 text-xs">Updated {new Date(data.computedAt).toLocaleString()}</span>
+            <span className="ml-2 text-xs">
+              Updated {new Date(data.computedAt).toLocaleString()}
+            </span>
           )}
         </p>
       </div>
@@ -66,7 +78,7 @@ export default function AnalyticsPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {Object.entries(metrics).map(([key, value]) => (
           <div key={key} className="rounded-lg border p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
               {METRIC_LABELS[key] ?? key.replace(/_/g, " ")}
             </p>
             <p className="mt-2 text-3xl font-bold">
@@ -78,7 +90,7 @@ export default function AnalyticsPage() {
         ))}
 
         {Object.keys(metrics).length === 0 && (
-          <div className="col-span-4 rounded-lg border p-8 text-center text-muted-foreground">
+          <div className="text-muted-foreground col-span-4 rounded-lg border p-8 text-center">
             No metrics available yet.
           </div>
         )}

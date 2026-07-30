@@ -22,20 +22,12 @@ const navItems = [
   { label: "Settings", href: "/admin/settings" },
 ];
 
-function Sidebar({
-  className,
-  onNavigate,
-}: {
-  className?: string;
-  onNavigate?: () => void;
-}) {
+function Sidebar({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className={cn("flex h-full flex-col bg-card border-r", className)}>
-      <div className="flex h-14 items-center px-4 font-semibold text-lg">
-        AtlasOps Admin
-      </div>
+    <aside className={cn("bg-card flex h-full flex-col border-r", className)}>
+      <div className="flex h-14 items-center px-4 text-lg font-semibold">AtlasOps Admin</div>
       <Separator />
       <nav className="flex-1 overflow-y-auto p-2" aria-label="Admin navigation">
         <ul className="space-y-1">
@@ -49,7 +41,7 @@ function Sidebar({
                   "hover:bg-accent hover:text-accent-foreground",
                   pathname?.startsWith(item.href)
                     ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground",
+                    : "text-muted-foreground"
                 )}
               >
                 {item.label}
@@ -67,25 +59,20 @@ function Breadcrumbs() {
   const segments = pathname?.split("/").filter(Boolean) ?? [];
 
   return (
-    <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
+    <nav aria-label="Breadcrumb" className="text-muted-foreground text-sm">
       <ol className="flex items-center gap-1.5">
         {segments.map((segment, index) => {
           const href = "/" + segments.slice(0, index + 1).join("/");
           const isLast = index === segments.length - 1;
-          const label =
-            segment.charAt(0).toUpperCase() +
-            segment.slice(1).replace(/[-_]/g, " ");
+          const label = segment.charAt(0).toUpperCase() + segment.slice(1).replace(/[-_]/g, " ");
 
           return (
             <li key={href} className="flex items-center gap-1.5">
               {index > 0 && <span aria-hidden="true">/</span>}
               {isLast ? (
-                <span className="font-medium text-foreground">{label}</span>
+                <span className="text-foreground font-medium">{label}</span>
               ) : (
-                <Link
-                  href={href}
-                  className="hover:text-foreground transition-colors"
-                >
+                <Link href={href} className="hover:text-foreground transition-colors">
                   {label}
                 </Link>
               )}
@@ -97,25 +84,18 @@ function Breadcrumbs() {
   );
 }
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Desktop sidebar: persistent ≥1024px */}
-      <Sidebar className="hidden lg:flex w-64 shrink-0" />
+      <Sidebar className="hidden w-64 shrink-0 lg:flex" />
 
       {/* Tablet sidebar: collapsible 768–1023px */}
       <div className="hidden md:flex lg:hidden">
         {sidebarOpen && (
-          <Sidebar
-            className="w-64 shrink-0"
-            onNavigate={() => setSidebarOpen(false)}
-          />
+          <Sidebar className="w-64 shrink-0" onNavigate={() => setSidebarOpen(false)} />
         )}
       </div>
 
@@ -127,17 +107,14 @@ export default function AdminLayout({
             onClick={() => setSidebarOpen(false)}
             aria-hidden="true"
           />
-          <Sidebar
-            className="relative z-10 w-64 h-full"
-            onNavigate={() => setSidebarOpen(false)}
-          />
+          <Sidebar className="relative z-10 h-full w-64" onNavigate={() => setSidebarOpen(false)} />
         </div>
       )}
 
       {/* Main content */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Header */}
-        <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:px-6">
+        <header className="bg-card flex h-14 items-center gap-4 border-b px-4 lg:px-6">
           <Button
             variant="ghost"
             size="sm"
@@ -164,7 +141,7 @@ export default function AdminLayout({
           <div className="ml-auto flex items-center gap-2">
             <Link
               href="/admin/search"
-              className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md p-2 transition-colors"
               aria-label="Search"
             >
               <svg
@@ -184,7 +161,7 @@ export default function AdminLayout({
             </Link>
             <Link
               href="/admin/activities"
-              className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md p-2 transition-colors"
               aria-label="Notifications"
             >
               <svg
@@ -204,7 +181,7 @@ export default function AdminLayout({
             </Link>
             <Link
               href="/admin/settings"
-              className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-md p-2 transition-colors"
               aria-label="Settings and profile"
             >
               <svg

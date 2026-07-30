@@ -10,10 +10,7 @@ test.describe("ADMIN: Audit trail", () => {
     await expect(page).toHaveURL(/login/);
   });
 
-  test("should show audit page after admin login", async ({
-    adminLogin,
-    page,
-  }) => {
+  test("should show audit page after admin login", async ({ adminLogin, page }) => {
     await page.goto("/admin/audit");
     await expect(page).not.toHaveURL(/login/);
   });

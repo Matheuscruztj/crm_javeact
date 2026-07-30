@@ -10,7 +10,7 @@ export default function AsyncApiPage() {
     <main className="flex min-h-screen flex-col">
       <div className="border-b px-6 py-4">
         <h1 className="text-xl font-semibold">AsyncAPI — Event Channels</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Server-Sent Events (SSE) channels and domain events for AtlasOps AI.
         </p>
       </div>
@@ -27,7 +27,7 @@ export default function AsyncApiPage() {
       </div>
 
       {/* Fallback: direct download link */}
-      <div className="border-t px-6 py-3 text-sm text-muted-foreground">
+      <div className="text-muted-foreground border-t px-6 py-3 text-sm">
         <a
           href="/docs/asyncapi.yaml"
           download="asyncapi.yaml"

@@ -40,14 +40,11 @@ export const Colors: StoryObj = {
       <h2 className="text-lg font-semibold">Color Tokens</h2>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
         {colors.map((token) => (
-          <div key={token.name} className="rounded-md border overflow-hidden">
-            <div
-              className="h-12"
-              style={{ backgroundColor: `hsl(var(${token.variable}))` }}
-            />
+          <div key={token.name} className="overflow-hidden rounded-md border">
+            <div className="h-12" style={{ backgroundColor: `hsl(var(${token.variable}))` }} />
             <div className="p-2">
               <p className="font-mono text-xs font-medium">{token.variable}</p>
-              <p className="text-xs text-muted-foreground">{token.description}</p>
+              <p className="text-muted-foreground text-xs">{token.description}</p>
             </div>
           </div>
         ))}
@@ -72,9 +69,9 @@ export const Typography: StoryObj = {
       <div className="space-y-2">
         {typographyScale.map((t) => (
           <div key={t.name} className="flex items-baseline gap-4 border-b pb-2">
-            <span className="w-24 font-mono text-xs text-muted-foreground">{t.name}</span>
+            <span className="text-muted-foreground w-24 font-mono text-xs">{t.name}</span>
             <span className={t.class}>The quick brown fox — {t.size}</span>
-            <span className="ml-auto text-xs text-muted-foreground">{t.usage}</span>
+            <span className="text-muted-foreground ml-auto text-xs">{t.usage}</span>
           </div>
         ))}
       </div>
@@ -89,12 +86,9 @@ export const Spacing: StoryObj = {
       <div className="space-y-2">
         {[1, 2, 3, 4, 6, 8, 10, 12, 16].map((n) => (
           <div key={n} className="flex items-center gap-4">
-            <span className="w-8 font-mono text-xs text-muted-foreground">{n}</span>
-            <div
-              className="h-4 bg-primary rounded"
-              style={{ width: `${n * 4}px` }}
-            />
-            <span className="text-xs text-muted-foreground">{n * 4}px</span>
+            <span className="text-muted-foreground w-8 font-mono text-xs">{n}</span>
+            <div className="bg-primary h-4 rounded" style={{ width: `${n * 4}px` }} />
+            <span className="text-muted-foreground text-xs">{n * 4}px</span>
           </div>
         ))}
       </div>

@@ -15,10 +15,7 @@ export type LoginFormValues = z.infer<typeof loginSchema>;
 // ─── Customer ─────────────────────────────────────────────────────────────
 
 export const createCustomerSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Name is required")
-    .max(150, "Name must not exceed 150 characters"),
+  name: z.string().min(1, "Name is required").max(150, "Name must not exceed 150 characters"),
   email: z.string().email("Must be a valid email address"),
   phone: z.string().optional(),
   street: z.string().optional(),
@@ -32,10 +29,7 @@ export type CreateCustomerFormValues = z.infer<typeof createCustomerSchema>;
 // ─── Request ──────────────────────────────────────────────────────────────
 
 export const createRequestSchema = z.object({
-  title: z
-    .string()
-    .min(1, "Title is required")
-    .max(255, "Title must not exceed 255 characters"),
+  title: z.string().min(1, "Title is required").max(255, "Title must not exceed 255 characters"),
   description: z.string().optional(),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
   customerId: z.string().min(1, "Customer is required"),
