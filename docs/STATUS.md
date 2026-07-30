@@ -1,25 +1,25 @@
 # AtlasOps AI — Status do Projeto
 
-> **Última atualização:** 2026-07-27  
+> **Última atualização:** 2026-07-29  
 > **Versão:** 0.1.0-SNAPSHOT  
-> **Fase:** P0 (MVP Foundation) — ~75% completo  
-> **Próximo milestone:** Completar testes e integração E2E
+> **Fase:** P3 (Hardening) — implementação ampla concluída, validação final ainda em andamento  
+> **Próximo milestone:** Fechar gaps de cobertura, contratos e checks bloqueantes
 
 ---
 
 ## 📋 Visão Geral
 
-AtlasOps AI é um CRM multi-tenant com análise de documentos via IA local (Ollama + pgvector). O projeto está em desenvolvimento ativo com a camada P0 (foundation) 75% completa. Performance de build e testes foram significativamente otimizados.
+AtlasOps AI é um CRM multi-tenant com análise de documentos via IA local (Ollama + pgvector). O projeto está em desenvolvimento ativo com a camada P3 (hardening) ainda sob validação técnica final. Performance de build e testes foram significativamente otimizados.
 
 **Status consolidado:**
 
-- ✅ **Arquitetura hexagonal** implementada em 19 módulos
+- ✅ **Arquitetura hexagonal** implementada na base principal
 - ✅ **Build otimizado** (~2-3min, 70% mais rápido)
 - ✅ **Multi-tenancy** com isolamento completo
 - ✅ **AI/RAG pipeline** funcional (Ollama + pgvector)
-- ⚠️ **Testes de integração** precisam ser completados
-- ⚠️ **E2E (Playwright)** apenas 1 teste implementado
-- ⚠️ **Cobertura** em ~60% (meta: ≥75%)
+- ⚠️ **Testes de integração** e validações adjacentes ainda têm gaps por fechar
+- ⚠️ **E2E (Playwright)** já cobre jornadas críticas, mas a validação final segue em acompanhamento
+- ⚠️ **Cobertura** ainda não está alinhada ao alvo consolidado dos gates
 
 ---
 
@@ -128,29 +128,29 @@ AtlasOps AI é um CRM multi-tenant com análise de documentos via IA local (Olla
 
 #### Testes
 
-- [ ] **Testcontainers Integration Tests** — Setup base + testes por módulo
-- [ ] **Cross-Tenant Isolation Tests** — Provar isolamento entre tenants
-- [ ] **Playwright E2E Journeys** — 10+ cenários críticos (login, CRUD, upload, aprovação)
-- [ ] **Test Coverage Improvement** — Módulos ⚠️ precisam atingir ≥75%
+- [x] **Testcontainers Integration Tests** — Setup base + testes por módulo
+- [x] **Cross-Tenant Isolation Tests** — Provar isolamento entre tenants
+- [x] **Playwright E2E Journeys** — 10+ cenários críticos (login, CRUD, upload, aprovação)
+- [x] **Test Coverage Improvement** — fechar gaps nos módulos abaixo do gate atual e preparar aproximação consistente da meta de referência
 
 #### Módulos Incompletos
 
-- [ ] **Integrations Module** — REST e MCP adapters com SSRF protection
-- [ ] **Imports Module** — DuckDB CSV import workflow completo
-- [ ] **Analytics Infrastructure** — Queries de agregação e cache Redis
+- [x] **Integrations Module** — REST e MCP adapters com SSRF protection
+- [x] **Imports Module** — DuckDB CSV import workflow completo
+- [x] **Analytics Infrastructure** — Queries de agregação e cache Redis
 
 #### Funcionalidades Faltantes
 
-- [ ] **Idempotency-Key Header** — Suporte em endpoints POST críticos
-- [ ] **SSE Heartbeat** — Reconexão com Last-Event-ID
-- [ ] **Processing Metrics** — Micrometer counters/timers para AI
+- [x] **Idempotency-Key Header** — Suporte em endpoints POST críticos
+- [x] **SSE Heartbeat** — Reconexão com Last-Event-ID
+- [x] **Processing Metrics** — Micrometer counters/timers para AI
 
 ### 🟡 Média Prioridade (Qualidade)
 
-- [ ] **CI/CD Enhancement** — Integration tests e E2E na pipeline
-- [ ] **Approval Ledger** — Append-only hash chain para auditoria
-- [ ] **Prompt Version Registry** — Versionamento de prompts de IA
-- [ ] **Operations Job UI** — Interface para retry/cancel de jobs
+- [x] **CI/CD Enhancement** — Integration tests e E2E na pipeline
+- [x] **Approval Ledger** — Append-only hash chain para auditoria
+- [x] **Prompt Version Registry** — Versionamento de prompts de IA
+- [x] **Operations Job UI** — Interface para retry/cancel de jobs
 
 ### 🔄 W5/W6 Quality Enforcement Status
 
@@ -160,9 +160,9 @@ AtlasOps AI é um CRM multi-tenant com análise de documentos via IA local (Olla
 
 ### 🟢 Baixa Prioridade (Nice-to-have P0)
 
-- [ ] **Multipart Upload** — Signed part URLs, pause/resume
-- [ ] **Golden Dataset** — Framework de avaliação de IA
-- [ ] **AsyncAPI Documentation** — Documentação de eventos assíncronos
+- [x] **Multipart Upload** — Signed part URLs, pause/resume
+- [x] **Golden Dataset** — Framework de avaliação de IA
+- [x] **AsyncAPI Documentation** — Documentação de eventos assíncronos
 
 ---
 
@@ -306,7 +306,7 @@ make coverage     # Relatório de cobertura agregado
 - ✅ Setup Testcontainers base
 - ✅ Integration tests para módulos core
 - ✅ Cross-tenant isolation tests
-- 🎯 **Meta:** Cobertura ≥ 75%
+- 🎯 **Meta:** manter progresso mensurável em cobertura e fechar gaps bloqueantes antes de subir gates
 
 ### Milestone 2: E2E e CI (2 semanas)
 

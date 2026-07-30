@@ -1,7 +1,7 @@
 # AtlasOps AI — Current Status
 
-> **Updated:** 2026-07-27  
-> **Phase:** P3 (Hardening) — P0+P1 Complete, P2 ~40%, P3 ~60%  
+> **Updated:** 2026-07-29  
+> **Phase:** P3 (Hardening) — P0+P1 implemented, P2 feature-flagged/partial, P3 under final validation  
 > **Version:** v1.0.0-rc.1 (pending final validation)
 
 ---
@@ -151,5 +151,5 @@ make compose-up       # Start infrastructure
 | ------------------- | ----------- | ---------- | ----------- |
 | P0 Foundation       | ✅ COMPLETE | 55         | 55          |
 | P1 Experience       | ✅ COMPLETE | 30         | 30          |
-| P2 Specialized Data | 🔄 40%      | 14         | 35          |
-| P3 Hardening        | 🔄 60%      | 12         | 20          |
+| P2 Specialized Data | 🔄 parcial   | 14         | 35          |
+| P3 Hardening        | 🔄 em validação | 12      | 20          |

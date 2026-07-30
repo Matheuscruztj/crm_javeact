@@ -71,7 +71,11 @@ make test-integration
 - Spotless (formatting): `./gradlew spotlessCheck` / `./gradlew spotlessApply`
 - Checkstyle: `./gradlew checkstyleMain`
 - SpotBugs: `./gradlew spotbugsMain`
-- ArchUnit: `./gradlew test --tests "*ArchitectureTest"`
+- ArchUnit: `./gradlew test --tests "*ArchitectureTest" --tests "*ArchRulesTest"`
+- Fast local backend path: `make verify-local-fast`
+- Fast local frontend path: `make verify-frontend-fast`
+- Pre-commit baseline: `make verify-precommit`
+- Pre-push baseline: `make verify-prepush`
 - Jacoco coverage: `./gradlew jacocoTestReport`
 
 ### Frontend (Next.js 15 / React 19)
@@ -80,8 +84,10 @@ make test-integration
 cd frontend
 pnpm install
 pnpm dev          # start dev server
+pnpm format:check # Prettier formatting gate
 pnpm lint         # ESLint
-pnpm exec tsc --noEmit   # TypeScript strict check
+pnpm typecheck    # TypeScript strict check
+pnpm verify:fast  # Formatting + lint + typecheck
 pnpm build        # production build
 pnpm test:e2e     # Playwright E2E (requires running app)
 ```

@@ -21,6 +21,11 @@ Quality includes:
 ## 2. Stable quality commands
 
 ```bash
+make verify-local-fast
+make verify-frontend-fast
+make verify-precommit
+make verify-prepush
+make verify-contracts
 make format-check
 make lint
 make typecheck
@@ -41,6 +46,8 @@ make verify-full
 `make verify` is the fast local and PR baseline.
 
 `make verify-full` executes broader integration, functional and specialized checks according to enabled profiles.
+
+`make verify-contracts` is the local/CI contract gate for OpenAPI export, OpenAPI lint and AsyncAPI validation.
 
 ---
 

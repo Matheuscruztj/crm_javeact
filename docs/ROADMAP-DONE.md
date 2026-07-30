@@ -1,22 +1,24 @@
-# AtlasOps AI — Roadmap: Tarefas Concluídas
+# AtlasOps AI — Roadmap histórico de tarefas implementadas
 
-> Arquivo de todas as tarefas implementadas. Roadmap ativo em [ROADMAP.md](./ROADMAP.md).
-> Última atualização: 2026-07-20 | Versão: v1.0.0-rc.1
-
----
-
-## Resumo de Conclusão
-
-| Fase                | Status      | Seções Concluídas                 |
-| ------------------- | ----------- | --------------------------------- |
-| P0 Foundation       | ✅ COMPLETO | P0.A–P0.V (22 seções, 100+ tasks) |
-| P1 Experience       | ✅ COMPLETO | P1.1–P1.26 (26 seções)            |
-| P2 Specialized Data | ✅ COMPLETO | P2.1–P2.14 (14 seções)            |
-| P3 Hardening        | ✅ COMPLETO | P3.1–P3.13 (13 seções)            |
+> Registro histórico do que foi implementado até o momento. Roadmap ativo em [ROADMAP.md](./ROADMAP.md).
+> Última atualização: 2026-07-29 | Versão: v1.0.0-rc.1
 
 ---
 
-## Fase P0 — Foundation ✅ COMPLETO
+## Resumo de Implementação
+
+| Fase                | Status                        | Seções registradas              |
+| ------------------- | ----------------------------- | ------------------------------- |
+| P0 Foundation       | ✅ IMPLEMENTADO               | P0.A–P0.V (22 seções, 100+ tasks) |
+| P1 Experience       | ✅ IMPLEMENTADO               | P1.1–P1.26 (26 seções)          |
+| P2 Specialized Data | ✅ IMPLEMENTADO / feature-flag | P2.1–P2.14 (14 seções)          |
+| P3 Hardening        | ✅ IMPLEMENTADO / em validação | P3.1–P3.13 (13 seções)          |
+
+> Observação: este arquivo registra implementação histórica; a validação técnica atual e os gaps pendentes estão documentados em [docs/task-plans](./task-plans/), [ROADMAP-QUALITY-ENFORCEMENT-WAVES.md](./ROADMAP-QUALITY-ENFORCEMENT-WAVES.md) e [STATUS.md](./STATUS.md).
+
+---
+
+## Fase P0 — Foundation ✅ IMPLEMENTADO
 
 ### P0.A — Testes e Cobertura
 
@@ -460,7 +462,7 @@ commit: feat(frontend): add ESLint config, Prettier and CI bundle/secret scan ga
 
 ---
 
-## Fase P1 — Experience ✅ COMPLETO
+## Fase P1 — Experience ✅ IMPLEMENTADO
 
 ### P1.1 — Table Infrastructure ✅ DONE
 
@@ -604,7 +606,7 @@ commit: feat(observability): complete Grafana provisioning with Tempo datasource
 
 ---
 
-## Fase P2 — Specialized Data ✅ COMPLETO
+## Fase P2 — Specialized Data ✅ IMPLEMENTADO / feature-flag
 
 ### P2.1 — PostGIS (Customer Radius Query) ✅ DONE
 
@@ -700,7 +702,7 @@ commit: feat(frontend): implement i18n infrastructure
 
 ---
 
-## Fase P3 — Hardening ✅ COMPLETO
+## Fase P3 — Hardening ✅ IMPLEMENTADO / em validação
 
 ### P3.1 — Security Hardening ✅ DONE
 
@@ -794,15 +796,15 @@ commit: chore(release): final validation gate for v1.0.0-rc.1
 
 ---
 
-## Métricas de Qualidade Atuais vs Target
+## Métricas de Qualidade Registradas vs Target
 
 | Métrica             | Atual (P0 início) | Target P0       | Target P3 (alcançado) |
 | ------------------- | ----------------- | --------------- | --------------------- |
 | Line Coverage       | ~60%              | ≥ 75%           | ≥ 80%                 |
 | Branch Coverage     | ~50%              | ≥ 65%           | ≥ 70%                 |
 | Domain Coverage     | ~75%              | ≥ 85%           | ≥ 90%                 |
-| Checkstyle Warnings | ⚠️                | 0               | ⚠️ (ainda presentes)  |
-| SpotBugs Issues     | ⚠️                | 0               | ⚠️ (ainda presentes)  |
+| Checkstyle Warnings | ⚠️                | 0               | ⚠️ ainda pendentes     |
+| SpotBugs Issues     | ⚠️                | 0               | ⚠️ ainda pendentes     |
 | ArchUnit            | ✅                | Pass            | Pass ✅               |
 | Playwright E2E      | 1 test            | 10+ jornadas    | 20+ jornadas ✅       |
 | k6 Load Tests       | Smoke only        | Smoke + Average | Full scenarios ✅     |
@@ -827,7 +829,7 @@ Testcontainers setup, Cross-tenant isolation tests, CI Pipeline enhancement, OWA
 
 ### Sprint 4 — E2E e Coverage ✅
 
-Playwright setup, 10 jornadas críticas E2E, Complementar unit tests. Cobertura ≥75% alcançada.
+Playwright setup, 10 jornadas críticas E2E, complementar unit tests. A meta mínima de cobertura foi tratada como objetivo operacional, mas a validação corrente continua registrada nos relatórios de cobertura.
 
 ### Sprint 5 — Multipart Upload + Events ✅
 
