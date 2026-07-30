@@ -3,12 +3,14 @@ package com.atlasops.users.application;
 import com.atlasops.shared.domain.exceptions.ResourceNotFoundException;
 import com.atlasops.users.domain.User;
 import com.atlasops.users.domain.ports.UserRepository;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for retrieving a user by their identifier.
  *
  * <p>Validates: Requirements 5.1
  */
+@Service
 public class GetUserByIdUseCase {
 
   private final UserRepository userRepository;

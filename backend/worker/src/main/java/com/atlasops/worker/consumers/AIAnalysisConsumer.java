@@ -6,12 +6,15 @@ import com.atlasops.ai.domain.ports.DocumentAnalysisPort;
 import com.atlasops.worker.infrastructure.redis.MessageHandler;
 import com.atlasops.worker.infrastructure.redis.StreamMessage;
 import java.time.Instant;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -33,14 +36,27 @@ public class AIAnalysisConsumer implements MessageHandler {
   private static final String OUTPUT_STREAM = "documents.analyzed";
   private static final String DEFAULT_PROMPT_VERSION = "analysis:v1";
   private static final String DEFAULT_OUTPUT_SCHEMA = "standard-analysis";
+  private static final String AI_ANALYSIS_DURATION = "ai_analysis_duration_seconds";
+  private static final String DOCUMENT_PROCESSING_DURATION =
+      "document_processing_duration_seconds";
+  private static final String AI_FALLBACK_TOTAL = "ai_fallback_total";
 
   private final DocumentAnalysisPort documentAnalysisPort;
   private final StringRedisTemplate redisTemplate;
+  private final MeterRegistry meterRegistry;
+
+  public AIAnalysisConsumer(
+      DocumentAnalysisPort documentAnalysisPort,
+      StringRedisTemplate redisTemplate,
+      MeterRegistry meterRegistry) {
+    this.documentAnalysisPort = documentAnalysisPort;
+    this.redisTemplate = redisTemplate;
+    this.meterRegistry = meterRegistry;
+  }
 
   public AIAnalysisConsumer(
       DocumentAnalysisPort documentAnalysisPort, StringRedisTemplate redisTemplate) {
-    this.documentAnalysisPort = documentAnalysisPort;
-    this.redisTemplate = redisTemplate;
+    this(documentAnalysisPort, redisTemplate, new SimpleMeterRegistry());
   }
 
   public String getStreamKey() {
@@ -64,11 +80,14 @@ public class AIAnalysisConsumer implements MessageHandler {
     log.info("Starting AI analysis for document {} (tenant: {})", documentId, tenantId);
 
     DocumentAnalysisResult result;
+    Instant startedAt = Instant.now();
+    boolean usedFallback;
 
     // Handle empty or image documents with deterministic fallback
     if (extractedText == null || extractedText.isBlank()) {
       log.info("Document {} has no extracted text, using deterministic fallback", documentId);
       result = createDeterministicFallback(contentType);
+      usedFallback = true;
     } else {
       try {
         DocumentAnalysisRequest request =
@@ -76,15 +95,18 @@ public class AIAnalysisConsumer implements MessageHandler {
                 tenantId, documentId, extractedText, DEFAULT_PROMPT_VERSION, DEFAULT_OUTPUT_SCHEMA);
 
         result = documentAnalysisPort.analyze(request);
+        usedFallback = result.fallback();
       } catch (Exception e) {
         log.warn(
             "AI analysis failed for document {}, using deterministic fallback: {}",
             documentId,
             e.getMessage());
         result = createDeterministicFallback(contentType);
+        usedFallback = true;
       }
     }
 
+    recordMetrics(startedAt, usedFallback);
     publishAnalyzedEvent(documentId, tenantId, result, extractedText);
     log.info(
         "AI analysis completed for document {} (fallback: {}, confidence: {})",
@@ -161,6 +183,15 @@ public class AIAnalysisConsumer implements MessageHandler {
     redisTemplate.opsForStream().add(record);
 
     log.debug("Published DocumentAnalyzedEvent for document {}", documentId);
+  }
+
+  private void recordMetrics(Instant startedAt, boolean usedFallback) {
+    Duration duration = Duration.between(startedAt, Instant.now());
+    meterRegistry.timer(AI_ANALYSIS_DURATION).record(duration);
+    meterRegistry.timer(DOCUMENT_PROCESSING_DURATION).record(duration);
+    if (usedFallback) {
+      meterRegistry.counter(AI_FALLBACK_TOTAL).increment();
+    }
   }
 
   private String serializeKeyValuePairs(List<com.atlasops.ai.domain.KeyValuePair> pairs) {

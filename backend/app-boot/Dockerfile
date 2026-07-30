@@ -8,6 +8,8 @@
 FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /workspace
 
+ENV GRADLE_USER_HOME=/workspace/.gradle
+
 # Copy Gradle wrapper and build files first for layer caching
 COPY gradlew gradlew.bat gradle.properties settings.gradle.kts build.gradle.kts ./
 COPY gradle/ gradle/
@@ -16,7 +18,8 @@ COPY gradle/ gradle/
 COPY backend/ backend/
 
 # Build the application (skip tests — tests run in CI)
-RUN ./gradlew :backend:app-boot:bootJar --no-daemon -q
+RUN --mount=type=cache,target=/workspace/.gradle \
+    ./gradlew :backend:app-boot:bootJar --no-daemon -q
 
 # Extract layered jar for optimized Docker layers
 WORKDIR /workspace/backend/app-boot/build/libs

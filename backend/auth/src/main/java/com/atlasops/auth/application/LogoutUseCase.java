@@ -6,8 +6,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
 import java.util.Objects;
+import org.springframework.stereotype.Service;
 
 /** Use case for logging out a user by invalidating their refresh token in Redis. */
+@Service
 public class LogoutUseCase {
 
   private final RefreshTokenRepository refreshTokenRepository;

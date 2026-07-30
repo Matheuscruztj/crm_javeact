@@ -11,11 +11,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 /**
- * OpenSearch adapter stub implementing both {@link SearchIndexPort} and {@link SearchIndexUpdatePort}.
- * When the {@code opensearch} feature flag is enabled, delegates to OpenSearch client (not yet available).
- * Otherwise, delegates to the PostgreSQL full-text search fallback.
+ * OpenSearch adapter implementing both {@link SearchIndexPort} and {@link SearchIndexUpdatePort}.
  *
- * <p>Validates: P1.3 — OpenSearch Integration stub with feature flag
+ * <p>When the {@code opensearch} feature flag is enabled but no OpenSearch client is wired, this
+ * adapter degrades gracefully and keeps using the PostgreSQL fallback instead of failing the
+ * request.
+ *
+ * <p>Validates: P1.3 — OpenSearch Integration fallback with feature flag
  */
 public class OpenSearchAdapter implements SearchIndexPort, SearchIndexUpdatePort {
 
@@ -38,31 +40,41 @@ public class OpenSearchAdapter implements SearchIndexPort, SearchIndexUpdatePort
     @Override
     public Page<SearchResult> search(SearchQuery query, Pageable pageable) {
         if (featureFlags.isEnabled(FEATURE_FLAG)) {
-            // OpenSearch client not yet available — will be wired in P2.2
-            throw new UnsupportedOperationException(
-                    "OpenSearch client not yet configured. Enable after wiring dependency.");
+            log.warn(
+                    "Feature flag '{}' enabled but OpenSearch client is not wired; using fallback adapter",
+                    FEATURE_FLAG);
+        } else {
+            log.debug(
+                    "Feature flag '{}' disabled — delegating search to fallback adapter", FEATURE_FLAG);
         }
-        log.debug("Feature flag '{}' disabled — delegating search to fallback adapter", FEATURE_FLAG);
         return fallback.search(query, pageable);
     }
 
     @Override
     public void indexEntity(String entityType, String entityId, String content, String tenantId) {
         if (featureFlags.isEnabled(FEATURE_FLAG)) {
-            throw new UnsupportedOperationException(
-                    "OpenSearch client not yet configured. Enable after wiring dependency.");
+            log.warn(
+                    "Feature flag '{}' enabled but OpenSearch client is not wired; using fallback adapter",
+                    FEATURE_FLAG);
+        } else {
+            log.debug(
+                    "Feature flag '{}' disabled — delegating indexEntity to fallback adapter",
+                    FEATURE_FLAG);
         }
-        log.debug("Feature flag '{}' disabled — delegating indexEntity to fallback adapter", FEATURE_FLAG);
         fallbackUpdate.indexEntity(entityType, entityId, content, tenantId);
     }
 
     @Override
     public void removeEntity(String entityType, String entityId, String tenantId) {
         if (featureFlags.isEnabled(FEATURE_FLAG)) {
-            throw new UnsupportedOperationException(
-                    "OpenSearch client not yet configured. Enable after wiring dependency.");
+            log.warn(
+                    "Feature flag '{}' enabled but OpenSearch client is not wired; using fallback adapter",
+                    FEATURE_FLAG);
+        } else {
+            log.debug(
+                    "Feature flag '{}' disabled — delegating removeEntity to fallback adapter",
+                    FEATURE_FLAG);
         }
-        log.debug("Feature flag '{}' disabled — delegating removeEntity to fallback adapter", FEATURE_FLAG);
         fallbackUpdate.removeEntity(entityType, entityId, tenantId);
     }
 }

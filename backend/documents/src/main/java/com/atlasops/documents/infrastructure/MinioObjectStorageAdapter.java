@@ -33,7 +33,7 @@ public class MinioObjectStorageAdapter implements ObjectStoragePort {
   public MinioObjectStorageAdapter(
       S3Client s3Client,
       S3Presigner s3Presigner,
-      @Value("${app.storage.bucket-name:atlasops-documents}") String bucketName) {
+      @Value("${app.storage.bucket:atlasops-local}") String bucketName) {
     this.s3Client = s3Client;
     this.s3Presigner = s3Presigner;
     this.bucketName = bucketName;

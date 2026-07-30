@@ -17,6 +17,7 @@ import java.util.HexFormat;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for refreshing an access token using a valid refresh token.
@@ -34,6 +35,7 @@ import java.util.UUID;
  * (replay detection — a stolen token was likely reused after the legitimate user
  * already rotated it).
  */
+@Service
 public class RefreshTokenUseCase {
 
   private static final Duration DEFAULT_REFRESH_TOKEN_TTL = Duration.ofDays(7);

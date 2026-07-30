@@ -4,11 +4,13 @@ import com.atlasops.notifications.domain.Notification;
 import com.atlasops.notifications.domain.ports.NotificationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for listing notifications for a user within a tenant. Results are ordered by creation
  * timestamp descending with configurable pagination.
  */
+@Service
 public class ListNotificationsUseCase {
 
   private static final int DEFAULT_PAGE_SIZE = 20;

@@ -5,11 +5,13 @@ import com.atlasops.activities.domain.ports.ActivityRepository;
 import com.atlasops.shared.domain.ports.Clock;
 import com.atlasops.shared.domain.ports.IdGenerator;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for recording a new activity entry from a domain event. Performs deduplication check via
  * eventId before persisting to prevent duplicate entries from duplicate event delivery.
  */
+@Service
 public class RecordActivityUseCase {
 
   private final ActivityRepository activityRepository;

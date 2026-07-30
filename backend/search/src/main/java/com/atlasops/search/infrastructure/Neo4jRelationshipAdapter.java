@@ -6,10 +6,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
- * Stub adapter for Neo4j relationship graph queries.
+ * Adapter for Neo4j relationship graph queries.
  * Only instantiated when the {@code app.features.neo4j.enabled} feature flag is true.
  *
- * <p>Not yet implemented — placeholder for graph-based customer/entity relationship queries.
+ * <p>When the feature flag is enabled but the Neo4j dependency is unavailable, this adapter
+ * degrades gracefully and acts as a no-op so the application can continue to start.
  *
  * <p>Validates: P2.2 — Neo4j relationship adapter stub with feature flag
  */
@@ -20,16 +21,10 @@ public class Neo4jRelationshipAdapter {
     private static final Logger log = LoggerFactory.getLogger(Neo4jRelationshipAdapter.class);
 
     public Neo4jRelationshipAdapter() {
-        log.info("Neo4j adapter not yet implemented — feature flag enabled but implementation pending");
+        log.info("Neo4j adapter enabled without Neo4j dependency; using no-op fallback");
     }
 
-    /**
-     * Stub method — not yet implemented.
-     *
-     * @throws UnsupportedOperationException always
-     */
     public void queryRelationships() {
-        throw new UnsupportedOperationException(
-                "Neo4j adapter not yet implemented. Feature flag enabled but dependency not configured.");
+        log.debug("Neo4j relationship query requested but dependency is not configured; no-op fallback");
     }
 }

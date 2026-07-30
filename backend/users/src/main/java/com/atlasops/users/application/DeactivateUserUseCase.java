@@ -5,8 +5,10 @@ import com.atlasops.shared.domain.exceptions.ResourceNotFoundException;
 import com.atlasops.shared.domain.ports.Clock;
 import com.atlasops.users.domain.User;
 import com.atlasops.users.domain.ports.UserRepository;
+import org.springframework.stereotype.Service;
 
 /** Use case for deactivating a user. Prevents self-deactivation and marks the user as INACTIVE. */
+@Service
 public class DeactivateUserUseCase {
 
   private final UserRepository userRepository;

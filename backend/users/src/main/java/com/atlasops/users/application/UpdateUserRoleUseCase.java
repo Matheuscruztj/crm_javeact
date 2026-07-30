@@ -5,11 +5,13 @@ import com.atlasops.shared.domain.ports.Clock;
 import com.atlasops.users.domain.User;
 import com.atlasops.users.domain.UserRole;
 import com.atlasops.users.domain.ports.UserRepository;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for updating a user's role. Validates that the new role is one of ADMIN, ANALYST, or
  * CLIENT, then persists the change.
  */
+@Service
 public class UpdateUserRoleUseCase {
 
   private final UserRepository userRepository;

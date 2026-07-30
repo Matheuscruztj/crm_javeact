@@ -8,12 +8,14 @@ import com.atlasops.users.domain.User;
 import com.atlasops.users.domain.UserRole;
 import com.atlasops.users.domain.ports.PasswordHashPort;
 import com.atlasops.users.domain.ports.UserRepository;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for creating a new user within a tenant. Validates input (email format, name length,
  * password length, valid role), hashes password with bcrypt (cost >= 10), enforces email uniqueness
  * within tenant, and persists the user.
  */
+@Service
 public class CreateUserUseCase {
 
   private static final int MIN_NAME_LENGTH = 2;

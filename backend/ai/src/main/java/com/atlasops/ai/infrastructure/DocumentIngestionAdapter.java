@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
  * <p>Validates: Requirements 4.5, 4.11
  */
 @Component
+@Profile("!local")
 public class DocumentIngestionAdapter implements DocumentIngestionPort {
 
   private static final Logger log = LoggerFactory.getLogger(DocumentIngestionAdapter.class);

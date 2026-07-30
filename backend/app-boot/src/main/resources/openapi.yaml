@@ -1,0 +1,70 @@
+openapi: 3.0.3
+info:
+  title: AtlasOps AI API
+  version: 1.0.0
+  description: Contract snapshot for core API endpoints.
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/v1/auth/login:
+    post:
+      summary: Authenticate a user and issue tokens
+      responses:
+        "200":
+          description: OK
+  /api/v1/tenants:
+    get:
+      summary: List tenants
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Create tenant
+      responses:
+        "201":
+          description: Created
+  /api/v1/customers:
+    get:
+      summary: List customers
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Create customer
+      responses:
+        "201":
+          description: Created
+  /api/v1/requests:
+    get:
+      summary: List requests
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Create request
+      responses:
+        "201":
+          description: Created
+  /api/v1/documents:
+    get:
+      summary: List documents
+      responses:
+        "200":
+          description: OK
+    post:
+      summary: Create document
+      responses:
+        "201":
+          description: Created
+  /api/v1/approvals:
+    get:
+      summary: List approvals
+      responses:
+        "200":
+          description: OK
+  /v3/api-docs:
+    get:
+      summary: OpenAPI specification
+      responses:
+        "200":
+          description: OK

@@ -23,6 +23,7 @@ import java.util.HexFormat;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for authenticating a user with email and password.
@@ -40,6 +41,7 @@ import java.util.UUID;
  *
  * <p>Requirements: 1.1, 1.2, 1.3, 1.10, 1.11, 1.12
  */
+@Service
 public class AuthenticateUserUseCase {
 
   private static final Duration LOCKOUT_DURATION = Duration.ofMinutes(15);

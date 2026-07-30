@@ -2,12 +2,14 @@ package com.atlasops.auth.application;
 
 import com.atlasops.auth.domain.JwtClaims;
 import com.atlasops.auth.domain.ports.JwtTokenPort;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for validating JWT tokens. Used by security filters to authenticate requests.
  *
  * <p>Validates: Requirements 1.9, 2.7
  */
+@Service
 public class ValidateTokenUseCase {
 
   private final JwtTokenPort jwtTokenPort;

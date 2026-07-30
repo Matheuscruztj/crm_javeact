@@ -4,11 +4,13 @@ import com.atlasops.notifications.domain.EmailNotification;
 import com.atlasops.notifications.domain.ports.EmailSenderPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for sending email notifications asynchronously with retry logic. Retries up to 3 times
  * with exponential backoff (1s, 4s, 16s) before giving up.
  */
+@Service
 public class SendEmailNotificationUseCase {
 
   private static final Logger log = LoggerFactory.getLogger(SendEmailNotificationUseCase.class);

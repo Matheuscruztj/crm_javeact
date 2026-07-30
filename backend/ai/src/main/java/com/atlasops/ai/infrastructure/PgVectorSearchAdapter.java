@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
  * <p>Validates: Requirements 4.2, 4.4, 4.7
  */
 @Component
+@Profile("!local")
 public class PgVectorSearchAdapter implements VectorSearchPort {
 
   private static final Logger log = LoggerFactory.getLogger(PgVectorSearchAdapter.class);

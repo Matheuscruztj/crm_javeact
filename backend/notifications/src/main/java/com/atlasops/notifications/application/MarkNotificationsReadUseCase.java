@@ -4,11 +4,13 @@ import com.atlasops.notifications.domain.ports.NotificationRepository;
 import com.atlasops.shared.domain.exceptions.BusinessRuleViolationException;
 import com.atlasops.shared.domain.exceptions.ResourceNotFoundException;
 import java.util.List;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for marking notifications as read. Supports single or bulk operations (max 100 IDs per
  * call). Validates that notifications exist and belong to the requesting user.
  */
+@Service
 public class MarkNotificationsReadUseCase {
 
   private static final int MAX_IDS_PER_CALL = 100;

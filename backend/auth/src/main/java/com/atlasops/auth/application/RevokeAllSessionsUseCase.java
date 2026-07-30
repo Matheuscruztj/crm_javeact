@@ -2,12 +2,14 @@ package com.atlasops.auth.application;
 
 import com.atlasops.auth.domain.ports.RefreshTokenRepository;
 import java.util.Objects;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for revoking all active sessions of a user.
  * Invalidates all refresh tokens associated with the given userId,
  * effectively forcing re-authentication on all devices.
  */
+@Service
 public class RevokeAllSessionsUseCase {
 
   private final RefreshTokenRepository refreshTokenRepository;

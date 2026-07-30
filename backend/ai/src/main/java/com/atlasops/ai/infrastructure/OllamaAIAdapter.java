@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Component;
  * <p>Validates: Requirements 4.1, 4.3, 4.6
  */
 @Component
+@Profile("!local")
 public class OllamaAIAdapter implements DocumentAnalysisPort {
 
   private static final Logger log = LoggerFactory.getLogger(OllamaAIAdapter.class);

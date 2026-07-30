@@ -1,11 +1,19 @@
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.ai.autoconfigure.ollama.OllamaAutoConfiguration
+      - org.springframework.ai.autoconfigure.vectorstore.pgvector.PgVectorStoreAutoConfiguration
+
   jpa:
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
     show-sql: true
 
   flyway:
+    enabled: false
     baseline-on-migrate: true
 
 logging:
@@ -17,6 +25,9 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 management:
+  health:
+    mail:
+      enabled: false
   endpoint:
     health:
       show-details: always

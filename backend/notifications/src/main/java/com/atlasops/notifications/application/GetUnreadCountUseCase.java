@@ -1,8 +1,10 @@
 package com.atlasops.notifications.application;
 
 import com.atlasops.notifications.domain.ports.NotificationRepository;
+import org.springframework.stereotype.Service;
 
 /** Use case for retrieving the count of unread notifications for a user within a tenant. */
+@Service
 public class GetUnreadCountUseCase {
 
   private final NotificationRepository notificationRepository;

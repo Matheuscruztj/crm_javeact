@@ -7,12 +7,14 @@ import java.util.List;
 import java.util.Objects;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for querying the global tenant activity feed. ADMIN and ANALYST roles see all activities
  * for the tenant. CLIENT role is restricted to activities whose entities belong to the user's
  * associated customers.
  */
+@Service
 public class GetTenantActivityFeedUseCase {
 
   private static final int DEFAULT_PAGE_SIZE = 20;

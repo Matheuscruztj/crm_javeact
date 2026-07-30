@@ -4,11 +4,13 @@ import com.atlasops.notifications.domain.Notification;
 import com.atlasops.notifications.domain.ports.NotificationRepository;
 import com.atlasops.shared.domain.ports.Clock;
 import com.atlasops.shared.domain.ports.IdGenerator;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for creating an in-app notification. Triggered by approval decisions and request status
  * changes.
  */
+@Service
 public class CreateNotificationUseCase {
 
   private final NotificationRepository notificationRepository;

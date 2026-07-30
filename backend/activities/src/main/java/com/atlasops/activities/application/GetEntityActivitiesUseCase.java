@@ -5,11 +5,13 @@ import com.atlasops.activities.domain.ports.ActivityRepository;
 import java.util.Objects;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for querying activities by entity within a tenant. Results are ordered by timestamp
  * descending with configurable pagination.
  */
+@Service
 public class GetEntityActivitiesUseCase {
 
   private static final int DEFAULT_PAGE_SIZE = 20;

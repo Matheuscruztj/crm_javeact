@@ -1,8 +1,10 @@
 package com.atlasops.notifications.application;
 
 import com.atlasops.notifications.domain.ports.SSEConnectionPort;
+import org.springframework.stereotype.Service;
 
 /** Use case for pushing real-time events to active SSE connections. */
+@Service
 public class PushSSEEventUseCase {
 
   private final SSEConnectionPort sseConnectionPort;

@@ -4,12 +4,14 @@ import com.atlasops.notifications.domain.NotificationPreferences;
 import com.atlasops.notifications.domain.ports.NotificationPreferencesRepository;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for updating a user's notification preferences.
  *
  * <p>Validates: P2.13 — Per-user notification channel preferences
  */
+@Service
 public class UpdatePreferencesUseCase {
 
     private final NotificationPreferencesRepository preferencesRepository;

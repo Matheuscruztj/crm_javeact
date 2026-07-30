@@ -3,6 +3,7 @@ package com.atlasops.auth.infrastructure;
 import com.atlasops.auth.domain.ports.RateLimiterPort;
 import java.time.Duration;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
  * Uses a simple counter with TTL per key (IP or user identifier).
  */
 @Component
+@Profile("!local")
 public class RedisRateLimiter implements RateLimiterPort {
 
   private static final String RATE_LIMIT_KEY_PREFIX = "rate_limit:";

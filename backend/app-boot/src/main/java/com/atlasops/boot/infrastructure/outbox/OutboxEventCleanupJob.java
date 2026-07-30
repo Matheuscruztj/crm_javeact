@@ -2,6 +2,7 @@ package com.atlasops.boot.infrastructure.outbox;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import org.slf4j.Logger;
@@ -55,7 +56,7 @@ public class OutboxEventCleanupJob {
             WHERE status = 'PUBLISHED'
               AND created_at < ?
             """,
-            cutoff);
+            Timestamp.from(cutoff));
 
     if (deleted > 0) {
       cleanedCounter.increment(deleted);

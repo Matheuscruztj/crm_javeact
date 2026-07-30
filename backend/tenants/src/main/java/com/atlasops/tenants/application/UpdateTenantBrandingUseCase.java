@@ -5,12 +5,14 @@ import com.atlasops.shared.domain.ports.Clock;
 import com.atlasops.tenants.domain.Tenant;
 import com.atlasops.tenants.domain.ports.TenantRepository;
 import java.util.Objects;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for updating tenant branding (logo URL and primary color).
  *
  * <p>Validates: P2.12 — Tenant branding endpoint
  */
+@Service
 public class UpdateTenantBrandingUseCase {
 
     private static final String HEX_COLOR_REGEX = "^#[0-9A-Fa-f]{6}$";

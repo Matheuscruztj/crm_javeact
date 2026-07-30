@@ -24,7 +24,7 @@ public interface SpringDataNotificationRepository
 
   @Modifying
   @Query(
-      "UPDATE NotificationJpaEntity n SET n.read = true, n.updatedAt = CURRENT_TIMESTAMP "
+      "UPDATE NotificationJpaEntity n SET n.read = true "
           + "WHERE n.id IN :ids AND n.recipientUserId = :recipientUserId "
           + "AND n.tenantId = :tenantId AND n.read = false")
   int markAsReadByIdsAndRecipientUserIdAndTenantId(
