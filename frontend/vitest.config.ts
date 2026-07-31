@@ -31,6 +31,12 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "json"],
+      thresholds: {
+        lines: 10,
+        branches: 10,
+        functions: 10,
+        statements: 10,
+      },
       include: [
         "lib/**/*.ts",
         "hooks/**/*.ts",

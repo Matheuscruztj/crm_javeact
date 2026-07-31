@@ -1,7 +1,7 @@
 ﻿# AtlasOps AI — Roadmap
 
-> **Atualizado em:** 2026-07-20 (Iteração 9 — reorganização pós-MVP + E2E real + teste carga 5VUs)
-> **Status:** v1.0.0-rc.1 — MVP COMPLETO — Definition of Done ✅ finalizada
+> **Atualizado em:** 2026-07-31
+> **Status:** v1.0.0-rc.1 — implementação ampla concluída, validação técnica ainda em andamento
 > **Arquivo histórico:** [ROADMAP-DONE.md](./ROADMAP-DONE.md)
 
 ---
@@ -10,10 +10,10 @@
 
 | Fase                | Status      | Tasks                 |
 | ------------------- | ----------- | --------------------- |
-| P0 Foundation       | ✅ COMPLETO | 22 seções, 100+ tasks |
-| P1 Experience       | ✅ COMPLETO | 26 seções             |
-| P2 Specialized Data | ✅ COMPLETO | 14 seções             |
-| P3 Hardening        | ✅ COMPLETO | 13 seções             |
+| P0 Foundation       | ✅ Implementado | 22 seções, 100+ tasks |
+| P1 Experience       | ✅ Implementado | 26 seções             |
+| P2 Specialized Data | ⚠️ Parcial / feature-flagged | 14 seções             |
+| P3 Hardening        | ⚠️ Em validação | 13 seções             |
 
 ---
 
@@ -30,9 +30,9 @@
 - Circuit breakers (Resilience4j) em Ollama, MinIO e webhooks
 - SSRF protection para chamadas HTTP outbound
 - Distributed locking (Redis) com fencing token
-- Testes E2E Playwright: 20+ jornadas críticas cobertas
-- Testes de integração com Testcontainers em 9 módulos
-- CI/CD completo: lint, coverage enforcement, ArchUnit, OWASP, secret scan
+- Testes E2E Playwright para jornadas críticas
+- Testes de integração com Testcontainers e suites por módulo
+- CI/CD segmentado com jobs de backend, frontend, contratos, segurança, resiliência e Sonar
 - Frontend funcional: admin + portal, SSE real-time, command palette (⌘K)
 - WCAG AA baseline implementado
 - k6 load tests: smoke + average + stress scenarios
@@ -40,17 +40,22 @@
 - Feature flags para adapters especializados (OpenSearch, Neo4j, etc.)
 - Nightly pipeline: mutation testing, flaky detection, AI evaluation
 - SBOM gerado, imagens Docker reproduzíveis, tag v1.0.0-rc.1
+- Hooks locais separados por custo: `pre-commit` leve e `pre-push` blocking
 
 ---
 
 ## ⚠️ Gaps Conhecidos / Próximas Atividades
 
-- **Checkstyle/SpotBugs warnings** ainda presentes — `make lint` não passa com 0 erros
+- **Cobertura** não pode ser tratada como concluída. O gate Gradle foi reduzido para `10%`, então a recuperação real de coverage continua pendente.
+- **Checkstyle/SpotBugs warnings** ainda presentes — `make lint` ainda precisa fechar com 0 erros
 - **PostGIS/Neo4j/TimescaleDB/ClickHouse/EventStoreDB** são stubs feature-flagged off — end-to-end não funcional
 - **OAuth2/SSO** não implementado
 - **PostgreSQL Row-Level Security** (P3.1.8) não configurado — apenas descrito no threat model
 - **DAST** (dynamic security testing) especificado mas não executado contra API em execução
 - **Job de verificação periódica do ledger** não agendado (apenas `make verify-ledger` manual)
+- **Breaking-change check de OpenAPI** ainda não existe
+- **Geração de tipos frontend a partir do OpenAPI** ainda não existe
+- **Política final de checks `blocking` vs `advisory`** ainda não está consolidada em documentação operacional única
 - **ADR-011** é duplicata do ADR-001 (hexagonal architecture) — precisa ser renomeado para cobrir tema diferente
 - **TextExtractionConsumerTest** usa factory de forma potencialmente incorreta (signature mismatch pode causar falha de compilação)
 - **CheckSlaBreachesUseCaseTest** factory method signature precisa verificação
@@ -82,11 +87,11 @@ Uma tarefa só é considerada **concluída** quando:
 - [x] Testes unitários escritos e passando
 - [x] Testes de integração escritos (quando aplicável)
 - [x] Testes E2E escritos (quando aplicável)
-- [x] `make verify` passa sem erros
-- [x] Cobertura ≥ 75% (≥85% para domínio)
+- [ ] `make verify` passa sem erros
+- [ ] Cobertura ≥ 75% (≥85% para domínio)
 - [x] Sem warnings de compilação
 - [x] Código formatado (`make format`)
-- [x] Lint sem erros (`make lint`)
+- [ ] Lint sem erros (`make lint`)
 - [x] ArchUnit validações passando
 - [x] Documentação atualizada (se interfaces alteradas)
 - [x] PR vinculado à task correspondente
@@ -98,6 +103,7 @@ Uma tarefa só é considerada **concluída** quando:
 
 | Documento                                      | Descrição                                         |
 | ---------------------------------------------- | ------------------------------------------------- |
+| [PENDING-ACTIVITIES.md](./PENDING-ACTIVITIES.md) | Backlog consolidado de atividades pendentes       |
 | [ROADMAP-DONE.md](./ROADMAP-DONE.md)           | Histórico completo de todas as tarefas concluídas |
 | [00-current-status.md](./00-current-status.md) | Status atual consolidado do projeto               |
 | [STATUS.md](./STATUS.md)                       | Status detalhado por módulo                       |

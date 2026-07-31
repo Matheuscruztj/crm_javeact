@@ -12,9 +12,18 @@ run_quiet_or_fail "Backend property tests failed" run_in_root ./gradlew testProp
 run_quiet_or_fail "Backend architecture tests failed" run_in_root ./gradlew :backend:app-boot:architectureTest
 run_quiet_or_fail "Frontend verification failed" run_in_root pnpm --dir frontend verify:fast
 run_quiet_or_fail "Frontend architecture checks failed" run_in_root pnpm --dir frontend architecture:check
+run_quiet_or_fail "Frontend unit coverage failed" run_in_root pnpm --dir frontend test:unit:coverage
 
 if [[ -z "$changed_files" ]] || needs_contract_checks "$changed_files"; then
   run_quiet_or_fail "Contract verification failed" run_in_root make verify-contracts
+fi
+
+if [[ -z "$changed_files" ]] || needs_resilience_checks "$changed_files"; then
+  run_quiet_or_fail "Resilience checks failed" run_in_root make test-resilience-minio
+fi
+
+if [[ -z "$changed_files" ]] || needs_security_checks "$changed_files"; then
+  run_quiet_or_fail "Security scan failed" run_in_root make verify-security
 fi
 
 printf 'OK\n'

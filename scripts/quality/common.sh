@@ -65,6 +65,40 @@ list_changed_files() {
   git -C "$ROOT_DIR" diff --name-only --diff-filter=ACMR
 }
 
+count_lines() {
+  local value="${1:-}"
+
+  if [[ -z "$value" ]]; then
+    printf '0\n'
+    return
+  fi
+
+  printf '%s\n' "$value" | sed '/^[[:space:]]*$/d' | wc -l | tr -d ' '
+}
+
+summarize_changed_areas() {
+  local files="${1:-}"
+
+  if [[ -z "$files" ]]; then
+    return
+  fi
+
+  printf '%s\n' "$files" | awk -F/ '
+    /^[[:space:]]*$/ { next }
+    {
+      if ($1 == ".github") {
+        print ".github/workflows"
+      } else if ($1 == "scripts" && $2 == "quality") {
+        print "scripts/quality"
+      } else if ($1 == "backend" || $1 == "frontend" || $1 == "docs" || $1 == "infra") {
+        print $1
+      } else {
+        print "(root)"
+      }
+    }
+  ' | sort -u
+}
+
 needs_backend_checks() {
   local files="$1"
   grep -Eq '^(backend/|build\.gradle\.kts|settings\.gradle\.kts|gradle\.properties|Makefile|\.github/workflows/|scripts/quality/)' <<<"$files"
@@ -78,4 +112,19 @@ needs_frontend_checks() {
 needs_contract_checks() {
   local files="$1"
   grep -Eq '^(backend/app-boot/|docs/asyncapi\.yaml|Makefile|\.github/workflows/|scripts/quality/)' <<<"$files"
+}
+
+needs_frontend_unit_checks() {
+  local files="$1"
+  grep -Eq '^(frontend/|package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|\.github/workflows/|scripts/quality/)' <<<"$files"
+}
+
+needs_security_checks() {
+  local files="$1"
+  grep -Eq '^(backend/|frontend/|infra/|docker-compose\.yml|Makefile|\.github/workflows/|scripts/quality/)' <<<"$files"
+}
+
+needs_resilience_checks() {
+  local files="$1"
+  grep -Eq '^(backend/app-boot/|backend/ai/|backend/documents/|backend/integrations/|infra/|docker-compose\.yml|Makefile|\.github/workflows/)' <<<"$files"
 }

@@ -154,6 +154,28 @@ jobs:
           path: "**/build/reports/dependency-check*"
           retention-days: 30
 
+  trivy-security-scan:
+    name: Trivy Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+          trivy --version
+
+      - name: Build backend images
+        run: |
+          docker build -t atlasops/backend-api:latest -f backend/app-boot/Dockerfile .
+          docker build -t atlasops/worker:latest -f backend/worker/Dockerfile .
+
+      - name: Run Trivy security scans
+        run: make verify-security
+
   flaky-test-detection:
     name: Flaky Test Detection
     runs-on: ubuntu-latest
@@ -261,26 +283,13 @@ jobs:
         run: ./gradlew pitest --no-daemon
 
   sbom:
-    name: SBOM Generation (CycloneDX)
+    name: SBOM Generation (Syft)
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: ${{ env.JAVA_VERSION }}
-          cache: "gradle"
-
-      - name: Grant execute permission to gradlew
-        run: chmod +x ./gradlew
-
-      - name: Generate SBOM (CycloneDX)
-        run: ./gradlew cyclonedxBom --no-daemon || echo "CycloneDX plugin not configured yet"
 
       - name: Install Syft (SBOM generator)
         uses: anchore/sbom-action/download-syft@v0

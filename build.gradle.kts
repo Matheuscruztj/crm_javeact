@@ -186,7 +186,7 @@ subprojects {
         
         // Better test reporting
         testLogging {
-            events("passed", "skipped", "failed")
+            events("failed")
             showStandardStreams = false
             showExceptions = true
             showCauses = true

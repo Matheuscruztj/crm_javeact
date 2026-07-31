@@ -206,14 +206,11 @@ install-git-hooks: ## Install local pre-commit and pre-push git hooks
 
 .PHONY: verify-contracts
 verify-contracts: ## Run contract verification gates (OpenAPI export + lint + AsyncAPI validation)
-	@echo "==> Exporting live OpenAPI contract..."
-	@$(GRADLEW) $(GRADLE_OPTS) :backend:app-boot:openApiContractExportTest
-	@echo "==> Linting exported OpenAPI contract..."
-	@command -v npx >/dev/null 2>&1 || { echo "ERROR: npx is required for contract linting."; exit 1; }
-	@npx -y @stoplight/spectral-cli@6.15.0 lint backend/app-boot/build/reports/openapi/openapi.json --ruleset spectral:oas
-	@echo "==> Validating AsyncAPI contract..."
-	@npx -y @asyncapi/cli@2.15.0 validate docs/asyncapi.yaml
-	@echo "==> Contract verification passed!"
+	@./scripts/quality/verify-contracts.sh
+
+.PHONY: verify-security
+verify-security: ## Run filesystem and Docker image security scans with Trivy
+	@./scripts/quality/trivy.sh
 
 .PHONY: test-contract
 test-contract: verify-contracts ## Alias for contract verification gates

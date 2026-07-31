@@ -159,10 +159,10 @@ Transformar checks já existentes em enforcement confiável e eliminar falsos po
 - `W1-FE-04` pendente: gaps entre convenção e enforcement seguem em revisão.
 - `W1-FE-05` pendente: build frontend verde, mas documentação estrutural ainda pode ser enriquecida.
 - `W1-QA-01` concluído: CI backend não tolera falha de ArchUnit.
-- `W1-QA-02` pendente: jobs skipados por ausência de arquivo ainda precisam de revisão completa.
-- `W1-QA-03` concluído: matriz inicial de severidade e comandos locais publicada.
-- `W1-QA-04` concluído: aliases `verify-local-fast`, `verify-frontend-fast`, `verify-precommit`, `verify-prepush` e `verify-contracts` adicionados.
-- `W1-QA-05` parcialmente concluído: artifacts e relatórios seguem o baseline já existente; faltam contract artifacts da W3.
+- `W1-QA-02` concluído em 2026-07-31: o fluxo local e a CI passaram a tratar explicitamente os checks disponíveis, sem placeholders operacionais em `verify-contracts`, `pre-commit`, `pre-push` e SBOM nightly.
+- `W1-QA-03` concluído em 2026-07-31: a matriz prática de severidade ficou refletida em `verify-local-fast`, `pre-commit`, `pre-push`, CI principal e nightly.
+- `W1-QA-04` concluído: aliases `verify-local-fast`, `verify-frontend-fast`, `verify-precommit`, `verify-prepush`, `verify-contracts` e `verify-security` adicionados.
+- `W1-QA-05` concluído em 2026-07-31: artifacts mínimos já existem para cobertura backend, contrato OpenAPI, frontend coverage, k6 e SBOM; relatórios adicionais ainda podem evoluir em waves posteriores.
 
 ---
 
@@ -233,14 +233,14 @@ Adicionar enforcement explícito para desacoplamento, herança indevida, uso inc
 - `W2-BE-03` pendente: expandir regras de desacoplamento entre módulos.
 - `W2-BE-04` pendente: criar rule set para evitar imports de tecnologia externa dentro de `domain`.
 - `W2-BE-05` pendente: adicionar suíte de testes arquiteturais dedicada por categoria.
-- `W2-FE-01` pendente: introduzir `dependency-cruiser` ou `ts-arch`.
-- `W2-FE-02` pendente: definir boundaries do frontend.
-- `W2-FE-03` pendente: criar regra contra import circular.
+- `W2-FE-01` concluído: `dependency-cruiser` já está introduzido e integrado ao frontend.
+- `W2-FE-02` parcialmente concluído: boundaries básicas do frontend já são exercidas pelo `dependency-cruiser`, mas ainda não cobrem toda a taxonomia prevista.
+- `W2-FE-03` parcialmente concluído: o gate atual de arquitetura já ajuda a conter acoplamentos, mas a regra explícita dedicada para circularidade ainda não foi registrada separadamente.
 - `W2-FE-04` pendente: criar regra para impedir acoplamento indevido entre admin e portal quando não compartilhado por contrato.
-- `W2-FE-05` pendente: introduzir gate de arquitetura frontend na CI.
+- `W2-FE-05` concluído: existe job dedicado de arquitetura frontend na CI.
 - `W2-QA-01` pendente: definir nomenclatura padrão para categorias de violation.
-- `W2-QA-02` pendente: adicionar job CI dedicado `architecture-backend`.
-- `W2-QA-03` pendente: adicionar job CI dedicado `architecture-frontend`.
+- `W2-QA-02` concluído: job CI dedicado `architecture-backend` já existe.
+- `W2-QA-03` concluído: job CI dedicado `architecture-frontend` já existe.
 - `W2-QA-04` pendente: classificar regras como `blocking` por estágio.
 - `W2-QA-05` pendente: publicar relatório consolidado de violações arquiteturais.
 
@@ -296,21 +296,21 @@ Converter contrato de API em artefato verificável e impedir drift entre impleme
 
 ### 6.8 Status de Implementação
 
-- `W3-BE-01` pendente: definir processo de geração/export de OpenAPI a partir da aplicação.
-- `W3-BE-02` pendente: versionar ou publicar `openapi.yaml` como artifact da CI.
+- `W3-BE-01` concluído em 2026-07-31: o processo de geração/export de OpenAPI a partir da aplicação já está ligado ao fluxo de verificação.
+- `W3-BE-02` concluído em 2026-07-31: o contrato exportado já é publicado como artifact da CI.
 - `W3-BE-03` pendente: garantir cobertura mínima dos endpoints críticos no contrato.
 - `W3-BE-04` pendente: adicionar testes que validem presença e consistência de schema em endpoints críticos.
 - `W3-BE-05` pendente: avaliar adoção de `Pact` ou `Spring Cloud Contract` para integrações relevantes.
 - `W3-FE-01` pendente: mapear endpoints consumidos pelo frontend e aderência ao contrato.
 - `W3-FE-02` pendente: avaliar geração de tipos a partir de OpenAPI.
-- `W3-FE-03` pendente: isolar client HTTP para reduzir acoplamento a payloads ad hoc.
+- `W3-FE-03` parcialmente concluído: já existe client HTTP isolado no frontend, mas sem derivação automática do contrato.
 - `W3-FE-04` pendente: substituir tipos manuais frágeis por tipos derivados do contrato quando viável.
 - `W3-FE-05` pendente: criar smoke de compatibilidade frontend-API em cenários críticos.
-- `W3-QA-01` pendente: corrigir job `openapi-lint` para operar sobre spec real.
-- `W3-QA-02` pendente: corrigir lint de AsyncAPI com ruleset apropriado.
+- `W3-QA-01` concluído em 2026-07-31: `verify-contracts` opera sobre a spec real exportada pela aplicação.
+- `W3-QA-02` concluído em 2026-07-31: o fluxo atual usa validação AsyncAPI por CLI compatível, em vez de ruleset inadequado de OpenAPI.
 - `W3-QA-03` pendente: adicionar verificação de breaking changes de contrato.
 - `W3-QA-04` pendente: introduzir job `contract-tests` se `Pact`/`SCC` for adotado.
-- `W3-QA-05` pendente: publicar artifacts de contrato por build.
+- `W3-QA-05` concluído em 2026-07-31: artifacts de contrato já são publicados por build.
 
 ---
 
@@ -373,11 +373,11 @@ Expandir segurança para além de CVE tradicional, cobrindo SAST, secrets, conta
 - `W4-QA-01` pendente: adicionar `CodeQL`.
 - `W4-QA-02` pendente: adicionar `Semgrep`.
 - `W4-QA-03` pendente: manter `gitleaks` como blocking.
-- `W4-QA-04` pendente: reforçar `OWASP Dependency-Check`.
+- `W4-QA-04` parcialmente concluído: `OWASP Dependency-Check` existe e roda no nightly, mas a política final para ausência de `NVD_API_KEY` ainda precisa ser formalizada.
 - `W4-QA-05` pendente: avaliar complementar com `Snyk` ou `OSV-Scanner`.
-- `W4-QA-06` pendente: adicionar `Trivy` para filesystem e imagem Docker.
-- `W4-QA-07` pendente: adicionar `Syft` para geração de SBOM.
-- `W4-QA-08` pendente: publicar SBOM como artifact por build.
+- `W4-QA-06` concluído em 2026-07-31: `Trivy` foi adicionado para filesystem e imagem Docker no fluxo local e nos workflows.
+- `W4-QA-07` concluído: `Syft` foi adicionado para geração de SBOM.
+- `W4-QA-08` concluído: SBOM é publicado como artifact no nightly.
 - `W4-QA-09` pendente: definir policy de bloqueio por severidade.
 - `W4-QA-10` pendente: adicionar `Dependabot` ou `Renovate`.
 - `W4-QA-11` pendente: criar runbook de resposta rápida a dependência crítica emergente.
@@ -440,15 +440,15 @@ Medir e reduzir acoplamento dinâmico entre serviços, infraestrutura e adapters
 
 ### 8.7 Status de Implementação
 
-- `W5-BE-01` pendente: introduzir `Toxiproxy` com `Testcontainers`.
-- `W5-BE-02` pendente: criar testes automatizados para PostgreSQL, Redis, MinIO, Ollama e OpenSearch indisponíveis.
-- `W5-BE-03` pendente: adicionar cenários de latência alta, timeout, connection reset e degradação parcial.
-- `W5-BE-04` pendente: verificar fallback, bounded retry, circuit breaker, DLQ e idempotência.
-- `W5-BE-05` pendente: criar suíte `resilienceTest` separada de `integrationTest` quando necessário.
-- `W5-QA-01` pendente: criar job CI `resilience-tests` com escopo controlado.
-- `W5-QA-02` pendente: marcar testes longos como nightly quando não forem adequados para PR.
+- `W5-BE-01` parcialmente concluído: já existe base com `Toxiproxy`/fault injection em partes do conjunto, mas a cobertura ainda não é uniforme.
+- `W5-BE-02` parcialmente concluído: existem testes automatizados de falha para dependências principais, porém ainda em níveis distintos de maturidade.
+- `W5-BE-03` parcialmente concluído: cenários de indisponibilidade e degradação já existem em parte da suíte, mas ainda não cobrem toda a matriz desejada.
+- `W5-BE-04` parcialmente concluído: fallback, bounded retry, circuit breaker e caminhos de falha já têm cobertura parcial.
+- `W5-BE-05` concluído: a suíte `resilienceTest` já existe de forma separada.
+- `W5-QA-01` concluído em 2026-07-31: a CI principal já possui job `resilience-tests`.
+- `W5-QA-02` parcialmente concluído: parte dos cenários pesados segue no nightly, mas a segmentação ainda pode evoluir.
 - `W5-QA-03` pendente: padronizar relatório de falha por dependência.
-- `W5-QA-04` pendente: ligar resultados de resiliência a runbooks e critérios operacionais.
+- `W5-QA-04` parcialmente concluído: já existe ligação com runbooks e documentação operacional, mas sem matriz consolidada única.
 
 ---
 
@@ -504,18 +504,18 @@ Consolidar evidência não-funcional com execução reproduzível de carga e pub
 
 ### 9.8 Status de Implementação
 
-- `W6-BE-01` pendente: revisar endpoints críticos para cenários k6.
-- `W6-BE-02` pendente: padronizar payloads e dados de teste de carga.
-- `W6-BE-03` pendente: expor métricas adequadas para análise de gargalo.
-- `W6-FE-01` pendente: identificar jornadas frontend críticas para smoke funcional correlacionado.
+- `W6-BE-01` parcialmente concluído: os cenários k6 existentes já cobrem fluxos críticos principais.
+- `W6-BE-02` parcialmente concluído: payloads e scripts-base já existem, mas ainda sem consolidação completa por módulo.
+- `W6-BE-03` parcialmente concluído: métricas e dashboards operacionais já suportam parte da análise.
+- `W6-FE-01` parcialmente concluído: já existe smoke de caminho crítico frontend.
 - `W6-FE-02` pendente: medir impacto de bundle e requests em rotas críticas.
 - `W6-FE-03` pendente: preparar smoke de integração UI + API quando aplicável.
-- `W6-QA-01` pendente: corrigir path e estratégia do job k6 na CI.
-- `W6-QA-02` pendente: organizar cenários de smoke, baseline, stress e soak.
-- `W6-QA-03` pendente: publicar relatórios JSON/HTML.
-- `W6-QA-04` pendente: definir thresholds por endpoint ou fluxo.
-- `W6-QA-05` pendente: criar execução agendada para testes pesados.
-- `W6-QA-06` pendente: integrar evidência de performance ao processo de release.
+- `W6-QA-01` concluído: a estratégia do job k6 já está organizada entre CI principal e nightly.
+- `W6-QA-02` concluído: cenários `smoke`, `average` e `stress` já estão organizados; `soak` ainda não.
+- `W6-QA-03` concluído: relatórios JSON/HTML já são publicados.
+- `W6-QA-04` parcialmente concluído: existem thresholds parametrizáveis, mas ainda não há política central única por fluxo.
+- `W6-QA-05` concluído: existe execução agendada para testes pesados no nightly.
+- `W6-QA-06` parcialmente concluído: já há evidência ligada ao processo de release, mas ainda não como gate final obrigatório.
 
 ---
 
@@ -588,10 +588,10 @@ Tasks:
 - PB-02: Separar tasks rápidas e lentas.
 - PB-03: Garantir que output local seja legível por trilha.
 
-### 11.4 Status de Implementação
+### 11.1 Status de Implementação
 
 - `PB-01` concluído: `make verify-local-fast` criado.
-- `PB-02` pendente: separar tasks rápidas e lentas.
+- `PB-02` concluído em 2026-07-31: tasks rápidas e lentas estão explicitamente separadas entre `verify-local-fast`, `pre-commit`, `pre-push`, CI principal e nightly.
 
 ## 11.2 Pre-commit
 
@@ -613,6 +613,12 @@ Tasks:
 - PC-02: Implementar hook staged.
 - PC-03: Garantir execução em menos de janela aceitável.
 
+### 11.2 Status de Implementação
+
+- `PC-01` concluído: hooks locais foram implementados diretamente via Git hooks instalados por script.
+- `PC-02` concluído em 2026-07-31: `pre-commit` opera sobre staged files, com checks leves de diff, shell, YAML e JSON.
+- `PC-03` parcialmente concluído: o escopo do `pre-commit` foi reduzido para custo baixo, mas ainda faltam métricas formais de tempo.
+
 ## 11.3 Pre-push
 
 Objetivo:
@@ -631,6 +637,12 @@ Tasks:
 - PP-01: Criar `make verify-prepush`.
 - PP-02: Incluir `ArchUnit`, `dependency-cruiser`, `OpenAPI lint`.
 - PP-03: Avaliar subset de integração por módulo alterado.
+
+### 11.3 Status de Implementação
+
+- `PP-01` concluído: `make verify-prepush` existe.
+- `PP-02` concluído em 2026-07-31: `pre-push` inclui backend fast/static/property/architecture, frontend fast/architecture/coverage, `verify-contracts`, resiliência e segurança.
+- `PP-03` pendente: ainda não há subset dinâmico de integração por módulo alterado.
 
 ## 11.4 CI GitHub
 
@@ -652,6 +664,12 @@ Jobs recomendados:
 - `resilience-tests`
 - `performance-smoke`
 - `nightly-heavy`
+
+### 11.4 Status de Implementação
+
+- `CI-01` concluído: a CI principal já está segmentada em jobs de backend, frontend, contratos, segurança, resiliência e Sonar.
+- `CI-02` concluído: o nightly já concentra os checks mais pesados de performance, SBOM, flaky detection e mutation testing opcional.
+- `CI-03` pendente: ainda falta uma matriz documental única ligando cada job a owner, severidade e política de bloqueio.
 
 ---
 
