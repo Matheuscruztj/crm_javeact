@@ -8,6 +8,8 @@ package com.atlasops.boot.config;
  */
 public class EnvironmentValidationException extends RuntimeException {
 
+  private static final long serialVersionUID = 1L;
+
   public EnvironmentValidationException(String message) {
     super(message);
   }

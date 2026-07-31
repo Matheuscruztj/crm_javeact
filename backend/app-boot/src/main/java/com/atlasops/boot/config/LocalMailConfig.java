@@ -54,7 +54,9 @@ public class LocalMailConfig {
 
     @Override
     public void send(SimpleMailMessage simpleMessage) throws MailException {
-      log.info("Skipping SMTP send to {} in local profile", simpleMessage.getTo());
+      log.info(
+          "Skipping SMTP send to {} in local profile",
+          (Object) simpleMessage.getTo());
     }
 
     @Override

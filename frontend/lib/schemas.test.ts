@@ -10,9 +10,10 @@ import {
 
 describe("schemas", () => {
   it("accepts valid login payload", () => {
-    expect(
-      loginSchema.parse({ email: "admin@example.com", password: "password123" })
-    ).toEqual({ email: "admin@example.com", password: "password123" });
+    expect(loginSchema.parse({ email: "admin@example.com", password: "password123" })).toEqual({
+      email: "admin@example.com",
+      password: "password123",
+    });
   });
 
   it("rejects invalid login payload", () => {

@@ -237,7 +237,9 @@ describe("api-client", () => {
       json: async () => ({}),
     });
 
-    await expect(api.get("/needs-refresh")).rejects.toThrow("Session expired. Please log in again.");
+    await expect(api.get("/needs-refresh")).rejects.toThrow(
+      "Session expired. Please log in again."
+    );
     expect(getAccessToken()).toBeNull();
     expect(getTenantId()).toBeNull();
 

@@ -21,7 +21,13 @@ export default defineConfig({
       "components/shared/**/*.test.ts",
       "components/shared/**/*.test.tsx",
     ],
-    exclude: ["**/node_modules/**", "**/*.spec.ts", "**/*.spec.tsx", "tests/e2e/**", "tests/performance/**"],
+    exclude: [
+      "**/node_modules/**",
+      "**/*.spec.ts",
+      "**/*.spec.tsx",
+      "tests/e2e/**",
+      "tests/performance/**",
+    ],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "json"],

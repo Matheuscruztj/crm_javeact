@@ -65,7 +65,9 @@ describe("useApi hooks", () => {
     api.get.mockReset();
     api.get.mockRejectedValueOnce(undefined);
 
-    const { result: emptyErrorResult } = renderHook(() => useApiQuery<{ id: string }>("/customers/2"));
+    const { result: emptyErrorResult } = renderHook(() =>
+      useApiQuery<{ id: string }>("/customers/2")
+    );
 
     await act(async () => {
       await Promise.resolve();
@@ -83,7 +85,10 @@ describe("useApi hooks", () => {
   });
 
   it("builds paged urls", async () => {
-    api.get.mockResolvedValueOnce({ content: [], page: { number: 0, size: 20, totalElements: 0, totalPages: 0 } });
+    api.get.mockResolvedValueOnce({
+      content: [],
+      page: { number: 0, size: 20, totalElements: 0, totalPages: 0 },
+    });
 
     const { result } = renderHook(() => usePagedQuery<{ id: string }>("/customers", 2, 50));
 
@@ -95,7 +100,9 @@ describe("useApi hooks", () => {
 
   it("creates mutations and surfaces api errors", async () => {
     api.post.mockResolvedValueOnce({ id: "req-1" });
-    const { result } = renderHook(() => useMutation<{ id: string }, { title: string }>("/requests"));
+    const { result } = renderHook(() =>
+      useMutation<{ id: string }, { title: string }>("/requests")
+    );
 
     await act(async () => {
       await expect(result.current.mutate({ title: "Need help" })).resolves.toEqual({ id: "req-1" });
@@ -119,11 +126,17 @@ describe("useApi hooks", () => {
     expect(result.current.data).toBeNull();
     expect(result.current.error).toBeNull();
 
-    api.get.mockResolvedValueOnce({ content: [], page: { number: 0, size: 20, totalElements: 0, totalPages: 0 } });
+    api.get.mockResolvedValueOnce({
+      content: [],
+      page: { number: 0, size: 20, totalElements: 0, totalPages: 0 },
+    });
     const paged = renderHook(() => usePagedQuery<{ id: string }>("/customers", 0, 20));
     await waitFor(() => expect(paged.result.current.loading).toBe(false));
 
-    api.get.mockResolvedValueOnce({ content: [], page: { number: 1, size: 20, totalElements: 0, totalPages: 0 } });
+    api.get.mockResolvedValueOnce({
+      content: [],
+      page: { number: 1, size: 20, totalElements: 0, totalPages: 0 },
+    });
     await act(async () => {
       paged.result.current.setPage(1);
     });

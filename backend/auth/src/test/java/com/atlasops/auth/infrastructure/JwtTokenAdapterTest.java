@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 
 class JwtTokenAdapterTest {
 
-  private static final String SECRET = "0123456789abcdef0123456789abcdef";
+  private static final String SECRET = "test-jwt-signing-secret-0123456789";
 
   @Test
   void should_generateAndValidateToken_whenClaimsAreComplete() {

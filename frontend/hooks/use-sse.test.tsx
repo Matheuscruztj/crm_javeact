@@ -113,7 +113,11 @@ describe("useSSE", () => {
     );
 
     act(() => {
-      first.emit("document.processing", { documentId: "doc-1", status: "PROCESSING", progress: 25 });
+      first.emit("document.processing", {
+        documentId: "doc-1",
+        status: "PROCESSING",
+        progress: 25,
+      });
       first.emit("document.analyzed", { documentId: "doc-1", status: "ANALYZED" });
       first.emit("document.approved", { documentId: "doc-1" });
       first.emit("document.rejected", { documentId: "doc-2" });

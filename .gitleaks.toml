@@ -1,0 +1,5 @@
+[allowlist]
+description = "Test fixture secrets used in JWT adapter tests"
+paths = [
+  '''backend/auth/src/test/java/com/atlasops/auth/infrastructure/JwtTokenAdapterTest.java'''
+]

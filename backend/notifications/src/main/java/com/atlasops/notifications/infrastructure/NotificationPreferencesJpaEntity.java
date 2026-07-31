@@ -1,10 +1,9 @@
 package com.atlasops.notifications.infrastructure;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Id;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.List;
@@ -61,6 +60,8 @@ public class NotificationPreferencesJpaEntity {
 
   @Embeddable
   public static class NotificationPreferencesId implements java.io.Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "user_id", nullable = false, updatable = false)
     private String userId;

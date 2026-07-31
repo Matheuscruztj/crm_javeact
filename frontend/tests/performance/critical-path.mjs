@@ -4,12 +4,7 @@ import path from "node:path";
 
 const BASE_URL = process.env.FRONTEND_BASE_URL || "http://localhost:3000";
 const OUTPUT_FILE = process.env.FRONTEND_PERF_OUTPUT || "frontend/perf-results/critical-path.json";
-const ROUTES = [
-  "/login",
-  "/portal/home",
-  "/admin/dashboard",
-  "/admin/search",
-];
+const ROUTES = ["/login", "/portal/home", "/admin/dashboard", "/admin/search"];
 
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
@@ -38,8 +33,8 @@ fs.writeFileSync(
       results,
     },
     null,
-    2,
-  ),
+    2
+  )
 );
 
 console.log(`Frontend performance evidence written to ${OUTPUT_FILE}`);

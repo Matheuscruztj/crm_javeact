@@ -30,7 +30,7 @@ import org.springframework.data.domain.Pageable;
  */
 @Configuration(proxyBeanMethods = false)
 @Profile("local")
-public class LocalMissingPortsConfig {
+public final class LocalMissingPortsConfig {
 
   private static final Set<Class<?>> LOCAL_FALLBACK_PORTS =
       Set.of(
@@ -41,6 +41,8 @@ public class LocalMissingPortsConfig {
           OperationsPort.class,
           PendingApprovalRepository.class,
           ProjectionRepository.class);
+
+  private LocalMissingPortsConfig() {}
 
   @Bean
   static BeanFactoryPostProcessor localMissingPortFallbacks() {

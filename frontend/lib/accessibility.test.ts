@@ -1,5 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import { generateId, getFocusableElements, handleFocusTrap, liveRegionProps, WCAG_AA } from "./accessibility";
+import {
+  generateId,
+  getFocusableElements,
+  handleFocusTrap,
+  liveRegionProps,
+  WCAG_AA,
+} from "./accessibility";
 
 describe("accessibility", () => {
   it("generates ids with prefix", () => {
