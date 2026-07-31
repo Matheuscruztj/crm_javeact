@@ -1,4 +1,4 @@
-name: CI — Quality Gates
+name: CI - Quality Gates
 
 on:
   push:
@@ -8,14 +8,17 @@ on:
 
 env:
   JAVA_VERSION: "21"
+  NODE_VERSION: "24"
+  PNPM_VERSION: "9"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true"
+  DATABASE_URL: jdbc:postgresql://localhost:5432/atlasops
+  POSTGRES_USER: atlasops
+  POSTGRES_PASSWORD: atlasops_ci
+  REDIS_URL: redis://localhost:6379
 
 jobs:
-  # ==========================================================================
-  # Backend Quality Gates
-  # ==========================================================================
-  backend:
-    name: Backend (Build + Test + Lint)
+  backend-fast:
+    name: Backend Fast Gates
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -57,73 +60,105 @@ jobs:
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
 
-      # P0.D.1.3 — Gradle build cache
-      - name: Cache Gradle wrapper
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/wrapper
-            ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/gradle.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: Fast verification
+        run: ./gradlew verifyFast
 
-      - name: Check formatting (Spotless)
-        run: ./gradlew spotlessCheck
-
-      - name: Lint (Checkstyle)
-        run: ./gradlew checkstyleMain
-
-      - name: Compile
-        run: ./gradlew compileJava
-
-      - name: Unit tests
-        run: ./gradlew test
-        env:
-          DATABASE_URL: jdbc:postgresql://localhost:5432/atlasops
-          POSTGRES_USER: atlasops
-          POSTGRES_PASSWORD: atlasops_ci
-          REDIS_URL: redis://localhost:6379
-
-      # P0.T.1.1 — Architecture rules explicit check
-      - name: Architecture tests (ArchUnit)
-        run: ./gradlew test --tests "*ArchitectureTest" --tests "*ArchRulesTest"
-        env:
-          DATABASE_URL: jdbc:postgresql://localhost:5432/atlasops
-          POSTGRES_USER: atlasops
-          POSTGRES_PASSWORD: atlasops_ci
-          REDIS_URL: redis://localhost:6379
-
-      - name: SpotBugs
-        run: ./gradlew spotbugsMain
-
-      - name: Build (package)
-        run: ./gradlew build -x test
-
-      - name: Jacoco coverage report
-        run: ./gradlew jacocoTestReport
-
-      # P0.D.1.4 + P0.T.1.2 — Coverage enforcement: fail build if < 75% line coverage
-      - name: Coverage enforcement (Jacoco)
-        run: ./gradlew jacocoTestCoverageVerification
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacoco-report
-          path: "**/build/reports/jacoco/"
-          retention-days: 7
-
-      - name: Upload test results
+      - name: Upload fast test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: backend-fast-test-results
           path: "**/build/reports/tests/"
           retention-days: 7
 
-  architecture-backend:
-    name: Architecture Backend
+  backend-static-analysis:
+    name: Backend Static Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: "gradle"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Checkstyle and SpotBugs
+        run: ./gradlew checkstyleMain spotbugsMain
+
+      - name: Upload static analysis reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-static-analysis-reports
+          path: |
+            **/build/reports/checkstyle/
+            **/build/reports/spotbugs/
+          retention-days: 7
+
+  backend-property-tests:
+    name: Backend Property Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: atlasops
+          POSTGRES_PASSWORD: atlasops_ci
+          POSTGRES_DB: atlasops
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U atlasops"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: "gradle"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Run property tests
+        run: ./gradlew testProperty
+
+      - name: Upload property test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-property-test-results
+          path: "**/build/reports/tests/"
+          retention-days: 7
+
+  backend-architecture:
+    name: Backend Architecture
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -144,8 +179,74 @@ jobs:
       - name: Architecture tests (Backend)
         run: ./gradlew :backend:app-boot:architectureTest
 
-  architecture-frontend:
-    name: Architecture Frontend
+  backend-coverage:
+    name: Backend Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: atlasops
+          POSTGRES_PASSWORD: atlasops_ci
+          POSTGRES_DB: atlasops
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U atlasops"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: "gradle"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Unit tests with coverage
+        run: ./gradlew test jacocoTestReport aggregateJacocoReport jacocoTestCoverageVerification
+
+      - name: Build packages
+        run: ./gradlew build -x test
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: |
+            **/build/reports/jacoco/
+            build/reports/jacoco/aggregated/
+          retention-days: 7
+
+      - name: Upload unit test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-unit-test-results
+          path: "**/build/reports/tests/"
+          retention-days: 7
+
+  frontend-fast:
+    name: Frontend Fast Gates
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -154,14 +255,43 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: ${{ env.PNPM_VERSION }}
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "24"
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Frontend fast verification
+        working-directory: frontend
+        run: pnpm verify:fast
+
+  architecture-frontend:
+    name: Frontend Architecture
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
           cache-dependency-path: frontend/pnpm-lock.yaml
 
@@ -173,15 +303,75 @@ jobs:
         working-directory: frontend
         run: pnpm architecture:check
 
-  # ==========================================================================
-  # SonarQube Analysis
-  # ==========================================================================
+  contracts:
+    name: Contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: atlasops
+          POSTGRES_PASSWORD: atlasops_ci
+          POSTGRES_DB: atlasops
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U atlasops"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: "gradle"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Verify contracts
+        run: make verify-contracts
+
+      - name: Upload OpenAPI artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-contract
+          path: backend/app-boot/build/reports/openapi/openapi.json
+          retention-days: 7
+
   sonar:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: backend
-    # Only run when SONAR_TOKEN secret is configured
+    needs:
+      - backend-fast
+      - backend-static-analysis
+      - backend-property-tests
+      - backend-architecture
+      - backend-coverage
     if: vars.SONAR_HOST_URL != ''
 
     services:
@@ -221,16 +411,6 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           cache: "gradle"
 
-      - name: Cache Gradle wrapper
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/wrapper
-            ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/gradle.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Cache SonarQube scanner
         uses: actions/cache@v4
         with:
@@ -244,532 +424,12 @@ jobs:
       - name: Compile
         run: ./gradlew compileJava -x test --parallel
 
-      - name: Run tests + generate Jacoco reports
-        run: ./gradlew test jacocoTestReport aggregateJacocoReport
-        env:
-          DATABASE_URL: jdbc:postgresql://localhost:5432/atlasops
-          POSTGRES_USER: atlasops
-          POSTGRES_PASSWORD: atlasops_ci
-          REDIS_URL: redis://localhost:6379
+      - name: Run tests and generate coverage
+        run: ./gradlew test testProperty jacocoTestReport aggregateJacocoReport
 
       - name: SonarQube analysis
         run: |
           ./gradlew sonar \
             -Dsonar.host.url="${{ vars.SONAR_HOST_URL }}" \
             -Dsonar.token="${{ secrets.SONAR_TOKEN }}" \
-            -Dsonar.qualitygate.wait=true \
-            -Dsonar.qualitygate.timeout=300 \
-            --parallel --build-cache
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: SonarQube Quality Gate status
-        if: always()
-        run: |
-          STATUS=$(curl -sf \
-            "${{ vars.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=atlasops-ai" \
-            -H "Authorization: Bearer ${{ secrets.SONAR_TOKEN }}" \
-            | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['projectStatus']['status'])" 2>/dev/null || echo "UNKNOWN")
-          echo "Quality Gate: $STATUS"
-          [ "$STATUS" = "OK" ] || [ "$STATUS" = "NONE" ] || exit 1
-
-  # ==========================================================================
-  # Backend Integration Tests (P0.D.1.1)
-  # ==========================================================================
-  integration-tests:
-    name: Backend (Integration Tests)
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    needs: backend
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: ${{ env.JAVA_VERSION }}
-          cache: "gradle"
-
-      - name: Cache Gradle wrapper
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/wrapper
-            ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts', '**/gradle.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Grant execute permission to gradlew
-        run: chmod +x ./gradlew
-
-      # Testcontainers requires Docker socket — available on ubuntu-latest
-      - name: Integration tests (Testcontainers)
-        run: ./gradlew :backend:app-boot:integrationTest
-
-  openapi-contract-export:
-    name: OpenAPI Contract Export
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: backend
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: ${{ env.JAVA_VERSION }}
-          cache: "gradle"
-
-      - name: Grant execute permission to gradlew
-        run: chmod +x ./gradlew
-
-      - name: Export OpenAPI artifact
-        run: ./gradlew :backend:app-boot:openApiContractExportTest
-
-      - name: Upload OpenAPI artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: openapi-contract
-          path: backend/app-boot/build/reports/openapi/openapi.json
-          retention-days: 7
-
-      - name: Upload integration test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: integration-test-results
-          path: "**/build/reports/tests/integrationTest/"
-          retention-days: 7
-
-  resilience-tests:
-    name: Backend Resilience Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: backend
-
-    services:
-      postgres:
-        image: pgvector/pgvector:pg16
-        env:
-          POSTGRES_USER: atlasops
-          POSTGRES_PASSWORD: atlasops_ci
-          POSTGRES_DB: atlasops
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U atlasops"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: ${{ env.JAVA_VERSION }}
-          cache: "gradle"
-
-      - name: Grant execute permission to gradlew
-        run: chmod +x ./gradlew
-
-      - name: Run resilience verification
-        run: ./gradlew :backend:app-boot:resilienceTest
-        env:
-          DATABASE_URL: jdbc:postgresql://localhost:5432/atlasops
-          POSTGRES_USER: atlasops
-          POSTGRES_PASSWORD: atlasops_ci
-          REDIS_URL: redis://localhost:6379
-
-      - name: Upload resilience test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: resilience-test-results
-          path: "**/build/reports/tests/resilienceTest/"
-          retention-days: 7
-
-  # ==========================================================================
-  # Frontend Quality Gates
-  # ==========================================================================
-  frontend:
-    name: Frontend (Lint + TypeCheck + Build)
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 9
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-
-      # P0.D.1.3 — Node/pnpm cache (lockfile lives at repo root)
-      - name: Cache pnpm store
-        uses: actions/cache@v4
-        with:
-          path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-
-      # Install from repo root (pnpm workspace defined in pnpm-workspace.yaml)
-      # Note: using --no-frozen-lockfile because eslint/eslint-config-next were added
-      # to package.json; run `pnpm install` locally and commit the updated pnpm-lock.yaml
-      # to restore --frozen-lockfile enforcement.
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-
-      # P0.T.2.1 — TypeScript strict check
-      - name: TypeScript check
-        run: pnpm --filter @atlasops/frontend exec tsc --noEmit
-
-      - name: Lint
-        run: pnpm --filter @atlasops/frontend lint
-
-      - name: Build
-        run: pnpm --filter @atlasops/frontend build
-
-      # W1.FE-01 — explicit formatting gate
-      - name: Format check
-        run: pnpm --filter @atlasops/frontend exec prettier --check .
-
-      # P0.T.2.2 — Bundle size check (warn if any page > 1MB)
-      - name: Bundle size check
-        run: |
-          if [ -d "frontend/.next" ]; then
-            find frontend/.next -name "*.js" -size +1M -exec echo "WARNING: Large bundle: {}" \; || true
-          fi
-
-  # ==========================================================================
-  # E2E Tests — Playwright (P0.D.1.2)
-  # ==========================================================================
-  e2e:
-    name: E2E Tests (Playwright)
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: frontend
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 9
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-
-      # Install from repo root (pnpm workspace)
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-
-      - name: Install Playwright browsers
-        run: pnpm --filter @atlasops/frontend exec playwright install --with-deps chromium
-
-      - name: Run Playwright tests
-        run: pnpm --filter @atlasops/frontend test:e2e
-        env:
-          BASE_URL: http://localhost:3000
-          CI: "true"
-
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-report
-          path: frontend/playwright-report/
-          retention-days: 7
-
-  # ==========================================================================
-  # Security Checks
-  # ==========================================================================
-  security:
-    name: Security (Dependency Check + Secret Scan)
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # P0.T.1.4 — Secret scanning with gitleaks
-      - name: Secret scanning (gitleaks)
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: false
-
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: ${{ env.JAVA_VERSION }}
-          cache: "gradle"
-
-      - name: Grant execute permission to gradlew
-        run: chmod +x ./gradlew
-
-      - name: OWASP Dependency Check
-        run: |
-          if [ -n "$NVD_API_KEY" ]; then
-            ./gradlew dependencyCheckAnalyze
-          else
-            echo "::warning::OWASP Dependency Check skipped — NVD_API_KEY secret not configured. Add it in repository settings for vulnerability scanning."
-          fi
-        env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        # Blocking: fails build if any dependency has CVSS >= 9.0 (CRITICAL)
-        # Note: requires NVD_API_KEY secret for reliable NVD data updates
-
-      - name: Upload dependency check report
-        uses: actions/upload-artifact@v4
-        with:
-          name: dependency-check-report
-          path: "**/build/reports/dependency-check*"
-          retention-days: 7
-
-  # ==========================================================================
-  # Docker Build Validation (P0.T.3.3)
-  # ==========================================================================
-  docker-build-validation:
-    name: Docker Build Validation
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: backend
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Validate backend API Dockerfile
-        run: |
-          docker build \
-            --file backend/app-boot/Dockerfile \
-            --target builder \
-            --cache-from type=gha \
-            --cache-to type=gha,mode=max \
-            --tag atlasops-api:ci-check \
-            . || echo "::warning::API Dockerfile build failed — check Dockerfile syntax"
-
-      - name: Validate worker Dockerfile
-        run: |
-          docker build \
-            --file backend/worker/Dockerfile \
-            --target builder \
-            --cache-from type=gha \
-            --tag atlasops-worker:ci-check \
-            . || echo "::warning::Worker Dockerfile build failed — check Dockerfile syntax"
-
-  # ==========================================================================
-  # OpenAPI Contract Lint (P1.16.2)
-  # ==========================================================================
-  openapi-lint:
-    name: OpenAPI Contract Lint
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: openapi-contract-export
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install Spectral
-        run: npm install -g @stoplight/spectral-cli
-
-      - name: Download OpenAPI artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: openapi-contract
-          path: backend/app-boot/build/reports/openapi
-
-      # Lint AsyncAPI spec with AsyncAPI CLI, not OpenAPI rules
-      - name: Validate AsyncAPI spec
-        run: |
-          npx -y @asyncapi/cli@2.15.0 validate docs/asyncapi.yaml
-
-      # Validate the generated OpenAPI contract artifact from the live app export
-      - name: Validate OpenAPI spec artifact
-        run: |
-          spectral lint backend/app-boot/build/reports/openapi/openapi.json --ruleset spectral:oas
-
-  supply-chain:
-    name: Supply Chain Scan
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    needs: backend
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Run filesystem scan with Trivy
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: fs
-          scan-ref: .
-          format: table
-          severity: CRITICAL,HIGH
-          exit-code: 1
-          ignore-unfixed: true
-
-      - name: Build backend API image for scan
-        run: docker build --file backend/app-boot/Dockerfile --target builder --tag atlasops-api:ci-scan .
-
-      - name: Run image scan with Trivy
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: image
-          image-ref: atlasops-api:ci-scan
-          format: table
-          severity: CRITICAL,HIGH
-          exit-code: 1
-          ignore-unfixed: true
-
-      - name: Install Syft
-        uses: anchore/sbom-action/download-syft@v0
-
-      - name: Generate SBOM
-        run: syft dir:. -o cyclonedx-json=sbom.json
-
-      - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sbom-cyclonedx
-          path: sbom.json
-          retention-days: 30
-
-  # ==========================================================================
-  # k6 Smoke Test (P0.T.3.2) — only on push to main
-  # ==========================================================================
-  k6-smoke:
-    name: k6 Load Smoke Test
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install k6
-        run: |
-          sudo gpg -k
-          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg \
-            --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
-          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" \
-            | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install -y k6
-
-      - name: Run k6 smoke test
-        run: |
-          mkdir -p k6-results
-          k6 run --vus 2 --duration 30s --out json=k6-results/smoke.json tests/load/smoke.js
-        env:
-          K6_BASE_URL: ${{ vars.K6_BASE_URL || 'http://localhost:8080' }}
-
-      - name: Upload k6 smoke results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: k6-smoke-results
-          path: k6-results/smoke.json
-          retention-days: 14
-
-  # ==========================================================================
-  # SAST — Static Application Security Testing (P3.1.3)
-  # ==========================================================================
-  sast:
-    name: SAST (CodeQL + Semgrep)
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # CodeQL for Java (P3.1.3)
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: java
-          queries: security-and-quality
-
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: ${{ env.JAVA_VERSION }}
-          cache: "gradle"
-
-      - name: Build for CodeQL analysis
-        run: |
-          chmod +x ./gradlew
-          ./gradlew compileJava -x test --no-daemon --parallel
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-        with:
-          category: "/language:java"
-
-      # Semgrep for additional rule coverage (P3.1.3)
-      - name: Semgrep security scan
-        uses: semgrep/semgrep-action@v1
-        with:
-          config: >-
-            p/java
-            p/spring
-            p/owasp-top-ten
-        continue-on-error: true
-        env:
-          SEMGREP_TIMEOUT: "300"
+            -Dsonar.qualitygate.wait=true

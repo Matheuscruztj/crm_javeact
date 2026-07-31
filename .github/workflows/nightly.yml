@@ -7,14 +7,43 @@ on:
 
 env:
   JAVA_VERSION: "21"
+  NODE_VERSION: "24"
+  PNPM_VERSION: "9"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  DATABASE_URL: jdbc:postgresql://localhost:5432/atlasops
+  POSTGRES_USER: atlasops
+  POSTGRES_PASSWORD: atlasops_ci
+  REDIS_URL: redis://localhost:6379
 
 jobs:
   full-load-test:
     name: Full Load Test
     runs-on: ubuntu-latest
+    timeout-minutes: 35
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Start backend stack for load test
+        run: docker compose up -d postgres redis minio backend-api
+
+      - name: Wait for backend API readiness
+        run: |
+          for i in {1..36}; do
+            if curl -fsS http://localhost:8080/actuator/health/readiness >/dev/null; then
+              exit 0
+            fi
+            sleep 10
+          done
+          docker compose ps
+          docker compose logs backend-api
+          exit 1
 
       - name: Install k6
         run: |
@@ -37,11 +66,22 @@ jobs:
           path: k6-results/
           retention-days: 14
 
+      - name: Dump backend logs on failure
+        if: failure()
+        run: docker compose logs backend-api postgres redis minio
+
+      - name: Stop backend stack
+        if: always()
+        run: docker compose down -v
+
   architecture-scan:
     name: Architecture Scan
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up Java ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
@@ -50,8 +90,31 @@ jobs:
           distribution: "temurin"
           cache: "gradle"
 
-      - name: Run architecture tests
-        run: ./gradlew test --tests "*Architecture*" --tests "*ArchUnit*" --no-daemon
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Run backend architecture tests
+        run: ./gradlew :backend:app-boot:architectureTest --no-daemon
+
+      - name: Run frontend architecture tests
+        working-directory: frontend
+        run: pnpm architecture:check
 
       - name: Upload architecture test results
         uses: actions/upload-artifact@v4
@@ -64,8 +127,11 @@ jobs:
   dependency-report:
     name: Dependency Report
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up Java ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
@@ -73,6 +139,9 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: "temurin"
           cache: "gradle"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
 
       - name: Run OWASP dependency check
         run: ./gradlew dependencyCheckAnalyze --no-daemon
@@ -88,8 +157,35 @@ jobs:
   flaky-test-detection:
     name: Flaky Test Detection
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: atlasops
+          POSTGRES_PASSWORD: atlasops_ci
+          POSTGRES_DB: atlasops
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U atlasops"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up Java ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
@@ -97,6 +193,9 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: "temurin"
           cache: "gradle"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
 
       - name: Run unit tests (attempt 1)
         id: run1
@@ -119,12 +218,16 @@ jobs:
           echo "Run 1: ${{ steps.run1.outcome }}"
           echo "Run 2: ${{ steps.run2.outcome }}"
           echo "Run 3: ${{ steps.run3.outcome }}"
-          if [[ "${{ steps.run1.outcome }}" != "${{ steps.run2.outcome }}" ]] || \
-             [[ "${{ steps.run2.outcome }}" != "${{ steps.run3.outcome }}" ]]; then
-            echo "WARNING: Inconsistent test results detected — possible flaky tests!"
+          if [[ "${{ steps.run1.outcome }}" == "failure" && "${{ steps.run2.outcome }}" == "failure" && "${{ steps.run3.outcome }}" == "failure" ]]; then
+            echo "All attempts failed consistently. This is a deterministic failure, not just flakiness."
             exit 1
           fi
-          echo "All runs consistent."
+          if [[ "${{ steps.run1.outcome }}" != "${{ steps.run2.outcome }}" ]] || \
+             [[ "${{ steps.run2.outcome }}" != "${{ steps.run3.outcome }}" ]]; then
+            echo "Inconsistent test results detected. Possible flaky tests."
+            exit 1
+          fi
+          echo "All runs passed consistently."
 
       - name: Upload test logs
         uses: actions/upload-artifact@v4
@@ -137,9 +240,12 @@ jobs:
   mutation-testing:
     name: Mutation Testing (PIT)
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     if: ${{ vars.PITEST_ENABLED == 'true' }}
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up Java ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
@@ -148,16 +254,20 @@ jobs:
           distribution: "temurin"
           cache: "gradle"
 
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
       - name: Run mutation tests
         run: ./gradlew pitest --no-daemon
 
-  # P3.7.1 — SBOM generation (CycloneDX)
   sbom:
     name: SBOM Generation (CycloneDX)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v4
@@ -172,7 +282,6 @@ jobs:
       - name: Generate SBOM (CycloneDX)
         run: ./gradlew cyclonedxBom --no-daemon || echo "CycloneDX plugin not configured yet"
 
-      # Fallback: use syft for SBOM generation
       - name: Install Syft (SBOM generator)
         uses: anchore/sbom-action/download-syft@v0
 

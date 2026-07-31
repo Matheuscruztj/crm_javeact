@@ -1,5 +1,12 @@
 {
   "name": "atlasops-ai",
   "private": true,
-  "packageManager": "pnpm@9.15.0"
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "qa:local-fast": "./scripts/quality/local-fast.sh",
+    "qa:precommit": "./scripts/quality/pre-commit.sh",
+    "qa:prepush": "./scripts/quality/pre-push.sh",
+    "qa:contracts": "make verify-contracts",
+    "qa:backend:module": "./scripts/quality/backend-module.sh"
+  }
 }

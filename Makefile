@@ -189,15 +189,20 @@ verify: ## Run all quality gates in sequence (format → lint → compile → te
 	@echo "==> All quality gates passed!"
 
 .PHONY: verify-local-fast
-verify-local-fast: verify-fast verify-frontend-fast ## Fast local verification across backend and frontend
+verify-local-fast: ## Fast local verification across backend and frontend
+	@./scripts/quality/local-fast.sh
 
 .PHONY: verify-precommit
-verify-precommit: format-check lint ## Run the minimal blocking checks for a pre-commit hook
-	@echo "==> Pre-commit verification passed!"
+verify-precommit: ## Run the minimal blocking checks for a pre-commit hook
+	@./scripts/quality/pre-commit.sh
 
 .PHONY: verify-prepush
-verify-prepush: verify ## Run the blocking backend quality gates intended before push
-	@echo "==> Pre-push verification passed!"
+verify-prepush: ## Run the blocking backend quality gates intended before push
+	@./scripts/quality/pre-push.sh
+
+.PHONY: install-git-hooks
+install-git-hooks: ## Install local pre-commit and pre-push git hooks
+	@./scripts/quality/install-git-hooks.sh
 
 .PHONY: verify-contracts
 verify-contracts: ## Run contract verification gates (OpenAPI export + lint + AsyncAPI validation)

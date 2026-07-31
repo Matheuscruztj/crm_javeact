@@ -77,6 +77,9 @@ make test-integration
 - Pre-commit baseline: `make verify-precommit`
 - Pre-push baseline: `make verify-prepush`
 - Jacoco coverage: `./gradlew jacocoTestReport`
+- Local script wrappers: `./scripts/quality/local-fast.sh`, `./scripts/quality/pre-commit.sh`, `./scripts/quality/pre-push.sh`
+- Git hook installer: `make install-git-hooks`
+- Module-local backend diagnosis: `./scripts/quality/backend-module.sh customers`
 
 ### Frontend (Next.js 15 / React 19)
 
