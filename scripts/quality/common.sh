@@ -124,6 +124,16 @@ needs_security_checks() {
   grep -Eq '^(backend/|frontend/|infra/|docker-compose\.yml|Makefile|\.github/workflows/|scripts/quality/)' <<<"$files"
 }
 
+needs_sast_checks() {
+  local files="$1"
+  grep -Eq '^(backend/|frontend/|Makefile|\.github/workflows/|scripts/quality/|build\.gradle\.kts|settings\.gradle\.kts|gradle\.properties|package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml)' <<<"$files"
+}
+
+needs_dast_checks() {
+  local files="$1"
+  grep -Eq '^(backend/app-boot/|backend/auth/|backend/customers/|backend/documents/|backend/requests/|backend/approvals/|backend/tenants/|backend/users/|frontend/|docker-compose\.yml|Makefile|\.github/workflows/|scripts/quality/)' <<<"$files"
+}
+
 needs_resilience_checks() {
   local files="$1"
   grep -Eq '^(backend/app-boot/|backend/ai/|backend/documents/|backend/integrations/|infra/|docker-compose\.yml|Makefile|\.github/workflows/)' <<<"$files"

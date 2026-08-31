@@ -209,8 +209,18 @@ verify-contracts: ## Run contract verification gates (OpenAPI export + lint + As
 	@bash ./scripts/quality/verify-contracts.sh
 
 .PHONY: verify-security
-verify-security: ## Run filesystem and Docker image security scans with Trivy
+verify-security: ## Run SAST, DAST, filesystem and Docker image security scans
+	@./scripts/quality/semgrep.sh
+	@./scripts/quality/zap-baseline.sh
 	@./scripts/quality/trivy.sh
+
+.PHONY: verify-sast
+verify-sast: ## Run static application security testing with Semgrep
+	@./scripts/quality/semgrep.sh
+
+.PHONY: verify-dast
+verify-dast: ## Run baseline dynamic application security testing with OWASP ZAP
+	@./scripts/quality/zap-baseline.sh
 
 .PHONY: test-contract
 test-contract: verify-contracts ## Alias for contract verification gates

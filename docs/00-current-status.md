@@ -75,7 +75,7 @@
 | Search  | OpenSearch not active (feature flag off)         | P1.3 pending production config |
 | Graph   | Neo4j projection disabled (feature flag off)     | P2.2 pending infra             |
 | Ledger  | Periodic verification job not scheduled          | P3 hardening                   |
-| DAST    | Dynamic security testing not yet run             | P3.1.4                         |
+| DAST    | Baseline dynamic scan runs against `/v3/api-docs`| P3.1.4                         |
 | RLS     | PostgreSQL Row-Level Security not configured     | P3.1.8                         |
 
 ---

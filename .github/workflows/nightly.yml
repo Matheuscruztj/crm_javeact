@@ -280,3 +280,106 @@ jobs:
           name: sbom-cyclonedx
           path: sbom.json
           retention-days: 90
+
+  sast-scan:
+    name: SAST Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+          cache: "gradle"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Run Semgrep SAST
+        run: ./scripts/quality/semgrep.sh
+
+      - name: Upload Semgrep report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-report-${{ github.run_number }}
+          path: build/reports/semgrep/semgrep.sarif
+          retention-days: 30
+
+  dast-scan:
+    name: DAST Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: atlasops
+          POSTGRES_PASSWORD: atlasops_ci
+          POSTGRES_DB: atlasops
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U atlasops"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+          cache: "gradle"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Start backend API for DAST
+        run: docker compose up -d postgres redis minio backend-api
+
+      - name: Wait for readiness
+        run: |
+          for i in {1..36}; do
+            if curl -fsS http://localhost:8080/actuator/health/readiness >/dev/null; then
+              exit 0
+            fi
+            sleep 10
+          done
+          docker compose ps
+          docker compose logs backend-api
+          exit 1
+
+      - name: Run OWASP ZAP baseline
+        run: ./scripts/quality/zap-baseline.sh
+
+      - name: Upload ZAP report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-report-${{ github.run_number }}
+          path: build/reports/zap/
+          retention-days: 30
+
+      - name: Stop backend API
+        if: always()
+        run: docker compose down -v

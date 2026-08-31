@@ -23,7 +23,15 @@ if [[ -z "$changed_files" ]] || needs_resilience_checks "$changed_files"; then
 fi
 
 if [[ -z "$changed_files" ]] || needs_security_checks "$changed_files"; then
-  run_quiet_or_fail "Security scan failed" run_in_root make verify-security
+  if [[ -z "$changed_files" ]] || needs_sast_checks "$changed_files"; then
+    run_quiet_or_fail "SAST scan failed" run_in_root make verify-sast
+  fi
+
+  if [[ -z "$changed_files" ]] || needs_dast_checks "$changed_files"; then
+    run_quiet_or_fail "DAST scan failed" run_in_root make verify-dast
+  fi
+
+  run_quiet_or_fail "Filesystem and image security scan failed" run_in_root ./scripts/quality/trivy.sh
 fi
 
 printf 'OK\n'

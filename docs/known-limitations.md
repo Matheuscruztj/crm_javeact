@@ -11,7 +11,7 @@
 | OAuth2/SSO not implemented                            | Medium | Username+password only; planned for post-v1                                                        |
 | Access tokens irrevocable until expiry (1h)           | Low    | Short TTL; rate limiting blocks brute force                                                        |
 | PostgreSQL Row-Level Security (RLS) not configured    | Low    | App-layer tenant isolation via TenantAuthorizationFilter; RLS as defense-in-depth planned (P3.1.8) |
-| DAST (dynamic application security testing) not run   | Medium | P3.1.4 — planned post-RC                                                                           |
+| DAST coverage is baseline-only                        | Medium | ZAP baseline runs on `/v3/api-docs`; authenticated crawl and attack mode still pending             |
 | Prompt injection in document text not fully mitigated | Medium | Document text is data not prompt; full LLM safety guidelines in P3.1.7                             |
 
 ---
