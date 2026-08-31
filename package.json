@@ -2,6 +2,11 @@
   "name": "atlasops-ai",
   "private": true,
   "packageManager": "pnpm@9.15.0",
+  "pnpm": {
+    "overrides": {
+      "sharp": "0.35.4"
+    }
+  },
   "scripts": {
     "qa:local-fast": "./scripts/quality/local-fast.sh",
     "qa:precommit": "./scripts/quality/pre-commit.sh",
