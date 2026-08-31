@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +87,7 @@ public class IdempotencyFilter extends OncePerRequestFilter {
     int status = responseWrapper.getStatus();
     // Cache only successful responses
     if (status >= 200 && status < 300) {
-      String responseBody = new String(responseWrapper.getContentAsByteArray());
+      String responseBody = new String(responseWrapper.getContentAsByteArray(), StandardCharsets.UTF_8);
       try {
         redisTemplate.opsForValue().set(redisKey, responseBody,
             java.time.Duration.ofSeconds(TTL_SECONDS));

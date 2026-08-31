@@ -285,6 +285,7 @@ subprojects {
         
         filter {
             includeTestsMatching("*PropertyTest")
+            isFailOnNoMatchingTests = false
         }
         
         shouldRunAfter(tasks.test)

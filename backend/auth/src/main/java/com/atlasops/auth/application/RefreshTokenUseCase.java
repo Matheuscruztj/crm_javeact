@@ -90,7 +90,7 @@ public class RefreshTokenUseCase {
     refreshTokenRepository.revokeByTokenHash(tokenHash);
 
     // Determine role from existing token (stored during login)
-    String roleName = existingToken.getRole() != null ? existingToken.getRole() : "VIEWER";
+    String roleName = existingToken.getRole() != null ? existingToken.getRole() : Role.CLIENT.name();
     Role role = Role.valueOf(roleName);
 
     // Preserve the token family for replay detection chain

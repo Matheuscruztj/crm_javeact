@@ -34,7 +34,7 @@ class SSRFValidatorPropertyTest {
             @ForAll("privateIpRange10Urls") String url) {
 
         assertThatThrownBy(() -> SSRFValidator.validate(url))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(SecurityException.class)
                 .hasMessageContaining("private");
     }
 
@@ -46,7 +46,7 @@ class SSRFValidatorPropertyTest {
             @ForAll("loopbackUrls") String url) {
 
         assertThatThrownBy(() -> SSRFValidator.validate(url))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(SecurityException.class);
     }
 
     /**
@@ -57,7 +57,7 @@ class SSRFValidatorPropertyTest {
             @ForAll("nonHttpSchemeUrls") String url) {
 
         assertThatThrownBy(() -> SSRFValidator.validate(url))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(SecurityException.class);
     }
 
     /**

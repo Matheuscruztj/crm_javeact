@@ -9,7 +9,6 @@ on:
 env:
   JAVA_VERSION: "21"
   NODE_VERSION: "24"
-  PNPM_VERSION: "9"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true"
   DATABASE_URL: jdbc:postgresql://localhost:5432/atlasops
   POSTGRES_USER: atlasops
@@ -283,8 +282,6 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -312,8 +309,6 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -350,8 +345,6 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

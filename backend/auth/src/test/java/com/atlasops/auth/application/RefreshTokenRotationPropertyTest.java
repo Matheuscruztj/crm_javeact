@@ -57,6 +57,8 @@ class RefreshTokenRotationPropertyTest {
             oldTokenHash,
             input.userId(),
             input.tenantId(),
+            Role.CLIENT.name(),
+            "family-001",
             NOW.plus(Duration.ofDays(7)),
             false,
             NOW.minus(Duration.ofHours(1)));
@@ -65,7 +67,7 @@ class RefreshTokenRotationPropertyTest {
         .thenReturn(Optional.of(existingToken));
     when(clock.now()).thenReturn(NOW);
     when(idGenerator.generate()).thenReturn("new-token-id");
-    when(jwtTokenPort.generateAccessToken(input.userId(), input.tenantId(), Role.ADMIN))
+    when(jwtTokenPort.generateAccessToken(input.userId(), input.tenantId(), Role.CLIENT))
         .thenReturn(ACCESS_TOKEN);
 
     // Act

@@ -255,7 +255,7 @@ public class RedisStreamConsumer {
           lag.set(pending.size());
         }
       } catch (Exception ignored) {
-        // Non-critical — lag metric may be stale
+        log.debug("Unable to refresh lag for stream '{}'", streamKey, ignored);
       }
     }
   }

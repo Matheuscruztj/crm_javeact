@@ -206,7 +206,7 @@ install-git-hooks: ## Install local pre-commit and pre-push git hooks
 
 .PHONY: verify-contracts
 verify-contracts: ## Run contract verification gates (OpenAPI export + lint + AsyncAPI validation)
-	@./scripts/quality/verify-contracts.sh
+	@bash ./scripts/quality/verify-contracts.sh
 
 .PHONY: verify-security
 verify-security: ## Run filesystem and Docker image security scans with Trivy

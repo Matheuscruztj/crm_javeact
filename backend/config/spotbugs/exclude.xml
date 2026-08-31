@@ -11,6 +11,12 @@
         <Package name="~com\.atlasops\..*\.domain"/>
     </Match>
 
+    <!-- Exclude CT_CONSTRUCTOR_THROW for JWT adapter startup validation -->
+    <Match>
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+        <Class name="com.atlasops.auth.infrastructure.JwtTokenAdapter"/>
+    </Match>
+
     <!-- Exclude format string suggestions (using \n is fine in non-console output) -->
     <Match>
         <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
