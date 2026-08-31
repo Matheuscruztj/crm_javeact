@@ -5,3 +5,8 @@ RUN apt-get update \
         postgresql-16-postgis-3 \
         postgresql-16-pgvector \
     && rm -rf /var/lib/apt/lists/*
+
+RUN addgroup --system atlasops \
+    && adduser --system --ingroup atlasops atlasops
+
+USER atlasops
