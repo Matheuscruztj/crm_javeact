@@ -97,7 +97,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
-          cache-dependency-path: frontend/pnpm-lock.yaml
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
