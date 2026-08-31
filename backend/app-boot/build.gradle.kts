@@ -50,7 +50,8 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus:${property("micrometerVersion")}")
 
     // OpenAPI / Swagger documentation
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.17")
+    implementation("io.swagger.core.v3:swagger-annotations:2.2.47")
 
     // Logging - structured JSON
     implementation("net.logstash.logback:logstash-logback-encoder:7.4")

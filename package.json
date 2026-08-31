@@ -2,16 +2,20 @@
   "name": "atlasops-ai",
   "private": true,
   "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "prepare": "husky",
+    "qa:local-fast": "./scripts/quality/local-fast.sh",
+    "qa:precommit": "./scripts/quality/local-fast.sh && make verify-contracts && make verify-security",
+    "qa:prepush": "./scripts/quality/pre-push.sh",
+    "qa:contracts": "make verify-contracts",
+    "qa:backend:module": "./scripts/quality/backend-module.sh"
+  },
   "pnpm": {
     "overrides": {
       "sharp": "0.35.4"
     }
   },
-  "scripts": {
-    "qa:local-fast": "./scripts/quality/local-fast.sh",
-    "qa:precommit": "./scripts/quality/pre-commit.sh",
-    "qa:prepush": "./scripts/quality/pre-push.sh",
-    "qa:contracts": "make verify-contracts",
-    "qa:backend:module": "./scripts/quality/backend-module.sh"
+  "devDependencies": {
+    "husky": "^9.1.7"
   }
 }

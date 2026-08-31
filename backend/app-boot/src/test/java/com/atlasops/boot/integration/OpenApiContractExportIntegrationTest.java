@@ -2,58 +2,58 @@ package com.atlasops.boot.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.atlasops.activities.infrastructure.SpringDataActivityRepository;
+import com.atlasops.ai.infrastructure.PgVectorSearchAdapter;
+import com.atlasops.ai.infrastructure.SpringDataAIAnalysisRecordRepository;
+import com.atlasops.ai.infrastructure.SpringDataGoldenDatasetRepository;
+import com.atlasops.ai.infrastructure.SpringDataPromptVersionRepository;
+import com.atlasops.approvals.infrastructure.SpringDataApprovalLedgerRepository;
+import com.atlasops.approvals.infrastructure.SpringDataApprovalRepository;
+import com.atlasops.audit.infrastructure.SpringDataAuditEntryRepository;
 import com.atlasops.auth.application.ValidateTokenUseCase;
 import com.atlasops.auth.domain.ports.AccountLockoutPort;
 import com.atlasops.auth.domain.ports.AuthUserPort;
 import com.atlasops.auth.domain.ports.JwtTokenPort;
-import com.atlasops.auth.domain.ports.RefreshTokenRepository;
 import com.atlasops.auth.domain.ports.PasswordHashPort;
+import com.atlasops.auth.domain.ports.RefreshTokenRepository;
 import com.atlasops.customers.domain.ports.CustomerRepository;
+import com.atlasops.customers.infrastructure.SpringDataCustomerRepository;
+import com.atlasops.customers.infrastructure.SpringDataUserCustomerAssociationRepository;
 import com.atlasops.documents.domain.ports.DocumentRepository;
-import com.atlasops.imports.domain.ports.ImportPort;
+import com.atlasops.documents.infrastructure.SpringDataDocumentRepository;
 import com.atlasops.imports.application.StartImportUseCase;
+import com.atlasops.imports.domain.ports.ImportPort;
 import com.atlasops.notifications.domain.ports.EmailSenderPort;
 import com.atlasops.notifications.domain.ports.NotificationPreferencesRepository;
 import com.atlasops.notifications.domain.ports.NotificationRepository;
+import com.atlasops.notifications.infrastructure.SpringDataNotificationPreferencesRepository;
+import com.atlasops.notifications.infrastructure.SpringDataNotificationRepository;
 import com.atlasops.operations.domain.ports.JobRepository;
+import com.atlasops.operations.infrastructure.SpringDataJobRepository;
 import com.atlasops.requests.domain.ports.ServiceRequestRepository;
+import com.atlasops.requests.infrastructure.SpringDataCommentRepository;
+import com.atlasops.requests.infrastructure.SpringDataRequestStatusHistoryRepository;
+import com.atlasops.requests.infrastructure.SpringDataServiceRequestRepository;
+import com.atlasops.search.infrastructure.SpringDataSearchIndexRepository;
 import com.atlasops.shared.domain.ports.Clock;
 import com.atlasops.shared.domain.ports.FeatureFlagPort;
 import com.atlasops.shared.domain.ports.IdGenerator;
 import com.atlasops.shared.domain.ports.OutboxEventRepository;
 import com.atlasops.tenants.domain.ports.TenantRepository;
+import com.atlasops.tenants.infrastructure.SpringDataTenantRepository;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.http.ResponseEntity;
-import com.atlasops.activities.infrastructure.SpringDataActivityRepository;
-import com.atlasops.ai.infrastructure.SpringDataAIAnalysisRecordRepository;
-import com.atlasops.ai.infrastructure.SpringDataGoldenDatasetRepository;
-import com.atlasops.ai.infrastructure.SpringDataPromptVersionRepository;
-import com.atlasops.ai.infrastructure.PgVectorSearchAdapter;
-import com.atlasops.approvals.infrastructure.SpringDataApprovalLedgerRepository;
-import com.atlasops.approvals.infrastructure.SpringDataApprovalRepository;
-import com.atlasops.audit.infrastructure.SpringDataAuditEntryRepository;
-import com.atlasops.customers.infrastructure.SpringDataCustomerRepository;
-import com.atlasops.customers.infrastructure.SpringDataUserCustomerAssociationRepository;
-import com.atlasops.documents.infrastructure.SpringDataDocumentRepository;
-import com.atlasops.notifications.infrastructure.SpringDataNotificationPreferencesRepository;
-import com.atlasops.notifications.infrastructure.SpringDataNotificationRepository;
-import com.atlasops.operations.infrastructure.SpringDataJobRepository;
-import com.atlasops.requests.infrastructure.SpringDataCommentRepository;
-import com.atlasops.requests.infrastructure.SpringDataRequestStatusHistoryRepository;
-import com.atlasops.requests.infrastructure.SpringDataServiceRequestRepository;
-import com.atlasops.search.infrastructure.SpringDataSearchIndexRepository;
-import com.atlasops.tenants.infrastructure.SpringDataTenantRepository;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.test.context.ActiveProfiles;
 import software.amazon.awssdk.services.s3.S3Client;
 
 /**
@@ -76,6 +76,9 @@ import software.amazon.awssdk.services.s3.S3Client;
       "spring.jpa.hibernate.ddl-auto=none",
       "spring.sql.init.mode=never",
       "spring.task.scheduling.enabled=false",
+      "spring.cloud.function.scan.enabled=false",
+      "spring.cloud.function.autodetect=false",
+      "spring.autoconfigure.exclude=org.springframework.cloud.function.context.config.ContextFunctionCatalogAutoConfiguration",
       "LOG_LEVEL=INFO"
     })
 @ActiveProfiles({"test", "local"})
@@ -106,7 +109,10 @@ class OpenApiContractExportIntegrationTest {
   @MockBean private ImportPort importPort;
   @MockBean private StartImportUseCase startImportUseCase;
   @MockBean private SpringDataActivityRepository springDataActivityRepository;
-  @MockBean(name = "vectorStore") private Object vectorStore;
+
+  @MockBean(name = "vectorStore")
+  private Object vectorStore;
+
   @MockBean private PgVectorSearchAdapter pgVectorSearchAdapter;
   @MockBean private SpringDataAIAnalysisRecordRepository springDataAIAnalysisRecordRepository;
   @MockBean private SpringDataGoldenDatasetRepository springDataGoldenDatasetRepository;
@@ -115,13 +121,22 @@ class OpenApiContractExportIntegrationTest {
   @MockBean private SpringDataApprovalRepository springDataApprovalRepository;
   @MockBean private SpringDataAuditEntryRepository springDataAuditEntryRepository;
   @MockBean private SpringDataCustomerRepository springDataCustomerRepository;
-  @MockBean private SpringDataUserCustomerAssociationRepository springDataUserCustomerAssociationRepository;
+
+  @MockBean
+  private SpringDataUserCustomerAssociationRepository springDataUserCustomerAssociationRepository;
+
   @MockBean private SpringDataDocumentRepository springDataDocumentRepository;
-  @MockBean private SpringDataNotificationPreferencesRepository springDataNotificationPreferencesRepository;
+
+  @MockBean
+  private SpringDataNotificationPreferencesRepository springDataNotificationPreferencesRepository;
+
   @MockBean private SpringDataNotificationRepository springDataNotificationRepository;
   @MockBean private SpringDataJobRepository springDataJobRepository;
   @MockBean private SpringDataCommentRepository springDataCommentRepository;
-  @MockBean private SpringDataRequestStatusHistoryRepository springDataRequestStatusHistoryRepository;
+
+  @MockBean
+  private SpringDataRequestStatusHistoryRepository springDataRequestStatusHistoryRepository;
+
   @MockBean private SpringDataServiceRequestRepository springDataServiceRequestRepository;
   @MockBean private SpringDataSearchIndexRepository springDataSearchIndexRepository;
   @MockBean private SpringDataTenantRepository springDataTenantRepository;
@@ -134,7 +149,11 @@ class OpenApiContractExportIntegrationTest {
   void should_exportOpenApiSpec_when_apiDocsAreAvailable() throws IOException {
     ResponseEntity<String> response = restTemplate.getForEntity("/v3/api-docs", String.class);
 
-    assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+    assertThat(response.getStatusCode().is2xxSuccessful())
+        .as(
+            "Expected /v3/api-docs to return 2xx but got %s with body: %s",
+            response.getStatusCode(), response.getBody())
+        .isTrue();
     assertThat(response.getBody()).isNotNull();
 
     Files.createDirectories(OPENAPI_OUTPUT.getParent());

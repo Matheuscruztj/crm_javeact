@@ -539,14 +539,15 @@ docker-build-worker:
 
 ## Start SonarQube and its database (quality profile)
 sonar-up: ## Start SonarQube self-hosted (first run: ~2min to initialize)
-	@docker compose -f $(COMPOSE_FILE) --profile quality up -d
+	@docker compose -f $(COMPOSE_FILE) up -d sonarqube-db sonarqube
 	@echo ""
 	@echo "SonarQube starting at http://localhost:$${SONAR_PORT:-9099}"
 	@echo "Run 'make sonar-provision' once it is fully UP (check with 'make sonar-health')"
 
 ## Stop SonarQube services
 sonar-down: ## Stop SonarQube services
-	@docker compose -f $(COMPOSE_FILE) --profile quality down
+	@docker compose -f $(COMPOSE_FILE) stop sonarqube sonarqube-db
+	@docker compose -f $(COMPOSE_FILE) rm -f sonarqube sonarqube-db
 
 ## Provision Quality Gate and project (run once after sonar-up)
 sonar-provision: ## Provision AtlasOps Quality Gate (80% coverage + all conditions)
