@@ -1,8 +1,8 @@
 package com.atlasops.search.presentation;
 
+import com.atlasops.search.application.SearchResultView;
 import com.atlasops.search.application.UnifiedSearchCommand;
 import com.atlasops.search.application.UnifiedSearchUseCase;
-import com.atlasops.search.domain.SearchResult;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -57,10 +57,13 @@ public class SearchController {
 
     var command = new UnifiedSearchCommand(q, entityType, tenantId, userId, role, page, size);
 
-    Page<SearchResult> result = unifiedSearchUseCase.execute(command);
+    Page<com.atlasops.search.domain.SearchResult> result = unifiedSearchUseCase.execute(command);
 
     List<SearchResultResponse> content =
-        result.getContent().stream().map(SearchResultResponse::from).toList();
+        result.getContent().stream()
+            .map(SearchResultView::from)
+            .map(SearchResultResponse::from)
+            .toList();
 
     var pageMetadata =
         new PageResponse.PageMetadata(

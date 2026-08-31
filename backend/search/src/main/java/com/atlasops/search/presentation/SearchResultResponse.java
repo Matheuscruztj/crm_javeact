@@ -1,6 +1,7 @@
 package com.atlasops.search.presentation;
 
 import com.atlasops.search.domain.SearchResult;
+import com.atlasops.search.application.SearchResultView;
 
 /**
  * REST response representation for a search result.
@@ -27,5 +28,14 @@ public record SearchResultResponse(
         searchResult.title(),
         searchResult.snippet(),
         searchResult.relevanceScore());
+  }
+
+  public static SearchResultResponse from(SearchResultView searchResultView) {
+    return new SearchResultResponse(
+        searchResultView.entityType(),
+        searchResultView.entityId(),
+        searchResultView.title(),
+        searchResultView.snippet(),
+        searchResultView.relevanceScore());
   }
 }

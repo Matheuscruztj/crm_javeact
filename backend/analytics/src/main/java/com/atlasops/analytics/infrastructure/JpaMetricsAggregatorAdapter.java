@@ -30,89 +30,56 @@ public class JpaMetricsAggregatorAdapter implements MetricsAggregator {
     @Override
     public DashboardSummary computeDashboard(String tenantId) {
         Instant now = Instant.now();
+        DashboardMetricsProjection projection = loadDashboardMetricsProjection(tenantId);
         Map<MetricName, Double> metrics = new EnumMap<>(MetricName.class);
-
-        metrics.put(MetricName.CUSTOMER_COUNT, countCustomers(tenantId));
-        metrics.put(MetricName.REQUEST_COUNT, countRequests(tenantId));
-        metrics.put(MetricName.ACTIVE_REQUEST_COUNT, countActiveRequests(tenantId));
-        metrics.put(MetricName.DOCUMENT_COUNT, countDocuments(tenantId));
-        metrics.put(MetricName.PENDING_APPROVAL_COUNT, countPendingApprovals(tenantId));
-
+        metrics.put(MetricName.CUSTOMER_COUNT, projection.customerCount());
+        metrics.put(MetricName.REQUEST_COUNT, projection.requestCount());
+        metrics.put(MetricName.ACTIVE_REQUEST_COUNT, projection.activeRequestCount());
+        metrics.put(MetricName.DOCUMENT_COUNT, projection.documentCount());
+        metrics.put(MetricName.PENDING_APPROVAL_COUNT, projection.pendingApprovalCount());
         return new DashboardSummary(tenantId, metrics, now);
     }
 
     @Override
     public Metric computeMetric(String tenantId, MetricName name) {
         Instant now = Instant.now();
-        double value = switch (name) {
-            case CUSTOMER_COUNT -> countCustomers(tenantId);
-            case REQUEST_COUNT -> countRequests(tenantId);
-            case ACTIVE_REQUEST_COUNT -> countActiveRequests(tenantId);
-            case DOCUMENT_COUNT -> countDocuments(tenantId);
-            case PENDING_APPROVAL_COUNT -> countPendingApprovals(tenantId);
-            default -> 0.0;
-        };
+        DashboardMetricsProjection projection = loadDashboardMetricsProjection(tenantId);
+        double value =
+            switch (name) {
+              case CUSTOMER_COUNT -> projection.customerCount();
+              case REQUEST_COUNT -> projection.requestCount();
+              case ACTIVE_REQUEST_COUNT -> projection.activeRequestCount();
+              case DOCUMENT_COUNT -> projection.documentCount();
+              case PENDING_APPROVAL_COUNT -> projection.pendingApprovalCount();
+              default -> 0.0;
+            };
         return Metric.of(tenantId, name, value, now);
     }
 
-    private double countCustomers(String tenantId) {
+    private DashboardMetricsProjection loadDashboardMetricsProjection(String tenantId) {
         try {
-            Object result = em.createNativeQuery(
-                    "SELECT COUNT(*) FROM customers WHERE tenant_id = :tenantId")
+            Object[] result = (Object[]) em.createNativeQuery("""
+                    SELECT
+                        (SELECT COUNT(*) FROM customers WHERE tenant_id = :tenantId) AS customer_count,
+                        (SELECT COUNT(*) FROM service_requests WHERE tenant_id = :tenantId) AS request_count,
+                        (SELECT COUNT(*) FROM service_requests WHERE tenant_id = :tenantId AND status NOT IN ('CLOSED', 'CANCELLED', 'REJECTED')) AS active_request_count,
+                        (SELECT COUNT(*) FROM documents WHERE tenant_id = :tenantId) AS document_count,
+                        (SELECT COUNT(*) FROM approvals WHERE tenant_id = :tenantId AND status = 'PENDING') AS pending_approval_count
+                    """)
                     .setParameter("tenantId", tenantId)
                     .getSingleResult();
-            return ((Number) result).doubleValue();
+            return new DashboardMetricsProjection(
+                    toDouble(result[0]),
+                    toDouble(result[1]),
+                    toDouble(result[2]),
+                    toDouble(result[3]),
+                    toDouble(result[4]));
         } catch (Exception e) {
-            return 0.0;
+            return new DashboardMetricsProjection(0.0, 0.0, 0.0, 0.0, 0.0);
         }
     }
 
-    private double countRequests(String tenantId) {
-        try {
-            Object result = em.createNativeQuery(
-                    "SELECT COUNT(*) FROM service_requests WHERE tenant_id = :tenantId")
-                    .setParameter("tenantId", tenantId)
-                    .getSingleResult();
-            return ((Number) result).doubleValue();
-        } catch (Exception e) {
-            return 0.0;
-        }
-    }
-
-    private double countActiveRequests(String tenantId) {
-        try {
-            Object result = em.createNativeQuery(
-                    "SELECT COUNT(*) FROM service_requests WHERE tenant_id = :tenantId "
-                    + "AND status NOT IN ('CLOSED', 'CANCELLED', 'REJECTED')")
-                    .setParameter("tenantId", tenantId)
-                    .getSingleResult();
-            return ((Number) result).doubleValue();
-        } catch (Exception e) {
-            return 0.0;
-        }
-    }
-
-    private double countDocuments(String tenantId) {
-        try {
-            Object result = em.createNativeQuery(
-                    "SELECT COUNT(*) FROM documents WHERE tenant_id = :tenantId")
-                    .setParameter("tenantId", tenantId)
-                    .getSingleResult();
-            return ((Number) result).doubleValue();
-        } catch (Exception e) {
-            return 0.0;
-        }
-    }
-
-    private double countPendingApprovals(String tenantId) {
-        try {
-            Object result = em.createNativeQuery(
-                    "SELECT COUNT(*) FROM approvals WHERE tenant_id = :tenantId AND status = 'PENDING'")
-                    .setParameter("tenantId", tenantId)
-                    .getSingleResult();
-            return ((Number) result).doubleValue();
-        } catch (Exception e) {
-            return 0.0;
-        }
+    private double toDouble(Object value) {
+        return value instanceof Number number ? number.doubleValue() : 0.0;
     }
 }

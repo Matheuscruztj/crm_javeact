@@ -1,0 +1,14 @@
+{
+  "name": "architecture-validation",
+  "description": "Validates architectural constraints (ArchUnit rules) when Gradle build files or module structure changes, ensuring hexagonal architecture compliance",
+  "triggerEvent": "fileModified",
+  "condition": {
+    "globPattern": "backend/**/build.gradle.kts"
+  },
+  "validationAction": {
+    "type": "command",
+    "command": "./gradlew :backend:shared-kernel:test --tests '*ArchUnit*'",
+    "description": "Run ArchUnit tests to validate no dependency cycles, domain isolation from infrastructure/presentation, and correct module layering.",
+    "failureMessage": "Architecture validation failed. Check that domain does not import infrastructure/presentation, no cyclic dependencies exist between modules, and layering rules are respected."
+  }
+}

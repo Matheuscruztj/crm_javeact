@@ -392,12 +392,23 @@ test-load-5vu-with-auth: ## Run k6 5-VU test with auth token (export K6_AUTH_TOK
 test-load: ## Run k6 average load test (50 VUs, 5min)
 	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} tests/load/average.js
 
+.PHONY: test-load-low-resource
+test-load-low-resource: ## Run k6 low-resource load test (1 VU, constrained budgets)
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} tests/load/low-resource.js
+
 .PHONY: test-load-report
 test-load-report: ## Run k6 load test and save JSON report
 	@mkdir -p tests/load/reports
 	@ts=$$(date +%Y%m%d%H%M%S); \
 	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/average-$$ts.summary.json --out json=tests/load/reports/average-$$ts.json tests/load/average.js; \
 	node tests/load/generate-report.mjs tests/load/reports/average-$$ts.summary.json tests/load/reports/average-$$ts.json tests/load/reports/average-$$ts.html
+
+.PHONY: test-load-low-resource-report
+test-load-low-resource-report: ## Run k6 low-resource test and save JSON report
+	@mkdir -p tests/load/reports
+	@ts=$$(date +%Y%m%d%H%M%S); \
+	k6 run --env K6_BASE_URL=$${K6_BASE_URL:-http://localhost:8080} --summary-export=tests/load/reports/low-resource-$$ts.summary.json --out json=tests/load/reports/low-resource-$$ts.json tests/load/low-resource.js; \
+	node tests/load/generate-report.mjs tests/load/reports/low-resource-$$ts.summary.json tests/load/reports/low-resource-$$ts.json tests/load/reports/low-resource-$$ts.html
 
 .PHONY: test-load-5vu-report
 test-load-5vu-report: ## Run k6 5-VU test and save JSON report

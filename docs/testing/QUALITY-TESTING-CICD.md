@@ -36,6 +36,7 @@ make test-contract
 make test-functional
 make test-load-smoke
 make test-load
+make test-load-low-resource
 make test-ai-evaluation
 make security-scan
 make docker-build
@@ -48,6 +49,8 @@ make verify-full
 `make verify-full` executes broader integration, functional and specialized checks according to enabled profiles.
 
 `make verify-contracts` is the local/CI contract gate for OpenAPI export, OpenAPI lint and AsyncAPI validation.
+
+`make test-load-low-resource` exercises the constrained capacity scenario that approximates a host with 1 vCPU and 1 GB RAM or less.
 
 ---
 
@@ -150,6 +153,7 @@ Playwright primary journey and critical browser states.
 
 - k6 smoke;
 - full load;
+- low-resource capacity validation;
 - thresholds;
 - worker lag;
 - search latency;
@@ -236,6 +240,7 @@ staging smoke
 
 ```text
 full load
+low-resource capacity
 mutation
 flaky detection
 architecture scan

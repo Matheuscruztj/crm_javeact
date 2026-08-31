@@ -95,6 +95,7 @@ services:
     environment:
       APP_ENV: local
       APP_PORT: 8080
+      JAVA_TOOL_OPTIONS: ${JAVA_TOOL_OPTIONS:-}
       DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-atlasops}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-atlasops}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-atlasops}
@@ -135,6 +136,7 @@ services:
     image: atlasops/worker:latest
     container_name: atlasops-worker
     environment:
+      JAVA_TOOL_OPTIONS: ${JAVA_TOOL_OPTIONS:-}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-atlasops}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-atlasops}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-atlasops_local}

@@ -170,7 +170,7 @@ atlasops-ai/
 │
 ├── infra/                # Docker Compose, scripts, monitoring
 ├── docs/                 # Documentação técnica
-├── .kiro/                # Specs SDD, steering, skills
+├── docs/codex/           # Specs SDD, steering, tasks, hooks
 ├── Makefile              # Comandos padronizados
 └── AGENTS.md             # Governança e convenções
 ```
@@ -181,17 +181,17 @@ atlasops-ai/
 
 ### Documentação Essencial
 
-1. [STATUS.md](./STATUS.md) — Status atual do projeto
+1. [00-current-status.md](./00-current-status.md) — Status atual do projeto
 2. [ROADMAP.md](./ROADMAP.md) — Roadmap e tarefas pendentes
 3. [AGENTS.md](../AGENTS.md) — Governança e convenções técnicas
 4. [BUILD-PERFORMANCE.md](./BUILD-PERFORMANCE.md) — Otimizações de build
 
 ### Convenções (Steering Files)
 
-- [.kiro/steering/java-conventions.md](../.kiro/steering/java-conventions.md)
-- [.kiro/steering/testing-patterns.md](../.kiro/steering/testing-patterns.md)
-- [.kiro/steering/api-conventions.md](../.kiro/steering/api-conventions.md)
-- [.kiro/steering/git-conventions.md](../.kiro/steering/git-conventions.md)
+- [docs/codex/steering/java-conventions.md](../docs/codex/steering/java-conventions.md)
+- [docs/codex/steering/testing-patterns.md](../docs/codex/steering/testing-patterns.md)
+- [docs/codex/steering/api-conventions.md](../docs/codex/steering/api-conventions.md)
+- [docs/codex/steering/git-conventions.md](../docs/codex/steering/git-conventions.md)
 
 ---
 
@@ -279,7 +279,7 @@ curl localhost:8080/actuator/health | jq
 Antes de fazer seu primeiro commit:
 
 - [ ] `make verify-fast` passa sem erros
-- [ ] Seguiu convenções de código ([java-conventions.md](../.kiro/steering/java-conventions.md))
+- [ ] Seguiu convenções de código ([java-conventions.md](../docs/codex/steering/java-conventions.md))
 - [ ] Testes unitários escritos (se aplicável)
 - [ ] Commit message segue Conventional Commits (`feat:`, `fix:`, etc.)
 - [ ] Branch segue padrão (`feature/ATLAS-XX-descricao`)
@@ -306,11 +306,11 @@ Você está pronto para contribuir com o AtlasOps AI!
 **Próximas leituras recomendadas:**
 
 1. [ROADMAP.md](./ROADMAP.md) — Ver tarefas disponíveis
-2. [architecture/MODULES.md](./architecture/MODULES.md) — Entender módulos
-3. [testing/STRATEGY.md](./testing/STRATEGY.md) — Estratégia de testes
+2. [architecture/system-overview.md](./architecture/system-overview.md) — Entender a arquitetura e os módulos
+3. [testing/QUALITY-TESTING-CICD.md](./testing/QUALITY-TESTING-CICD.md) — Estratégia de testes
 
 **Dúvidas?**
 
-- Consulte [runbooks/TROUBLESHOOTING.md](./runbooks/TROUBLESHOOTING.md)
+- Consulte [runbooks/OPERATIONS-RUNBOOK.md](./runbooks/OPERATIONS-RUNBOOK.md)
 - Execute `make doctor` para diagnóstico
 - Revise issues no GitHub

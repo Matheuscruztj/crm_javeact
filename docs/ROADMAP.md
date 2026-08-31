@@ -1,8 +1,8 @@
 ﻿# AtlasOps AI — Roadmap
 
 > **Atualizado em:** 2026-07-31
-> **Status:** v1.0.0-rc.1 — implementação ampla concluída, validação técnica ainda em andamento
-> **Arquivo histórico:** [ROADMAP-DONE.md](./ROADMAP-DONE.md)
+> **Status:** implementação ampla concluída; validação técnica e hardening ainda em andamento.
+> **Status canônico:** [00-current-status.md](./00-current-status.md)
 
 ---
 
@@ -104,8 +104,6 @@ Uma tarefa só é considerada **concluída** quando:
 | Documento                                      | Descrição                                         |
 | ---------------------------------------------- | ------------------------------------------------- |
 | [PENDING-ACTIVITIES.md](./PENDING-ACTIVITIES.md) | Backlog consolidado de atividades pendentes       |
-| [ROADMAP-DONE.md](./ROADMAP-DONE.md)           | Histórico completo de todas as tarefas concluídas |
 | [00-current-status.md](./00-current-status.md) | Status atual consolidado do projeto               |
-| [STATUS.md](./STATUS.md)                       | Status detalhado por módulo                       |
 | [adr/](./adr/)                                 | Architecture Decision Records (ADR-001 a ADR-019) |
 | [../AGENTS.md](../AGENTS.md)                   | Governança e papéis de agentes                    |

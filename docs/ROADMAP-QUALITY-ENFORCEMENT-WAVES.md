@@ -366,13 +366,13 @@ Expandir segurança para além de CVE tradicional, cobrindo SAST, secrets, conta
 
 ### 7.7 Status de Implementação
 
-- `W4-BE-01` pendente: revisar áreas sensíveis para regras Semgrep ou queries específicas.
+- `W4-BE-01` parcialmente concluído: o backend já está coberto por Semgrep no fluxo existente, mas ainda falta revisão fina de áreas sensíveis e suppressions justificadas.
 - `W4-BE-02` pendente: identificar sinks críticos.
 - `W4-BE-03` pendente: preparar suppressions justificadas para falsos positivos.
 - `W4-BE-04` pendente: garantir que configurações de segurança protegidas não sejam alteradas por automação indevida.
-- `W4-QA-01` pendente: adicionar `CodeQL`.
-- `W4-QA-02` pendente: adicionar `Semgrep`.
-- `W4-QA-03` pendente: manter `gitleaks` como blocking.
+- `W4-QA-01` concluído em 2026-08-31: `CodeQL` já está configurado no pipeline e não é mais pendência de criação.
+- `W4-QA-02` concluído em 2026-08-31: `Semgrep` já está configurado no pipeline e não é mais pendência de criação.
+- `W4-QA-03` concluído em 2026-08-31: `gitleaks` já está presente no fluxo de segurança; o que resta é a política documental de bloqueio e exceções.
 - `W4-QA-04` parcialmente concluído: `OWASP Dependency-Check` existe e roda no nightly, mas a política final para ausência de `NVD_API_KEY` ainda precisa ser formalizada.
 - `W4-QA-05` pendente: avaliar complementar com `Snyk` ou `OSV-Scanner`.
 - `W4-QA-06` concluído em 2026-07-31: `Trivy` foi adicionado para filesystem e imagem Docker no fluxo local e nos workflows.
@@ -761,7 +761,5 @@ O programa será considerado bem-sucedido quando:
 | Documento | Relação |
 | --- | --- |
 | [ROADMAP.md](./ROADMAP.md) | roadmap principal do produto |
-| [ROADMAP-DONE.md](./ROADMAP-DONE.md) | histórico de entregas concluídas |
-| [task-plans/TASK-PLAN-P3-HARDENING-RELEASE.md](./task-plans/TASK-PLAN-P3-HARDENING-RELEASE.md) | referência de hardening e release |
 | [runbooks/RESILIENCE-TESTING.md](./runbooks/RESILIENCE-TESTING.md) | base de resiliência atual |
 | [00-current-status.md](./00-current-status.md) | status consolidado do projeto |

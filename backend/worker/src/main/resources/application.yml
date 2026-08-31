@@ -1,4 +1,6 @@
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
   datasource:
     url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/atlasops}
     username: ${POSTGRES_USER:atlasops}
@@ -12,6 +14,13 @@ spring:
 atlasops:
   worker:
     consumer-group: atlasops-worker
+    streams:
+      batch-size: ${ATLASOPS_WORKER_STREAM_BATCH_SIZE:10}
+      max-concurrent-handlers: ${ATLASOPS_WORKER_STREAM_MAX_CONCURRENT_HANDLERS:1}
+      block-timeout-ms: ${ATLASOPS_WORKER_STREAM_BLOCK_TIMEOUT_MS:2000}
+      claim-idle-time-ms: ${ATLASOPS_WORKER_STREAM_CLAIM_IDLE_TIME_MS:60000}
+      reconnect-initial-delay-ms: ${ATLASOPS_WORKER_STREAM_RECONNECT_INITIAL_DELAY_MS:1000}
+      reconnect-max-delay-ms: ${ATLASOPS_WORKER_STREAM_RECONNECT_MAX_DELAY_MS:30000}
   minio:
     endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
     access-key: ${MINIO_ACCESS_KEY:minioadmin}

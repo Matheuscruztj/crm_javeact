@@ -1,7 +1,7 @@
 # AtlasOps AI — Task Plans Reordered
 
 > Atualizado em 2026-07-27
-> Fontes validadas: `docs/ROADMAP-QUALITY-ENFORCEMENT-WAVES.md`, `docs/ROADMAP-DONE.md`, `Makefile`, `build.gradle.kts`, `.github/workflows/ci.yml`, `.github/workflows/nightly.yml`
+> Fontes validadas: `docs/ROADMAP-QUALITY-ENFORCEMENT-WAVES.md`, `docs/00-current-status.md`, `Makefile`, `build.gradle.kts`, `.github/workflows/ci.yml`, `.github/workflows/nightly.yml`
 
 ## Objetivo
 
@@ -19,7 +19,7 @@ Reorganizar os planos em ordem operacional:
 
 ## Conclusao da validacao
 
-- `docs/ROADMAP-DONE.md` superdeclara conclusao. Ha varias capacidades listadas como concluídas sem evidência suficiente de coverage, contract enforcement ou quality gate blocking.
+- O roadmap histórico removido superdeclarava conclusão. Capacidades sem evidência suficiente continuam nos backlogs ativos.
 - `docs/ROADMAP-QUALITY-ENFORCEMENT-WAVES.md` descreve parte do estado real, mas varios itens marcados como "concluidos" ainda estao incompletos na esteira.
 - A pasta `docs/task-plans` foi recriada para refletir o que realmente falta em codigo e validacao.
 
@@ -43,7 +43,7 @@ Reorganizar os planos em ordem operacional:
 ### Ainda nao confiavel o suficiente
 
 - coverage atual nao sustenta "90% de garantia";
-- `verify-contracts` ainda e placeholder;
+- `verify-contracts` já executa export OpenAPI, lint OpenAPI e validação AsyncAPI;
 - lint de OpenAPI/AsyncAPI esta desalinhado do artefato autoritativo;
 - jobs noturnos ainda toleram falhas em pontos relevantes;
 - frontend nao tem cobertura de testes unitarios configurada;

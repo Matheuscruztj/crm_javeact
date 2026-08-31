@@ -25,7 +25,7 @@ make doctor
 
 ## Branch and Commit Conventions
 
-Follow the conventions in [.kiro/steering/git-conventions.md](../.kiro/steering/git-conventions.md).
+Follow the conventions in [docs/codex/steering/git-conventions.md](../docs/codex/steering/git-conventions.md).
 
 **Branch naming:**
 
@@ -49,7 +49,7 @@ test(shared-kernel): add PBT for correlation ID generation
 
 ### Backend (Java 21 / Spring Boot)
 
-All modules follow hexagonal architecture. See [.kiro/steering/module-structure.md](../.kiro/steering/module-structure.md).
+All modules follow hexagonal architecture. See [docs/codex/steering/module-structure.md](../docs/codex/steering/module-structure.md).
 
 ```bash
 # Compile a single module
@@ -99,7 +99,7 @@ pnpm test:e2e     # Playwright E2E (requires running app)
 
 ## Testing Standards
 
-See [.kiro/steering/testing-patterns.md](../.kiro/steering/testing-patterns.md).
+See [docs/codex/steering/testing-patterns.md](../docs/codex/steering/testing-patterns.md).
 
 | Type        | Framework         | Naming                         | Min Coverage |
 | ----------- | ----------------- | ------------------------------ | ------------ |

@@ -6,7 +6,7 @@
 
 ### Evidencia
 
-- `docs/ROADMAP-DONE.md` marca `P0`, `P1`, `P2` e `P3` como completos;
+- o roadmap histórico removido marcava `P0`, `P1`, `P2` e `P3` como completos;
 - os gates reais de coverage, contrato e quality enforcement ainda nao sustentam essa afirmacao.
 
 ### Atividades
@@ -29,7 +29,7 @@
 
 ### Atividades
 
-- alinhar `docs/testing/QUALITY-TESTING-CICD.md`, `docs/STATUS.md` e `docs/00-current-status.md` com os comandos que realmente executam;
+- alinhar `docs/testing/QUALITY-TESTING-CICD.md` e `docs/00-current-status.md` com os comandos que realmente executam;
 - remover referencias a comandos inexistentes ou placeholders;
 - listar separadamente:
   - comandos locais rapidos

@@ -44,7 +44,7 @@ atlasops-ai/
 ├── infra/              # Docker Compose, scripts, monitoring
 ├── docs/               # ADRs, runbooks, diagramas
 ├── shared/             # Artefatos compartilhados cross-stack
-├── .kiro/              # Specs SDD, steering, skills, hooks
+├── docs/codex/         # Specs SDD, steering, tasks, hooks
 ├── Makefile            # Comandos padronizados
 └── AGENTS.md           # Este arquivo
 ```
@@ -213,7 +213,7 @@ Uma tarefa é considerada **concluída** quando TODOS os itens abaixo forem sati
 | **Propósito**         | Analisa issues, decompõe em tarefas, define acceptance criteria e plano de execução                                                                             |
 | **Responsabilidades** | Analisar requisitos; criar specs SDD (requirements.md, design.md, tasks.md); definir acceptance criteria verificáveis; estimar complexidade; identificar riscos |
 | **Saídas**            | Spec completa no formato SDD; plano de tarefas com dependências; lista de riscos                                                                                |
-| **Permissões**        | Ler repositório inteiro; criar/editar arquivos em `.kiro/specs/`; criar issues                                                                                  |
+| **Permissões**        | Ler repositório inteiro; criar/editar arquivos em `docs/codex/specs/`; criar issues                                                                                  |
 | **Restrições**        | Não pode alterar código de produção; não pode executar builds; não pode criar migrations                                                                        |
 
 ### A2 — Implementer
@@ -332,7 +332,7 @@ Os seguintes arquivos e diretórios **não podem ser alterados sem revisão huma
 | Configurações de segurança (`SecurityConfig.java`, `JwtConfig.java`) | Impacto direto na autenticação e autorização   |
 | `settings.gradle.kts`                                                | Estrutura do monorepo                          |
 | `gradle.properties`                                                  | Versões centralizadas de dependências          |
-| `.kiro/specs/*/requirements.md` (specs aprovadas)                    | Requisitos validados por humano                |
+| `docs/codex/specs/*/requirements.md` (specs aprovadas)                    | Requisitos validados por humano                |
 
 **Regra:** Qualquer PR que altere estes arquivos deve ter aprovação explícita de pelo menos um mantenedor humano antes do merge.
 

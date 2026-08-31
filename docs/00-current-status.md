@@ -1,155 +1,75 @@
-# AtlasOps AI — Current Status
+# AtlasOps AI - Status Atual
 
-> **Updated:** 2026-07-29  
-> **Phase:** P3 (Hardening) — P0+P1 implemented, P2 feature-flagged/partial, P3 under final validation  
-> **Version:** v1.0.0-rc.1 (pending final validation)
+> **Atualizado em:** 2026-08-31
+> **Fonte canônica:** este arquivo descreve o estado de implementação. O backlog detalhado está em [PENDING-ACTIVITIES.md](./PENDING-ACTIVITIES.md) e o programa de qualidade em [ROADMAP-QUALITY-ENFORCEMENT-WAVES.md](./ROADMAP-QUALITY-ENFORCEMENT-WAVES.md).
 
----
+## Como interpretar
 
-## ✅ What's Working
+| Status | Significado |
+| --- | --- |
+| Concluído | Implementado e com evidência verificável no repositório. |
+| Em andamento | Implementado parcialmente ou sem evidência suficiente para encerrar. |
+| Pendente | Ainda não implementado ou depende de uma decisão ou ambiente externo. |
 
-### Authentication & Security
+## Resumo executivo
 
-- JWT auth + refresh token rotation
-- Account lockout after 5 failed attempts
-- Cross-tenant isolation (TenantAuthorizationFilter)
-- CLIENT role scoped to own customer data
-- SSRF protection on webhook dispatch
-- CORS configured for frontend
+| Área | Status | Evidência |
+| --- | --- | --- |
+| CRM multi-tenant e controle de acesso | Concluído | Módulos `auth`, `tenants`, `users`, `customers` e filtros de autorização. |
+| Fluxo principal de clientes, solicitações e aprovações | Concluído | Módulos, controllers e páginas administrativas correspondentes. |
+| Documentos e análise local por IA | Concluído | MinIO/presigned upload, Apache Tika, Ollama e pgvector. |
+| Processamento assíncrono | Concluído | Worker separado, transactional outbox, Redis Streams e DLQ. |
+| Frontend administrativo e portal do cliente | Concluído | Rotas Next.js para operações principais, portal e testes E2E. |
+| Observabilidade e operação | Concluído | Prometheus, Grafana, Loki, runbooks e scripts de backup, restore e export. |
+| Adapters especializados | Em andamento | OpenSearch, Neo4j, TimescaleDB, ClickHouse e EventStoreDB permanecem feature-flagged. |
+| Qualidade final de release | Em andamento | `make verify-fast` passou em 2026-08-31; os gates completos e evidências de release ainda precisam ser fechados. |
+| Profiling e carga mínima | Concluído | Runbook repetível de JFR e validação de host enxuto documentados; cenário k6 `low-resource`, baseline versionado e geração de artefatos JSON/HTML disponíveis no repositório. |
 
-### Core Business Features
+## Capacidades implementadas
 
-- **Customers** — CRUD, activate/deactivate, geospatial radius (PostGIS migration ready)
-- **Requests** — lifecycle (OPEN→CLOSED), comments, status history, SLA deadline
-- **Documents** — upload via presigned S3 URLs, text extraction, AI analysis
-- **Approvals** — PENDING→APPROVED/REJECTED/CANCELLED with immutable hash-chain ledger
-- **Activities** — tenant feed with role filtering, real-time via SSE
-- **Notifications** — in-app + email, per-user preferences, SSE push
-- **Search** — PostgreSQL full-text with tenant isolation, command palette (Ctrl+K)
-- **Operations** — job monitoring, retry/cancel, projection status
+- Autenticação JWT, rotação de refresh token, revogação de sessão e limitação de taxa.
+- Isolamento multi-tenant, perfis ADMIN, ANALYST e CLIENT e auditoria.
+- CRUD de clientes, solicitações, comentários, SLA, aprovações e ledger de hash encadeado.
+- Upload multipart por URLs pré-assinadas, extração de texto, análise de IA e progresso em tempo real por SSE.
+- Notificações in-app e email, busca PostgreSQL com isolamento por tenant, imports CSV e operações de jobs.
+- OpenAPI, AsyncAPI, testes unitários/property-based, Playwright, cenários k6, testes de resiliência e profilagem por JFR.
 
-### AI/RAG Pipeline
+## Em andamento
 
-- Spring AI + Ollama integration
-- pgvector embeddings (chunking, overlap)
-- Deterministic fallback when Ollama unavailable
-- Prompt versioning + A/B testing support
-- Golden dataset evaluation framework
+| Item | Estado atual | Próxima evidência necessária |
+| --- | --- | --- |
+| Cobertura de testes | O gate agregado permanece em 10%, abaixo das metas do projeto. | Elevar o gate e publicar relatório Jacoco que atinja as metas. |
+| Contratos API | OpenAPI é exportado e validado, mas não há verificação automatizada de breaking changes. | Adicionar diff de contrato e cobertura dos endpoints críticos. |
+| Integração frontend-API | Tipos manuais e smoke parcial. | Derivar tipos do OpenAPI ou justificar a alternativa; adicionar smoke crítico. |
+| Resiliência e performance | Há suites e artefatos, mas o gate de release não é obrigatório. | Vincular relatórios aprovados à promoção de release. |
+| Segurança de supply chain | CodeQL, Semgrep, Trivy, Dependency-Check e Gitleaks existem; governança está incompleta. | Definir severidade, ownership, exceções com expiração e resposta a vulnerabilidades. |
+| Profiling e capacidade mínima | O roteiro repetível de JFR e k6 de host enxuto já está consolidado no runbook e nos targets do Makefile. | Manter artefatos de execução e revisar budgets conforme a evolução do runtime. |
 
-### Infrastructure
+## Pendências de produto e infraestrutura
 
-- Redis Streams event backbone (at-least-once delivery, DLQ)
-- Transactional outbox pattern
-- Distributed locking for concurrent operations
-- Feature-flagged adapters: OpenSearch, Neo4j, TimescaleDB, ClickHouse, EventStoreDB
+- OAuth2/SSO e mitigação completa de prompt injection.
+- Validação automatizada de uploads grandes em ambiente próximo de produção.
+- Ativação operacional dos adapters especializados, quando a infraestrutura correspondente for aprovada.
+- PostgreSQL Row-Level Security, caso seja adotado como camada adicional ao isolamento atual.
+- Matriz única de checks, responsáveis, frequência e política `blocking` ou `advisory`.
+- Correção dos avisos deprecatórios que impedem compatibilidade futura com Gradle 9.
 
-### Frontend
-
-- Next.js 15 + React 19 with App Router
-- Admin portal (customers, requests, documents, approvals, search, analytics, operations)
-- Client portal (home, requests, documents, notifications)
-- SSE real-time updates (notifications, document progress, activity feed)
-- Upload Manager with pause/resume/retry
-- i18n: English + Portuguese
-
-### Quality & Observability
-
-- ≥75% unit test coverage (P0 target met)
-- 10 Playwright E2E journeys
-- k6 smoke + average + stress test scenarios
-- Prometheus alerts (job failures, AI fallback, ledger tampering, SLOs)
-- Grafana dashboards (AI metrics, job health, request latency)
-- Structured JSON logging with tenantId + actorId in MDC
-- OpenAPI docs at /swagger-ui.html (local profile)
-- AsyncAPI spec at docs/asyncapi.yaml
-
----
-
-## ⚠️ Known Limitations
-
-| Area    | Limitation                                       | Planned Fix                    |
-| ------- | ------------------------------------------------ | ------------------------------ |
-| Auth    | OAuth2/SSO not implemented                       | P3 or beyond                   |
-| AI      | Prompt injection not fully mitigated             | P3.1.7                         |
-| Storage | Large file uploads (>500MB) tested manually only | P3.4.2                         |
-| Search  | OpenSearch not active (feature flag off)         | P1.3 pending production config |
-| Graph   | Neo4j projection disabled (feature flag off)     | P2.2 pending infra             |
-| Ledger  | Periodic verification job not scheduled          | P3 hardening                   |
-| DAST    | Baseline dynamic scan runs against `/v3/api-docs`| P3.1.4                         |
-| RLS     | PostgreSQL Row-Level Security not configured     | P3.1.8                         |
-
----
-
-## 🔄 W5/W6 Evidência Não Funcional
-
-### W5 — Runtime Resilience
-
-- `backend/app-boot/build.gradle.kts` already defines `resilienceTest` as a separate verification task.
-- `backend/app-boot/src/main/java/com/atlasops/boot/config/ResilienceConfig.java` registers circuit breaker metrics.
-- `backend/app-boot/src/test/java/com/atlasops/boot/config/ResilienceConfigResilienceTest.java` covers the baseline behavior.
-- `docs/runbooks/RESILIENCE-TESTING.md` documents the dependency-failure matrix and expected degradation.
-- `ResilienceConfigResilienceTest` now exercises open/recover state transitions for the circuit breaker baseline.
-- `.github/workflows/ci.yml` now routes `resilienceTest` through a dedicated `resilience-tests` job on the main quality pipeline.
-- `backend/app-boot/src/test/java/com/atlasops/boot/resilience/MinioResilienceIntegrationTest.java` and `backend/ai/src/test/java/com/atlasops/ai/infrastructure/OllamaAIAdapterResilienceTest.java` add fault-injection and deterministic fallback coverage, with the Ollama path validated and the MinIO/Testcontainers path still being stabilized in this environment.
-- `backend/search/src/test/java/com/atlasops/search/infrastructure/PostgresFullTextSearchAdapterResilienceTest.java`, `backend/search/src/test/java/com/atlasops/search/infrastructure/OpenSearchAdapterResilienceTest.java` and `backend/notifications/src/test/java/com/atlasops/notifications/infrastructure/RedisSSEEventStoreResilienceTest.java` add explicit failure-path coverage for PostgreSQL, OpenSearch and Redis-backed SSE replay.
-- `backend/notifications/src/test/java/com/atlasops/notifications/infrastructure/SmtpEmailSenderAdapterResilienceTest.java` and `backend/integrations/src/test/java/com/atlasops/integrations/infrastructure/RestIntegrationAdapterResilienceTest.java` cover SMTP and external REST failure handling.
-- `backend/search/src/test/java/com/atlasops/search/infrastructure/Neo4jRelationshipAdapterResilienceTest.java`, `backend/analytics/src/test/java/com/atlasops/analytics/infrastructure/TimescaleMetricsAdapterResilienceTest.java`, `backend/analytics/src/test/java/com/atlasops/analytics/infrastructure/ClickHouseAnalyticsAdapterResilienceTest.java` and `backend/approvals/src/test/java/com/atlasops/approvals/infrastructure/EventStoreApprovalAdapterResilienceTest.java` enforce fail-fast behavior for feature-flagged specialized stubs.
-- `infra/scripts/backup.sh`, `infra/scripts/restore.sh` and `infra/scripts/tenant-export.sh` now generate and validate `checksums.sha256` manifests for backup and portability evidence.
-
-### W6 — Performance and Operational Evidence
-
-- `tests/load/smoke.js`, `tests/load/average.js`, `tests/load/stress.js` and `tests/load/five-users.js` already exist.
-- `Makefile` exposes `test-load-smoke`, `test-load-5vu`, `test-load`, `test-load-report`, `test-load-5vu-report` and `test-load-stress`.
-- `tests/load/generate-report.mjs` now emits a lightweight HTML report from k6 JSON summary artifacts.
-- `Makefile` report targets now emit JSON raw output, k6 `summary-export` artifacts, and HTML summaries.
-- `frontend/tests/performance/critical-path.mjs` captures a basic frontend route-load evidence snapshot.
-- The k6 scripts accept threshold overrides through env vars, which makes baseline tuning reproducible.
-- `.github/workflows/ci.yml` runs the smoke load test on push to `main`.
-- `.github/workflows/nightly.yml` runs the average load test and stores JSON + HTML artifacts.
-- `docs/BUILD-PERFORMANCE.md` records the scenario metadata, threshold inputs and artifact layout used for comparability.
-- `docs/RELEASE-v1.0.0-rc.1.md` now references the load-test report targets as release evidence.
-
-### Remaining Gaps
-
-- Fault injection with Toxiproxy + Testcontainers is present for MinIO and Ollama, and explicit failure-path coverage now exists for PostgreSQL, Redis, SMTP, OpenSearch, REST integrations and specialized feature-flagged stubs; broader integration outage suites can still be expanded.
-- Frontend critical-path load evidence is still lightweight and can be expanded into a CI-gated flow.
-
----
-
-## 🔧 Environment Requirements
-
-| Component  | Version       | Notes                                   |
-| ---------- | ------------- | --------------------------------------- |
-| Java       | 21+           | Eclipse Temurin recommended             |
-| Docker     | 24+           | Required for compose                    |
-| Node.js    | 20+           | For frontend                            |
-| pnpm       | 9+            | Package manager                         |
-| PostgreSQL | 16 (pgvector) | Via Docker                              |
-| Redis      | 7             | Via Docker                              |
-| MinIO      | Latest        | S3-compatible                           |
-| Ollama     | Latest        | Local AI (optional, fallback available) |
-
----
-
-## 🚀 Quick Start
+## Comandos de validação
 
 ```bash
-git clone <repo> && cd atlasops-ai
-cp .env.example .env
-make bootstrap        # Full setup (Java + Docker + migrations + seed)
-make verify           # Run all quality gates
-make compose-up       # Start infrastructure
-# Backend: http://localhost:8080/swagger-ui.html
-# Frontend: cd frontend && pnpm dev → http://localhost:3000
+make verify-fast          # Validado com sucesso em 2026-08-31
+make verify               # Gate completo de backend
+make test-integration     # Requer infraestrutura Docker
+make test-functional      # Jornadas Playwright
+make test-load-smoke      # Smoke k6
 ```
 
----
+## Documentos relacionados
 
-## 📋 Sprint Status
-
-| Phase               | Status      | Tasks Done | Tasks Total |
-| ------------------- | ----------- | ---------- | ----------- |
-| P0 Foundation       | ✅ COMPLETE | 55         | 55          |
-| P1 Experience       | ✅ COMPLETE | 30         | 30          |
-| P2 Specialized Data | 🔄 parcial   | 14         | 35          |
-| P3 Hardening        | 🔄 em validação | 12      | 20          |
+| Documento | Uso |
+| --- | --- |
+| [README.md](./README.md) | Índice da documentação mantida. |
+| [ROADMAP.md](./ROADMAP.md) | Direção e prioridades de produto. |
+| [PENDING-ACTIVITIES.md](./PENDING-ACTIVITIES.md) | Backlog acionável por prioridade. |
+| [ROADMAP-QUALITY-ENFORCEMENT-WAVES.md](./ROADMAP-QUALITY-ENFORCEMENT-WAVES.md) | Backlog técnico de qualidade. |
+| [known-limitations.md](./known-limitations.md) | Limitações e decisões de escopo. |

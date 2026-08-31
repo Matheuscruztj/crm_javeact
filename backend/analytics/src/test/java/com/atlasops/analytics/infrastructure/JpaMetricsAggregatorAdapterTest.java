@@ -30,10 +30,18 @@ class JpaMetricsAggregatorAdapterTest {
   @Test
   void should_computeMetric_when_metricIsKnown() {
     Query query = mock(Query.class);
-    when(entityManager.createNativeQuery("SELECT COUNT(*) FROM customers WHERE tenant_id = :tenantId"))
+    when(entityManager.createNativeQuery(
+            """
+                    SELECT
+                        (SELECT COUNT(*) FROM customers WHERE tenant_id = :tenantId) AS customer_count,
+                        (SELECT COUNT(*) FROM service_requests WHERE tenant_id = :tenantId) AS request_count,
+                        (SELECT COUNT(*) FROM service_requests WHERE tenant_id = :tenantId AND status NOT IN ('CLOSED', 'CANCELLED', 'REJECTED')) AS active_request_count,
+                        (SELECT COUNT(*) FROM documents WHERE tenant_id = :tenantId) AS document_count,
+                        (SELECT COUNT(*) FROM approvals WHERE tenant_id = :tenantId AND status = 'PENDING') AS pending_approval_count
+                    """))
         .thenReturn(query);
     when(query.setParameter("tenantId", TENANT_ID)).thenReturn(query);
-    when(query.getSingleResult()).thenReturn(7L);
+    when(query.getSingleResult()).thenReturn(new Object[] {7L, 5L, 2L, 11L, 4L});
 
     var result = adapter.computeMetric(TENANT_ID, MetricName.CUSTOMER_COUNT);
 
@@ -51,38 +59,19 @@ class JpaMetricsAggregatorAdapterTest {
 
   @Test
   void should_returnDashboard_when_queriesSucceed() {
-    Query customers = mock(Query.class);
-    Query requests = mock(Query.class);
-    Query activeRequests = mock(Query.class);
-    Query documents = mock(Query.class);
-    Query approvals = mock(Query.class);
-
-    when(entityManager.createNativeQuery("SELECT COUNT(*) FROM customers WHERE tenant_id = :tenantId"))
-        .thenReturn(customers);
-    when(customers.setParameter("tenantId", TENANT_ID)).thenReturn(customers);
-    when(customers.getSingleResult()).thenReturn(3L);
-
-    when(entityManager.createNativeQuery("SELECT COUNT(*) FROM service_requests WHERE tenant_id = :tenantId"))
-        .thenReturn(requests);
-    when(requests.setParameter("tenantId", TENANT_ID)).thenReturn(requests);
-    when(requests.getSingleResult()).thenReturn(5L);
-
+    Query query = mock(Query.class);
     when(entityManager.createNativeQuery(
-            "SELECT COUNT(*) FROM service_requests WHERE tenant_id = :tenantId AND status NOT IN ('CLOSED', 'CANCELLED', 'REJECTED')"))
-        .thenReturn(activeRequests);
-    when(activeRequests.setParameter("tenantId", TENANT_ID)).thenReturn(activeRequests);
-    when(activeRequests.getSingleResult()).thenReturn(2L);
-
-    when(entityManager.createNativeQuery("SELECT COUNT(*) FROM documents WHERE tenant_id = :tenantId"))
-        .thenReturn(documents);
-    when(documents.setParameter("tenantId", TENANT_ID)).thenReturn(documents);
-    when(documents.getSingleResult()).thenReturn(11L);
-
-    when(entityManager.createNativeQuery(
-            "SELECT COUNT(*) FROM approvals WHERE tenant_id = :tenantId AND status = 'PENDING'"))
-        .thenReturn(approvals);
-    when(approvals.setParameter("tenantId", TENANT_ID)).thenReturn(approvals);
-    when(approvals.getSingleResult()).thenReturn(4L);
+            """
+                    SELECT
+                        (SELECT COUNT(*) FROM customers WHERE tenant_id = :tenantId) AS customer_count,
+                        (SELECT COUNT(*) FROM service_requests WHERE tenant_id = :tenantId) AS request_count,
+                        (SELECT COUNT(*) FROM service_requests WHERE tenant_id = :tenantId AND status NOT IN ('CLOSED', 'CANCELLED', 'REJECTED')) AS active_request_count,
+                        (SELECT COUNT(*) FROM documents WHERE tenant_id = :tenantId) AS document_count,
+                        (SELECT COUNT(*) FROM approvals WHERE tenant_id = :tenantId AND status = 'PENDING') AS pending_approval_count
+                    """))
+        .thenReturn(query);
+    when(query.setParameter("tenantId", TENANT_ID)).thenReturn(query);
+    when(query.getSingleResult()).thenReturn(new Object[] {3L, 5L, 2L, 11L, 4L});
 
     var summary = adapter.computeDashboard(TENANT_ID);
 
@@ -91,5 +80,29 @@ class JpaMetricsAggregatorAdapterTest {
     assertThat(summary.get(MetricName.ACTIVE_REQUEST_COUNT)).isEqualTo(2.0);
     assertThat(summary.get(MetricName.DOCUMENT_COUNT)).isEqualTo(11.0);
     assertThat(summary.get(MetricName.PENDING_APPROVAL_COUNT)).isEqualTo(4.0);
+  }
+
+  @Test
+  void should_returnZeroDashboard_when_projectionFails() {
+    Query query = mock(Query.class);
+    when(entityManager.createNativeQuery(
+            """
+                    SELECT
+                        (SELECT COUNT(*) FROM customers WHERE tenant_id = :tenantId) AS customer_count,
+                        (SELECT COUNT(*) FROM service_requests WHERE tenant_id = :tenantId) AS request_count,
+                        (SELECT COUNT(*) FROM service_requests WHERE tenant_id = :tenantId AND status NOT IN ('CLOSED', 'CANCELLED', 'REJECTED')) AS active_request_count,
+                        (SELECT COUNT(*) FROM documents WHERE tenant_id = :tenantId) AS document_count,
+                        (SELECT COUNT(*) FROM approvals WHERE tenant_id = :tenantId AND status = 'PENDING') AS pending_approval_count
+                    """))
+        .thenReturn(query);
+    when(query.setParameter("tenantId", TENANT_ID)).thenThrow(new RuntimeException("boom"));
+
+    var summary = adapter.computeDashboard(TENANT_ID);
+
+    assertThat(summary.get(MetricName.CUSTOMER_COUNT)).isZero();
+    assertThat(summary.get(MetricName.REQUEST_COUNT)).isZero();
+    assertThat(summary.get(MetricName.ACTIVE_REQUEST_COUNT)).isZero();
+    assertThat(summary.get(MetricName.DOCUMENT_COUNT)).isZero();
+    assertThat(summary.get(MetricName.PENDING_APPROVAL_COUNT)).isZero();
   }
 }

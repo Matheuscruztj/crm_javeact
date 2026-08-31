@@ -33,12 +33,18 @@ AGENTS.md
 Makefile or Taskfile
 docker-compose.yml
 docs/00-current-status.md
+backend/AGENTS.md
+frontend/AGENTS.md
+tests/AGENTS.md
+docs/AGENTS.md
 docs/specifications/
 docs/architecture/
 docs/testing/
 docs/runbooks/
 docs/adr/
 ```
+
+Agent-local instructions are discovered progressively: read the root `AGENTS.md` first, then the nearest directory-level `AGENTS.md` that matches the work area. Local files must narrow scope, not redefine global rules.
 
 ### Stable commands
 

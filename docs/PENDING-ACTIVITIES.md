@@ -2,7 +2,7 @@
 
 > Última atualização: 2026-07-31
 > Objetivo: concentrar em um único lugar as atividades ainda pendentes ou apenas parcialmente concluídas.
-> Fontes de referência: [ROADMAP.md](./ROADMAP.md), [ROADMAP-QUALITY-ENFORCEMENT-WAVES.md](./ROADMAP-QUALITY-ENFORCEMENT-WAVES.md), [ROADMAP-DONE.md](./ROADMAP-DONE.md), [task-plans](./task-plans/)
+> Fontes de referência: [00-current-status.md](./00-current-status.md), [ROADMAP.md](./ROADMAP.md), [ROADMAP-QUALITY-ENFORCEMENT-WAVES.md](./ROADMAP-QUALITY-ENFORCEMENT-WAVES.md) e [task-plans](./task-plans/).
 
 ---
 
@@ -28,7 +28,6 @@
 
 - Expandir os checks arquiteturais do backend.
 - Fechar a camada de contrato frontend/API com geração de tipos ou cliente derivado.
-- Formalizar segurança adicional de supply chain: `CodeQL`, `Semgrep`, `gitleaks` blocking, policy por severidade.
 - Consolidar a matriz de governança: owner, frequência, severidade e exceções.
 
 ### Médio
@@ -36,6 +35,9 @@
 - Expandir medição de performance frontend.
 - Refinar relatórios de resiliência por dependência.
 - Documentar métricas de tempo dos gates locais.
+- Criar roteiro repetível de profiling JVM com JFR para identificar gargalos de CPU, heap e locks.
+- Validar cenário de carga mínima com k6 em host equivalente a 1 vCPU e 1 GB de RAM.
+- Correlacionar resultados de profiling e carga com Prometheus/Grafana.
 
 ---
 
@@ -99,9 +101,6 @@
 - Publicar relatório consolidado de violações arquiteturais.
 - Formalizar a policy de bloqueio por severidade para segurança.
 - Decidir e registrar o papel de `OWASP Dependency-Check` sem `NVD_API_KEY`.
-- Adicionar ou confirmar `CodeQL`.
-- Adicionar ou confirmar `Semgrep`.
-- Garantir `gitleaks` como blocking de forma explicitamente documentada.
 - Avaliar `Snyk` ou `OSV-Scanner` como complemento.
 - Adicionar `Dependabot` ou `Renovate`.
 - Criar runbook de resposta rápida a vulnerabilidade crítica emergente.
@@ -132,7 +131,6 @@
 
 ### Alto
 
-- Revisar áreas sensíveis do backend para regras `Semgrep` ou queries específicas.
 - Identificar sinks críticos: SSRF, desserialização, file upload, SQL dinâmico e chamadas externas.
 - Preparar suppressions justificadas para falsos positivos.
 - Garantir que configurações de segurança protegidas não sejam alteradas por automação indevida.
@@ -155,6 +153,7 @@
 - Consolidar payloads e dados-base dos cenários k6 por módulo.
 - Evoluir de smoke funcional frontend para evidência mais forte de performance correlacionada.
 - Amarrar evidência de performance como critério operacional mais explícito de release.
+- Publicar p95/p99 do cenário de recursos mínimos como referência de capacidade.
 
 ---
 

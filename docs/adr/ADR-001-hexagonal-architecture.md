@@ -64,4 +64,4 @@ Very similar to hexagonal but with more prescribed layers. Rejected as overly pr
 ## References
 
 - [Alistair Cockburn - Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)
-- [Module Structure Steering File](.kiro/steering/module-structure.md)
+- [Module Structure Steering File](docs/codex/steering/module-structure.md)

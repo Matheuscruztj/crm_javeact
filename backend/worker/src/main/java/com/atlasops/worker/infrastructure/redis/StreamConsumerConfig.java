@@ -8,6 +8,7 @@ public record StreamConsumerConfig(
     String groupName,
     String consumerName,
     int batchSize,
+    int maxConcurrentHandlers,
     long blockTimeoutMs,
     long claimIdleTimeMs,
     long reconnectInitialDelayMs,
@@ -22,6 +23,9 @@ public record StreamConsumerConfig(
     }
     if (batchSize <= 0) {
       batchSize = 10;
+    }
+    if (maxConcurrentHandlers <= 0) {
+      maxConcurrentHandlers = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
     }
     if (blockTimeoutMs <= 0) {
       blockTimeoutMs = 2000;
@@ -43,6 +47,6 @@ public record StreamConsumerConfig(
    * @return default StreamConsumerConfig
    */
   public static StreamConsumerConfig defaults() {
-    return new StreamConsumerConfig(null, null, 0, 0, 0, 0, 0);
+    return new StreamConsumerConfig(null, null, 0, 0, 0, 0, 0, 0);
   }
 }

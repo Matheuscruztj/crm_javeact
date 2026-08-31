@@ -203,4 +203,4 @@ Primary issue ranges:
 | Document | Purpose |
 | --- | --- |
 | [ROADMAP-QUALITY-ENFORCEMENT-WAVES.md](./ROADMAP-QUALITY-ENFORCEMENT-WAVES.md) | strategic roadmap |
-| [STATUS.md](./STATUS.md) | current execution status |
+| [00-current-status.md](./00-current-status.md) | current execution status |

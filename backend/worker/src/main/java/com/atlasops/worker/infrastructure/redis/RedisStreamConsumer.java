@@ -6,9 +6,11 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -54,7 +56,15 @@ public class RedisStreamConsumer {
     this.redisTemplate = redisTemplate;
     this.config = config;
     this.meterRegistry = meterRegistry;
-    this.executor = Executors.newCachedThreadPool();
+    this.executor =
+        new ThreadPoolExecutor(
+            config.maxConcurrentHandlers(),
+            config.maxConcurrentHandlers(),
+            0L,
+            TimeUnit.MILLISECONDS,
+            new ArrayBlockingQueue<>(Math.max(1, config.batchSize() * 2)),
+            workerThreadFactory(),
+            new ThreadPoolExecutor.CallerRunsPolicy());
   }
 
   /**
@@ -220,30 +230,7 @@ public class RedisStreamConsumer {
     }
 
     for (MapRecord<String, Object, Object> record : records) {
-      Map<String, String> payload = new HashMap<>();
-      record.getValue().forEach((k, v) -> payload.put(String.valueOf(k), String.valueOf(v)));
-
-      StreamMessage message = new StreamMessage(streamKey, record.getId().getValue(), payload);
-
-      try {
-        handler.handle(message);
-        redisTemplate.opsForStream().acknowledge(streamKey, config.groupName(), record.getId());
-        // Update lag metric after successful processing
-        AtomicLong lag = lagCounters.get(streamKey);
-        if (lag != null) lag.decrementAndGet();
-        log.debug(
-            "Processed and acknowledged message {} from stream '{}'", record.getId(), streamKey);
-      } catch (Exception e) {
-        // Increment lag on failure (message stays unacknowledged)
-        AtomicLong lag = lagCounters.get(streamKey);
-        if (lag != null) lag.incrementAndGet();
-        log.error(
-            "Failed to process message {} from stream '{}': {}",
-            record.getId(),
-            streamKey,
-            e.getMessage());
-        // Don't ACK - message will be reprocessed via pending claims
-      }
+      dispatchRecord(streamKey, handler, record);
     }
     // Refresh lag from actual pending count periodically
     AtomicLong lag = lagCounters.get(streamKey);
@@ -266,5 +253,47 @@ public class RedisStreamConsumer {
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
     }
+  }
+
+  private void dispatchRecord(
+      String streamKey, MessageHandler handler, MapRecord<String, Object, Object> record) {
+    executor.execute(
+        () -> {
+          Map<String, String> payload = new HashMap<>();
+          record.getValue().forEach((k, v) -> payload.put(String.valueOf(k), String.valueOf(v)));
+          StreamMessage message =
+              new StreamMessage(streamKey, record.getId().getValue(), payload);
+
+          try {
+            handler.handle(message);
+            redisTemplate.opsForStream().acknowledge(streamKey, config.groupName(), record.getId());
+            AtomicLong lag = lagCounters.get(streamKey);
+            if (lag != null) {
+              lag.decrementAndGet();
+            }
+            log.debug(
+                "Processed and acknowledged message {} from stream '{}'",
+                record.getId(),
+                streamKey);
+          } catch (Exception e) {
+            AtomicLong lag = lagCounters.get(streamKey);
+            if (lag != null) {
+              lag.incrementAndGet();
+            }
+            log.error(
+                "Failed to process message {} from stream '{}': {}",
+                record.getId(),
+                streamKey,
+                e.getMessage());
+          }
+        });
+  }
+
+  private ThreadFactory workerThreadFactory() {
+    return runnable -> {
+      Thread thread = new Thread(runnable, "stream-handler");
+      thread.setDaemon(true);
+      return thread;
+    };
   }
 }
