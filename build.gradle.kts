@@ -2,7 +2,7 @@ import java.time.Duration
 
 plugins {
     java
-    id("org.springframework.boot") version "3.2.5" apply false
+    id("org.springframework.boot") version "3.5.16" apply false
     id("io.spring.dependency-management") version "1.1.4" apply false
     id("com.diffplug.spotless") version "6.25.0" apply false
     id("com.github.spotbugs") version "6.0.9" apply false
