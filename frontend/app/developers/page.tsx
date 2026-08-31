@@ -109,7 +109,8 @@ export default function DevelopersPage() {
           Contract Surface
         </h2>
         <p className="text-muted-foreground mb-3 text-sm">
-          Frontend-visible endpoints tracked as part of the contract surface ({CONTRACT_ENDPOINTS.length}).
+          Frontend-visible endpoints tracked as part of the contract surface (
+          {CONTRACT_ENDPOINTS.length}).
         </p>
         <div className="flex flex-wrap gap-2">
           {CONTRACT_ENDPOINTS.map((endpoint) => (

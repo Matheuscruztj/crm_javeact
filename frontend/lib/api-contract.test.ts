@@ -12,11 +12,7 @@ describe("api-contract", () => {
   });
 
   it("groups endpoints by frontend usage surface", () => {
-    expect(CONTRACT_ENDPOINT_GROUPS.auth).toEqual([
-      "/auth/login",
-      "/auth/refresh",
-      "/auth/logout",
-    ]);
+    expect(CONTRACT_ENDPOINT_GROUPS.auth).toEqual(["/auth/login", "/auth/refresh", "/auth/logout"]);
     expect(CONTRACT_ENDPOINT_GROUPS.core).toContain("/requests");
     expect(CONTRACT_ENDPOINT_GROUPS.realtime).toContain("/analytics/dashboard");
   });
