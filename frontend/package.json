@@ -8,7 +8,7 @@
     "start": "next start",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "eslint app components hooks lib --no-eslintrc --config .eslintrc.cjs",
+    "lint": "eslint \"app/**/*.{js,jsx,ts,tsx}\" \"components/**/*.{js,jsx,ts,tsx}\" \"hooks/**/*.{js,jsx,ts,tsx}\" \"lib/**/*.{js,jsx,ts,tsx}\" --no-eslintrc --config .eslintrc.cjs",
     "typecheck": "tsc --noEmit",
     "architecture:check": "depcruise --config .dependency-cruiser.cjs app components hooks lib",
     "verify:fast": "pnpm format:check && pnpm lint && pnpm typecheck",
