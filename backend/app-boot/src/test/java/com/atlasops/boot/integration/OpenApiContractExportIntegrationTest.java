@@ -41,6 +41,7 @@ import com.atlasops.shared.domain.ports.IdGenerator;
 import com.atlasops.shared.domain.ports.OutboxEventRepository;
 import com.atlasops.tenants.domain.ports.TenantRepository;
 import com.atlasops.tenants.infrastructure.SpringDataTenantRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,7 +50,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,7 +181,8 @@ class OpenApiContractExportIntegrationTest {
     Map<String, Object> spec = objectMapper.readValue(response.getBody(), Map.class);
     Map<String, Object> paths = (Map<String, Object>) spec.get("paths");
     Map<String, Object> components = (Map<String, Object>) spec.get("components");
-    Map<String, Object> schemas = components == null ? Map.of() : (Map<String, Object>) components.get("schemas");
+    Map<String, Object> schemas =
+        components == null ? Map.of() : (Map<String, Object>) components.get("schemas");
 
     List<String> criticalPaths =
         List.of(

@@ -1,6 +1,5 @@
 package com.atlasops.boot.architecture;
 
-import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noFields;
 
@@ -76,14 +75,10 @@ class StructuralDecouplingTest {
     @Test
     @DisplayName("should_notUseFieldInjection")
     void should_notUseFieldInjection() {
-      ArchRule rule =
-          noFields()
-              .should()
-              .beAnnotatedWith(Autowired.class);
+      ArchRule rule = noFields().should().beAnnotatedWith(Autowired.class);
 
       rule.allowEmptyShould(true).check(allClasses);
     }
-
   }
 
   @Nested
