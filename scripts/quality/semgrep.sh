@@ -5,7 +5,7 @@ set -euo pipefail
 source "$(cd "$(dirname "$0")" && pwd)/common.sh"
 
 SEMGREP_IMAGE="${SEMGREP_IMAGE:-returntocorp/semgrep:1.84.0}"
-SEMGREP_CONFIG="${SEMGREP_CONFIG:-auto}"
+SEMGREP_CONFIG="${SEMGREP_CONFIG:-p/default}"
 SEMGREP_TARGETS="${SEMGREP_TARGETS:-backend frontend}"
 SEMGREP_SEVERITY="${SEMGREP_SEVERITY:-ERROR}"
 SEMGREP_REPORT_DIR="${SEMGREP_REPORT_DIR:-build/reports/semgrep}"
