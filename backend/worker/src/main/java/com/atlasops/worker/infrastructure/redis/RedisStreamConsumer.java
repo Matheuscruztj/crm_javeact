@@ -29,8 +29,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Redis Streams consumer infrastructure with XREADGROUP, XACK, XAUTOCLAIM support. Implements
- * configurable consumer groups, batch consumption, reconnection with exponential backoff,
- * and Prometheus lag metrics per stream.
+ * configurable consumer groups, batch consumption, reconnection with exponential backoff, and
+ * Prometheus lag metrics per stream.
  *
  * <p>Lag metric: {@code atlasops.stream.lag} (gauge) per stream key, exposed in Prometheus.
  * Validates: P0.P.1 — Redis Streams lag metrics exposed in Prometheus.
@@ -50,9 +50,7 @@ public class RedisStreamConsumer {
   private final ExecutorService executor;
 
   public RedisStreamConsumer(
-      StringRedisTemplate redisTemplate,
-      StreamConsumerConfig config,
-      MeterRegistry meterRegistry) {
+      StringRedisTemplate redisTemplate, StreamConsumerConfig config, MeterRegistry meterRegistry) {
     this.redisTemplate = redisTemplate;
     this.config = config;
     this.meterRegistry = meterRegistry;
@@ -236,8 +234,10 @@ public class RedisStreamConsumer {
     AtomicLong lag = lagCounters.get(streamKey);
     if (lag != null) {
       try {
-        PendingMessages pending = redisTemplate.opsForStream()
-            .pending(streamKey, config.groupName(), Range.unbounded(), 1);
+        PendingMessages pending =
+            redisTemplate
+                .opsForStream()
+                .pending(streamKey, config.groupName(), Range.unbounded(), 1);
         if (pending != null) {
           lag.set(pending.size());
         }
@@ -261,8 +261,7 @@ public class RedisStreamConsumer {
         () -> {
           Map<String, String> payload = new HashMap<>();
           record.getValue().forEach((k, v) -> payload.put(String.valueOf(k), String.valueOf(v)));
-          StreamMessage message =
-              new StreamMessage(streamKey, record.getId().getValue(), payload);
+          StreamMessage message = new StreamMessage(streamKey, record.getId().getValue(), payload);
 
           try {
             handler.handle(message);

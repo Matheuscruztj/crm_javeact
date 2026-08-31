@@ -1,9 +1,5 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
 
 set -e
 
-./scripts/quality/local-fast.sh
-make sonar-health
-make verify-contracts
-make verify-security
+./scripts/quality/pre-push.sh

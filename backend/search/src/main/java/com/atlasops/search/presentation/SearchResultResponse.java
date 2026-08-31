@@ -1,7 +1,7 @@
 package com.atlasops.search.presentation;
 
-import com.atlasops.search.domain.SearchResult;
 import com.atlasops.search.application.SearchResultView;
+import com.atlasops.search.domain.SearchResult;
 
 /**
  * REST response representation for a search result.
