@@ -44,6 +44,12 @@ import com.atlasops.tenants.infrastructure.SpringDataTenantRepository;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +95,7 @@ class OpenApiContractExportIntegrationTest {
       Path.of("backend", "app-boot", "build", "reports", "openapi", "openapi.json");
 
   @Autowired private TestRestTemplate restTemplate;
+  private final ObjectMapper objectMapper = new ObjectMapper();
   @MockBean private ValidateTokenUseCase validateTokenUseCase;
   @MockBean private AccountLockoutPort accountLockoutPort;
   @MockBean private AuthUserPort authUserPort;
@@ -161,5 +168,71 @@ class OpenApiContractExportIntegrationTest {
 
     assertThat(Files.exists(OPENAPI_OUTPUT)).isTrue();
     assertThat(Files.size(OPENAPI_OUTPUT)).isGreaterThan(0L);
+  }
+
+  @Test
+  @DisplayName("should_includeCriticalPaths_and_basicSchemas_in_exportedContract")
+  void should_includeCriticalPaths_and_basicSchemas_in_exportedContract() throws IOException {
+    ResponseEntity<String> response = restTemplate.getForEntity("/v3/api-docs", String.class);
+
+    assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+    assertThat(response.getBody()).isNotNull();
+
+    Map<String, Object> spec = objectMapper.readValue(response.getBody(), Map.class);
+    Map<String, Object> paths = (Map<String, Object>) spec.get("paths");
+    Map<String, Object> components = (Map<String, Object>) spec.get("components");
+    Map<String, Object> schemas = components == null ? Map.of() : (Map<String, Object>) components.get("schemas");
+
+    List<String> criticalPaths =
+        List.of(
+            "/api/v1/auth/login",
+            "/api/v1/tenants",
+            "/api/v1/customers",
+            "/api/v1/requests",
+            "/api/v1/documents",
+            "/api/v1/approvals");
+
+    for (String path : criticalPaths) {
+      assertThat(paths)
+          .as("Expected critical path %s to be present in OpenAPI export", path)
+          .containsKey(path);
+    }
+
+    assertThat(schemas)
+        .as("Expected basic response schemas to be exported")
+        .containsKeys(
+            "TokenResponse",
+            "TenantResponse",
+            "CustomerResponse",
+            "ServiceRequestResponse",
+            "DocumentResponse");
+  }
+
+  @Test
+  @DisplayName("should_preserveBaselineContractPaths_from_committedOpenApiSnapshot")
+  void should_preserveBaselineContractPaths_from_committedOpenApiSnapshot() throws IOException {
+    ResponseEntity<String> response = restTemplate.getForEntity("/v3/api-docs", String.class);
+    assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+    assertThat(response.getBody()).isNotNull();
+
+    Map<String, Object> spec = objectMapper.readValue(response.getBody(), Map.class);
+    Map<String, Object> paths = (Map<String, Object>) spec.get("paths");
+
+    String baseline = Files.readString(Path.of("src", "main", "resources", "openapi.yaml"));
+    Matcher matcher = Pattern.compile("^  (/[^\n:]+):$", Pattern.MULTILINE).matcher(baseline);
+    List<String> baselinePaths = new ArrayList<>();
+    while (matcher.find()) {
+      String path = matcher.group(1);
+      if (!"/v3/api-docs".equals(path)) {
+        baselinePaths.add(path);
+      }
+    }
+
+    assertThat(baselinePaths).isNotEmpty();
+    for (String path : baselinePaths) {
+      assertThat(paths)
+          .as("Expected baseline path %s to remain present in the live export", path)
+          .containsKey(path);
+    }
   }
 }

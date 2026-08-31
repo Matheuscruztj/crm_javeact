@@ -53,8 +53,8 @@ class StructuralDecouplingTest {
   class InheritanceRules {
 
     @Test
-    @DisplayName("should_notExtendFrameworkTypes_from_domainLayer")
-    void should_notExtendFrameworkTypes_from_domainLayer() {
+    @DisplayName("should_notExtendOrImplementFrameworkTypes_from_domainLayer")
+    void should_notExtendOrImplementFrameworkTypes_from_domainLayer() {
       ArchRule rule =
           noClasses()
               .that()
@@ -64,7 +64,11 @@ class StructuralDecouplingTest {
               .should()
               .dependOnClassesThat()
               .resideInAnyPackage(
-                  "org.springframework..", "jakarta.persistence..", "jakarta.transaction..");
+                  "org.springframework..",
+                  "jakarta.persistence..",
+                  "jakarta.transaction..",
+                  "org.hibernate..",
+                  "java.sql..");
 
       rule.allowEmptyShould(true).check(allClasses);
     }
@@ -99,6 +103,27 @@ class StructuralDecouplingTest {
               .beAnnotatedWith(Component.class)
               .orShould()
               .beAnnotatedWith(Service.class)
+              .orShould()
+              .beAnnotatedWith(Repository.class)
+              .orShould()
+              .beAnnotatedWith(Transactional.class)
+              .orShould()
+              .beAnnotatedWith(RestController.class)
+              .orShould()
+              .beAnnotatedWith(Entity.class);
+
+      rule.allowEmptyShould(true).check(allClasses);
+    }
+
+    @Test
+    @DisplayName("should_notUseFrameworkAnnotations_in_applicationLayer")
+    void should_notUseFrameworkAnnotations_in_applicationLayer() {
+      ArchRule rule =
+          noClasses()
+              .that()
+              .resideInAPackage("..application..")
+              .should()
+              .beAnnotatedWith(Component.class)
               .orShould()
               .beAnnotatedWith(Repository.class)
               .orShould()
@@ -211,6 +236,46 @@ class StructuralDecouplingTest {
                 .should()
                 .dependOnClassesThat(otherModuleDomain);
         rule.allowEmptyShould(true).check(allClasses);
+      }
+    }
+
+    @Test
+    @DisplayName("should_notDependOn_otherModules_application_packages_directly")
+    void should_notDependOn_otherModules_application_packages_directly() {
+      String[] modules = {
+        "auth",
+        "tenants",
+        "users",
+        "customers",
+        "documents",
+        "requests",
+        "approvals",
+        "activities",
+        "notifications",
+        "integrations",
+        "search",
+        "imports",
+        "operations",
+        "ai",
+        "analytics",
+        "audit"
+      };
+
+      for (String sourceModule : modules) {
+        for (String targetModule : modules) {
+          if (sourceModule.equals(targetModule)) {
+            continue;
+          }
+          ArchRule rule =
+              noClasses()
+                  .that()
+                  .resideInAPackage("com.atlasops." + sourceModule + "..")
+                  .should()
+                  .dependOnClassesThat()
+                  .resideInAPackage("com.atlasops." + targetModule + ".application..");
+
+          rule.allowEmptyShould(true).check(allClasses);
+        }
       }
     }
 

@@ -112,6 +112,14 @@
 - Refinar a segmentação entre CI principal e nightly para cenários pesados restantes.
 - Consolidar artifacts e relatórios adicionais onde ainda houver only-baseline.
 
+### Evidência registrada em 2026-08-31
+
+- `make verify-local-fast`: `14.54s`
+- `make verify-precommit`: `0.02s`
+- `make verify-prepush`: `76.49s`
+- Média amostral destes gates locais: `30.35s`
+- Observação: o valor de `verify-precommit` reflete o alvo mínimo bloqueante atual e por isso não é representativo do custo de pipeline completo.
+
 ---
 
 ## Contratos e APIs

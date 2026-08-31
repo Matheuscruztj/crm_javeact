@@ -1,3 +1,5 @@
+import { CONTRACT_ENDPOINTS } from "@/lib/api-contract";
+
 /**
  * Developers page: embedded Swagger, AsyncAPI, SSE/webhook examples.
  * Validates: P3.9.3 — /developers
@@ -98,6 +100,23 @@ export default function DevelopersPage() {
               <p className="text-muted-foreground text-xs">SSE channels and domain events</p>
             </div>
           </a>
+        </div>
+      </section>
+
+      {/* Contract Surface */}
+      <section aria-labelledby="contract-surface-heading">
+        <h2 id="contract-surface-heading" className="mb-4 border-b pb-2 text-lg font-semibold">
+          Contract Surface
+        </h2>
+        <p className="text-muted-foreground mb-3 text-sm">
+          Frontend-visible endpoints tracked as part of the contract surface ({CONTRACT_ENDPOINTS.length}).
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {CONTRACT_ENDPOINTS.map((endpoint) => (
+            <span key={endpoint} className="bg-muted rounded-full px-3 py-1 font-mono text-xs">
+              {endpoint}
+            </span>
+          ))}
         </div>
       </section>
 

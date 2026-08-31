@@ -152,7 +152,7 @@ Transformar checks já existentes em enforcement confiável e eliminar falsos po
 - `W1-BE-01` concluído: task matrix Gradle revisada e comando `verifyFast`/`verifyFull` exposto na base existente.
 - `W1-BE-03` concluído: tolerância indevida para arquitetura removida da CI.
 - `W1-BE-04` concluído: `make verify-local-fast` publicado como alias de feedback curto.
-- `W1-BE-05` pendente: ainda faltam métricas formais de tempo médio em documentação.
+- `W1-BE-05` concluído em 2026-08-31: métricas formais de tempo médio dos gates locais foram registradas na documentação operacional.
 - `W1-FE-01` concluído: `prettier --check` foi formalizado como gate explícito no frontend e na CI.
 - `W1-FE-02` pendente: lint frontend ainda precisa de revisão de regra mínima documentada.
 - `W1-FE-03` concluído: `pnpm verify:fast` entrou como caminho rápido local e passou após a normalização.
@@ -228,11 +228,11 @@ Adicionar enforcement explícito para desacoplamento, herança indevida, uso inc
 
 ### 5.8 Status de Implementação
 
-- `W2-BE-01` pendente: criar `Inheritance Rules` no ArchUnit.
-- `W2-BE-02` pendente: criar `Annotation Rules` no ArchUnit.
-- `W2-BE-03` pendente: expandir regras de desacoplamento entre módulos.
-- `W2-BE-04` pendente: criar rule set para evitar imports de tecnologia externa dentro de `domain`.
-- `W2-BE-05` pendente: adicionar suíte de testes arquiteturais dedicada por categoria.
+- `W2-BE-01` concluído em 2026-08-31: `Inheritance Rules` foi ampliado para bloquear dependência de tipos framework no domínio.
+- `W2-BE-02` concluído em 2026-08-31: `Annotation Rules` agora cobrem domínio e application contra anotações indevidas.
+- `W2-BE-03` concluído em 2026-08-31: as regras de desacoplamento passaram a cobrir dependências diretas entre módulos também no pacote `application`.
+- `W2-BE-04` concluído em 2026-08-31: o rule set de tecnologia no domínio foi ampliado para `org.hibernate` e `java.sql`.
+- `W2-BE-05` concluído em 2026-08-31: a suíte de arquitetura backend foi expandida por categoria e validada em task dedicada.
 - `W2-FE-01` concluído: `dependency-cruiser` já está introduzido e integrado ao frontend.
 - `W2-FE-02` parcialmente concluído: boundaries básicas do frontend já são exercidas pelo `dependency-cruiser`, mas ainda não cobrem toda a taxonomia prevista.
 - `W2-FE-03` parcialmente concluído: o gate atual de arquitetura já ajuda a conter acoplamentos, mas a regra explícita dedicada para circularidade ainda não foi registrada separadamente.
