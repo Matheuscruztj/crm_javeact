@@ -420,8 +420,7 @@ subprojects {
     configure<org.owasp.dependencycheck.gradle.extension.DependencyCheckExtension> {
         failBuildOnCVSS = 9.0f
         format = org.owasp.dependencycheck.reporting.ReportGenerator.Format.HTML.toString()
-        outputDirectory = "${project.layout.buildDirectory.get()}/reports/dependency-check"
-        dataDirectory = "${rootProject.layout.buildDirectory.get()}/dependency-check-data"
+        outputDirectory.set(project.layout.buildDirectory.dir("reports/dependency-check"))
         // Use NVD API key if provided (avoids 403/rate-limiting without a key).
         // Prefer the CI secret name, but keep a fallback for local shells.
         val nvdApiKey = System.getenv("NVD_API_KEY")
