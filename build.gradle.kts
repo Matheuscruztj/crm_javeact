@@ -435,6 +435,12 @@ subprojects {
         }
     }
 
+    tasks.withType<org.owasp.dependencycheck.gradle.tasks.Analyze>().configureEach {
+        notCompatibleWithConfigurationCache(
+            "OWASP Dependency-Check accesses Project state during execution and is not configuration-cache safe."
+        )
+    }
+
     // ========================================================================
     // Verify Task (Optimized for Speed)
     // ========================================================================
