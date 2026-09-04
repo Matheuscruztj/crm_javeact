@@ -91,8 +91,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 @DisplayName("OpenAPI Contract Export")
 class OpenApiContractExportIntegrationTest {
 
-  private static final Path OPENAPI_OUTPUT =
-      Path.of("build", "reports", "openapi", "openapi.json");
+  private static final Path OPENAPI_OUTPUT = Path.of("build", "reports", "openapi", "openapi.json");
 
   @Autowired private TestRestTemplate restTemplate;
   private final ObjectMapper objectMapper = new ObjectMapper();
