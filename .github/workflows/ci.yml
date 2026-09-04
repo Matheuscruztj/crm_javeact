@@ -14,6 +14,7 @@ env:
   POSTGRES_USER: atlasops
   POSTGRES_PASSWORD: atlasops_ci
   REDIS_URL: redis://localhost:6379
+  DEPENDENCY_CHECK_DATA_DIR: ~/.gradle/dependency-check-data
 
 jobs:
   detect-changes:
@@ -161,9 +162,18 @@ jobs:
       - name: Grant execute permission to gradlew
         run: chmod +x ./gradlew
 
+      - name: Cache Dependency-Check data
+        uses: actions/cache@v4
+        with:
+          path: ~/.gradle/dependency-check-data
+          key: dependency-check-${{ runner.os }}-${{ hashFiles('**/build.gradle.kts', '**/gradle.properties', 'gradle/libs.versions.toml') }}
+          restore-keys: |
+            dependency-check-${{ runner.os }}-
+
       - name: Run OWASP Dependency-Check
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+          OWASP_NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: ./gradlew dependencyCheckAnalyze --no-daemon --no-configuration-cache
 
       - name: Upload dependency-check report

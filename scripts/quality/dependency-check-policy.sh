@@ -4,7 +4,7 @@ set -euo pipefail
 
 source "$(cd "$(dirname "$0")" && pwd)/common.sh"
 
-if [[ -n "${NVD_API_KEY:-}" ]]; then
+if [[ -n "${NVD_API_KEY:-}" || -n "${OWASP_NVD_API_KEY:-}" ]]; then
   printf 'OK\n'
   exit 0
 fi

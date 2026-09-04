@@ -6,7 +6,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.4" apply false
     id("com.diffplug.spotless") version "6.25.0" apply false
     id("com.github.spotbugs") version "6.0.9" apply false
-    id("org.owasp.dependencycheck") version "9.1.0" apply false
+    id("org.owasp.dependencycheck") version "13.0.0" apply false
     id("org.sonarqube") version "5.1.0.4882"
     jacoco
 }
@@ -421,10 +421,14 @@ subprojects {
         failBuildOnCVSS = 9.0f
         format = org.owasp.dependencycheck.reporting.ReportGenerator.Format.HTML.toString()
         outputDirectory = "${project.layout.buildDirectory.get()}/reports/dependency-check"
-        // Use NVD API key if provided (avoids 403/rate-limiting without a key)
+        dataDirectory = "${rootProject.layout.buildDirectory.get()}/dependency-check-data"
+        // Use NVD API key if provided (avoids 403/rate-limiting without a key).
+        // Prefer the CI secret name, but keep a fallback for local shells.
         val nvdApiKey = System.getenv("NVD_API_KEY")
+            ?: System.getenv("OWASP_NVD_API_KEY")
         if (!nvdApiKey.isNullOrBlank()) {
             nvd.setApiKey(nvdApiKey)
+            nvd.delay = 15_000
         } else {
             autoUpdate = false
         }
