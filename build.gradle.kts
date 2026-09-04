@@ -425,6 +425,8 @@ subprojects {
         val nvdApiKey = System.getenv("NVD_API_KEY")
         if (!nvdApiKey.isNullOrBlank()) {
             nvd.setApiKey(nvdApiKey)
+        } else {
+            autoUpdate = false
         }
         // Suppress false positives (add to backend/config/dependency-check/suppression.xml)
         val suppressionFile = rootProject.file("backend/config/dependency-check/suppression.xml")
