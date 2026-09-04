@@ -16,10 +16,161 @@ env:
   REDIS_URL: redis://localhost:6379
 
 jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      infra: ${{ steps.filter.outputs.infra }}
+      workflows: ${{ steps.filter.outputs.workflows }}
+      security: ${{ steps.filter.outputs.security }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect changed areas
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - 'build.gradle.kts'
+              - 'settings.gradle.kts'
+              - 'gradle.properties'
+              - 'gradlew'
+              - 'gradle/**'
+              - 'Makefile'
+            frontend:
+              - 'frontend/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+            infra:
+              - 'infra/**'
+              - 'docker-compose*.yml'
+            workflows:
+              - '.github/workflows/**'
+            security:
+              - 'backend/**'
+              - 'frontend/**'
+              - 'infra/**'
+              - 'docker-compose*.yml'
+              - 'Makefile'
+              - '.github/workflows/**'
+              - 'scripts/quality/**'
+
+  secrets-scan:
+    name: Secrets Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: detect-changes
+    if: needs.detect-changes.outputs.security == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Gitleaks
+        run: ./scripts/quality/gitleaks.sh
+
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [java, javascript]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+      - name: Analyze
+        uses: github/codeql-action/analyze@v3
+
+  workflow-security:
+    name: Workflow Security
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: detect-changes
+    if: needs.detect-changes.outputs.workflows == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run actionlint
+        run: ./scripts/quality/actionlint.sh
+
+      - name: Run zizmor
+        run: ./scripts/quality/zizmor.sh
+
+  dependency-scan:
+    name: Dependency Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || needs.detect-changes.outputs.infra == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run OSV-Scanner
+        run: ./scripts/quality/osv-scanner.sh
+
+  dependency-check:
+    name: Dependency-Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: "gradle"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Run OWASP Dependency-Check
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: ./gradlew dependencyCheckAnalyze --no-daemon
+
+      - name: Upload dependency-check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: "**/build/reports/dependency-check*"
+          retention-days: 7
+
   backend-fast:
     name: Backend Fast Gates
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
 
     services:
       postgres:
@@ -74,6 +225,8 @@ jobs:
     name: Backend Static Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -106,6 +259,8 @@ jobs:
     name: Backend SAST
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    needs: detect-changes
+    if: needs.detect-changes.outputs.security == 'true' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -136,6 +291,8 @@ jobs:
     name: Backend Property Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
 
     services:
       postgres:
@@ -190,6 +347,8 @@ jobs:
     name: Backend Architecture
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -212,6 +371,8 @@ jobs:
     name: Backend Coverage
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || github.event_name == 'workflow_dispatch'
 
     services:
       postgres:
@@ -278,6 +439,8 @@ jobs:
     name: Frontend Fast Gates
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -305,6 +468,8 @@ jobs:
     name: Frontend Unit Coverage
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -341,6 +506,8 @@ jobs:
     name: Frontend Architecture
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -368,6 +535,8 @@ jobs:
     name: Contracts
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch'
 
     services:
       postgres:
@@ -423,10 +592,20 @@ jobs:
           path: backend/app-boot/build/reports/openapi/openapi.json
           retention-days: 7
 
+      - name: Upload contract artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: contract-artifacts
+          path: build/reports/contracts
+          retention-days: 7
+
   resilience-tests:
     name: Resilience Tests
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.infra == 'true' || github.event_name == 'workflow_dispatch'
 
     services:
       postgres:

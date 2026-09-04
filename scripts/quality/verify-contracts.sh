@@ -11,4 +11,7 @@ run_quiet_or_fail "OpenAPI contract lint failed" run_in_root npx -y @stoplight/s
 
 run_quiet_or_fail "AsyncAPI validation failed" run_in_root npx -y @asyncapi/cli@2.15.0 validate docs/asyncapi.yaml
 
+run_quiet_or_fail "OpenAPI breaking change check failed" run_in_root ./scripts/quality/openapi-breaking-change.sh
+run_quiet_or_fail "Contract artifact publication failed" run_in_root ./scripts/quality/publish-contract-artifacts.sh
+
 printf 'OK\n'

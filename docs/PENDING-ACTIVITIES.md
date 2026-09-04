@@ -99,11 +99,7 @@
 
 - Classificar formalmente os checks arquiteturais como `blocking` por estágio.
 - Publicar relatório consolidado de violações arquiteturais.
-- Formalizar a policy de bloqueio por severidade para segurança.
-- Decidir e registrar o papel de `OWASP Dependency-Check` sem `NVD_API_KEY`.
 - Avaliar `Snyk` ou `OSV-Scanner` como complemento.
-- Adicionar `Dependabot` ou `Renovate`.
-- Criar runbook de resposta rápida a vulnerabilidade crítica emergente.
 - Avaliar subset dinâmico de integração por módulo alterado no `pre-push`.
 
 ### Médio

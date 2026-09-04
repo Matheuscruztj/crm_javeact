@@ -36,8 +36,8 @@ Each issue group maps to one wave and one or more task plans under [`docs/task-p
 - `QE-002` Remove CI paths that pass without executing critical backend validation. [done]
 - `QE-003` Remove CI paths that pass without executing critical frontend validation. [done]
 - `QE-004` Create fast local verification targets for backend, frontend and shared quality checks. [done]
-- `QE-005` Standardize artifacts for tests, coverage, lint and security outputs. [in progress]
-- `QE-006` Document expected execution time and purpose of each local and CI check. [in progress]
+- `QE-005` Standardize artifacts for tests, coverage, lint and security outputs. [done]
+- `QE-006` Document expected execution time and purpose of each local and CI check. [done]
 - `QE-007` Add explicit frontend formatting check to local and CI flows. [done]
 - `QE-008` Define pre-commit vs pre-push vs CI scope boundaries. [done]
 - `QE-009` Align Makefile commands with CI jobs to avoid drift. [done]
@@ -58,29 +58,29 @@ Each issue group maps to one wave and one or more task plans under [`docs/task-p
 
 ## 3.3 Wave W3 — API and Contract Integrity
 
-- `QE-200` Define a reproducible OpenAPI generation/export process.
-- `QE-201` Make OpenAPI lint operate on a real generated or exported spec.
-- `QE-202` Fix AsyncAPI lint to use the correct ruleset and validation model.
+- `QE-200` Define a reproducible OpenAPI generation/export process. [done]
+- `QE-201` Make OpenAPI lint operate on a real generated or exported spec. [done]
+- `QE-202` Fix AsyncAPI lint to use the correct ruleset and validation model. [done]
 - `QE-203` Add schema presence checks for critical endpoints.
 - `QE-204` Evaluate and choose contract testing strategy for integrations.
-- `QE-205` Introduce API breaking change detection.
+- `QE-205` Introduce API breaking change detection. [done]
 - `QE-206` Align frontend types and API client with the authoritative contract.
-- `QE-207` Publish contract artifacts from CI.
-- `QE-208` Define rollout policy for contract-breaking changes.
+- `QE-207` Publish contract artifacts from CI. [done]
+- `QE-208` Define rollout policy for contract-breaking changes. [done]
 - `QE-209` Add compatibility smoke coverage for the most critical frontend flows.
 
 ## 3.4 Wave W4 — Security and Supply Chain
 
-- `QE-300` Add CodeQL to GitHub Actions.
-- `QE-301` Add Semgrep to GitHub Actions.
-- `QE-302` Harden dependency scanning and suppression governance.
-- `QE-303` Add Trivy filesystem and image scanning.
-- `QE-304` Add Syft SBOM generation and publication.
-- `QE-305` Add dependency update automation policy.
-- `QE-306` Define zero-day response workflow and emergency override process.
-- `QE-307` Review backend sensitive sinks and security hotspots.
-- `QE-308` Standardize security artifact publication and retention.
-- `QE-309` Define blocking thresholds for security findings by severity.
+- `QE-300` Add CodeQL to GitHub Actions. [done]
+- `QE-301` Add Semgrep to GitHub Actions. [done]
+- `QE-302` Harden dependency scanning and suppression governance. [done]
+- `QE-303` Add Trivy filesystem and image scanning. [done]
+- `QE-304` Add Syft SBOM generation and publication. [done]
+- `QE-305` Add dependency update automation policy. [done]
+- `QE-306` Define zero-day response workflow and emergency override process. [done]
+- `QE-307` Review backend sensitive sinks and security hotspots. [done]
+- `QE-308` Standardize security artifact publication and retention. [done]
+- `QE-309` Define blocking thresholds for security findings by severity. [done]
 
 ## 3.5 Wave W5 — Runtime Resilience and Dynamic Coupling
 
@@ -117,7 +117,7 @@ Each issue group maps to one wave and one or more task plans under [`docs/task-p
 - `QE-504` Correlate backend metrics with load test scenarios. [done]
 - `QE-505` Add frontend critical-path performance evidence where relevant. [done]
 - `QE-506` Define nightly stress and soak strategy. [done]
-- `QE-507` Establish regression review process for performance drift. [in progress]
+- `QE-507` Establish regression review process for performance drift. [done]
 - `QE-508` Integrate performance evidence into release documentation. [done]
 - `QE-509` Define environment metadata requirements for test comparability. [done]
 
@@ -135,16 +135,16 @@ Each issue group maps to one wave and one or more task plans under [`docs/task-p
 
 ## 3.7 Wave W7 — Governance and Continuous Hardening
 
-- `QE-600` Create a quality check ownership matrix.
-- `QE-601` Create an exception process with expiration and review.
-- `QE-602` Define severity-based remediation SLA.
-- `QE-603` Review suppressions and bypasses on a fixed cadence.
-- `QE-604` Create a quality dashboard and reporting view.
-- `QE-605` Define rules for promoting advisory checks to blocking.
-- `QE-606` Add roadmap maintenance and wave completion bookkeeping.
-- `QE-607` Align quality governance with agent execution boundaries.
-- `QE-608` Define evidence requirements for completion of each wave.
-- `QE-609` Close the program with a consolidated quality posture review.
+- `QE-600` Create a quality check ownership matrix. [done]
+- `QE-601` Create an exception process with expiration and review. [done]
+- `QE-602` Define severity-based remediation SLA. [done]
+- `QE-603` Review suppressions and bypasses on a fixed cadence. [done]
+- `QE-604` Create a quality dashboard and reporting view. [done]
+- `QE-605` Define rules for promoting advisory checks to blocking. [done]
+- `QE-606` Add roadmap maintenance and wave completion bookkeeping. [done]
+- `QE-607` Align quality governance with agent execution boundaries. [done]
+- `QE-608` Define evidence requirements for completion of each wave. [done]
+- `QE-609` Close the program with a consolidated quality posture review. [done]
 
 ---
 

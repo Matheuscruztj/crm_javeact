@@ -209,10 +209,26 @@ verify-contracts: ## Run contract verification gates (OpenAPI export + lint + As
 	@bash ./scripts/quality/verify-contracts.sh
 
 .PHONY: verify-security
-verify-security: ## Run SAST, DAST, filesystem and Docker image security scans
+verify-security: verify-static-security verify-container-security verify-dast ## Run the full security suite
+
+.PHONY: verify-container-security
+verify-container-security: ## Run filesystem and Docker image security scans
+	@./scripts/quality/trivy-fs.sh
+	@./scripts/quality/trivy-image.sh
+
+.PHONY: verify-static-security
+verify-static-security: ## Run static security checks (secrets, SAST, dependency and workflow scans)
+	@./scripts/quality/gitleaks.sh
 	@./scripts/quality/semgrep.sh
-	@./scripts/quality/zap-baseline.sh
-	@./scripts/quality/trivy.sh
+	@./scripts/quality/dependency-check-policy.sh
+	@./scripts/quality/osv-scanner.sh
+	@./scripts/quality/actionlint.sh
+	@./scripts/quality/zizmor.sh
+
+.PHONY: verify-workflow-security
+verify-workflow-security: ## Run GitHub Actions workflow security checks
+	@./scripts/quality/actionlint.sh
+	@./scripts/quality/zizmor.sh
 
 .PHONY: verify-sast
 verify-sast: ## Run static application security testing with Semgrep
@@ -221,6 +237,14 @@ verify-sast: ## Run static application security testing with Semgrep
 .PHONY: verify-dast
 verify-dast: ## Run baseline dynamic application security testing with OWASP ZAP
 	@./scripts/quality/zap-baseline.sh
+
+.PHONY: security-sbom
+security-sbom: ## Generate SBOM artifact locally
+	@./scripts/quality/sbom.sh
+
+.PHONY: performance-release-gate
+performance-release-gate: ## Validate required performance release evidence
+	@./scripts/quality/performance-release-gate.sh
 
 .PHONY: test-contract
 test-contract: verify-contracts ## Alias for contract verification gates

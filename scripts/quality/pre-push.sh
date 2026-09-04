@@ -31,7 +31,7 @@ if [[ -z "$changed_files" ]] || needs_security_checks "$changed_files"; then
     run_quiet_or_fail "DAST scan failed" run_in_root make verify-dast
   fi
 
-  run_quiet_or_fail "Filesystem and image security scan failed" run_in_root ./scripts/quality/trivy.sh
+  run_quiet_or_fail "Filesystem security scan failed" run_in_root make verify-container-security
 fi
 
 printf 'OK\n'

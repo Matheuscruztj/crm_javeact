@@ -15,10 +15,88 @@ env:
   REDIS_URL: redis://localhost:6379
 
 jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      infra: ${{ steps.filter.outputs.infra }}
+      workflows: ${{ steps.filter.outputs.workflows }}
+      security: ${{ steps.filter.outputs.security }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect changed areas
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - 'build.gradle.kts'
+              - 'settings.gradle.kts'
+              - 'gradle.properties'
+              - 'gradlew'
+              - 'gradle/**'
+              - 'Makefile'
+            frontend:
+              - 'frontend/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+              - 'pnpm-workspace.yaml'
+            infra:
+              - 'infra/**'
+              - 'docker-compose*.yml'
+            workflows:
+              - '.github/workflows/**'
+            security:
+              - 'backend/**'
+              - 'frontend/**'
+              - 'infra/**'
+              - 'docker-compose*.yml'
+              - 'Makefile'
+              - '.github/workflows/**'
+              - 'scripts/quality/**'
+
+  supply-chain-security:
+    name: Supply Chain Security
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: detect-changes
+    if: needs.detect-changes.outputs.security == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Gitleaks
+        run: ./scripts/quality/gitleaks.sh
+
+      - name: Enforce Dependency-Check policy
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+          CI: "true"
+        run: ./scripts/quality/dependency-check-policy.sh
+
+      - name: Run OSV-Scanner
+        run: ./scripts/quality/osv-scanner.sh
+
+      - name: Run actionlint
+        run: ./scripts/quality/actionlint.sh
+
+      - name: Run zizmor
+        run: ./scripts/quality/zizmor.sh
+
   full-load-test:
     name: Full Load Test
     runs-on: ubuntu-latest
     timeout-minutes: 35
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.infra == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -34,7 +112,8 @@ jobs:
 
       - name: Wait for backend API readiness
         run: |
-          for i in {1..36}; do
+          for attempt in {1..36}; do
+            : "$attempt"
             if curl -fsS http://localhost:8080/actuator/health/readiness >/dev/null; then
               exit 0
             fi
@@ -77,6 +156,8 @@ jobs:
     name: Architecture Scan
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -125,6 +206,8 @@ jobs:
     name: Dependency Report
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -141,6 +224,8 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run OWASP dependency check
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: ./gradlew dependencyCheckAnalyze --no-daemon
 
       - name: Upload dependency report
@@ -151,10 +236,48 @@ jobs:
           path: "**/build/reports/dependency-check*"
           retention-days: 30
 
+  contract-artifacts:
+    name: Contract Artifacts
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+          cache: "gradle"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Verify contracts
+        run: make verify-contracts
+
+      - name: Upload contract artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: contract-artifacts-${{ github.run_number }}
+          path: build/reports/contracts
+          retention-days: 30
+
   flaky-test-detection:
     name: Flaky Test Detection
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
     services:
       postgres:
@@ -238,6 +361,7 @@ jobs:
     name: Mutation Testing (PIT)
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    needs: detect-changes
     if: ${{ vars.PITEST_ENABLED == 'true' }}
 
     steps:
@@ -261,6 +385,8 @@ jobs:
     name: SBOM Generation (Syft)
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -270,21 +396,21 @@ jobs:
         uses: anchore/sbom-action/download-syft@v0
 
       - name: Generate SBOM with Syft
-        run: |
-          syft . --output cyclonedx-json=sbom.json
-          echo "SBOM generated with $(cat sbom.json | python3 -c 'import sys,json; d=json.load(sys.stdin); print(len(d.get(\"components\",[])))' 2>/dev/null || echo "?") components"
+        run: ./scripts/quality/sbom.sh
 
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
         with:
           name: sbom-cyclonedx
-          path: sbom.json
+          path: build/reports/sbom/sbom.json
           retention-days: 90
 
   sast-scan:
     name: SAST Scan
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    needs: detect-changes
+    if: needs.detect-changes.outputs.security == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout
@@ -315,6 +441,8 @@ jobs:
     name: DAST Scan
     runs-on: ubuntu-latest
     timeout-minutes: 35
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
     services:
       postgres:
@@ -359,7 +487,8 @@ jobs:
 
       - name: Wait for readiness
         run: |
-          for i in {1..36}; do
+          for attempt in {1..36}; do
+            : "$attempt"
             if curl -fsS http://localhost:8080/actuator/health/readiness >/dev/null; then
               exit 0
             fi

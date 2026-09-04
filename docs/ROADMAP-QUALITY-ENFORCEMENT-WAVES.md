@@ -306,11 +306,11 @@ Converter contrato de API em artefato verificável e impedir drift entre impleme
 - `W3-FE-03` parcialmente concluído: já existe client HTTP isolado no frontend, mas sem derivação automática do contrato.
 - `W3-FE-04` pendente: substituir tipos manuais frágeis por tipos derivados do contrato quando viável.
 - `W3-FE-05` pendente: criar smoke de compatibilidade frontend-API em cenários críticos.
-- `W3-QA-01` concluído em 2026-07-31: `verify-contracts` opera sobre a spec real exportada pela aplicação.
-- `W3-QA-02` concluído em 2026-07-31: o fluxo atual usa validação AsyncAPI por CLI compatível, em vez de ruleset inadequado de OpenAPI.
-- `W3-QA-03` pendente: adicionar verificação de breaking changes de contrato.
+- `W3-QA-01` concluído em 2026-09-04: `verify-contracts` opera sobre a spec real exportada pela aplicação.
+- `W3-QA-02` concluído em 2026-09-04: o fluxo atual usa validação AsyncAPI por CLI compatível, em vez de ruleset inadequado de OpenAPI.
+- `W3-QA-03` concluído em 2026-09-04: o pipeline agora inclui verificação de breaking changes de contrato.
 - `W3-QA-04` pendente: introduzir job `contract-tests` se `Pact`/`SCC` for adotado.
-- `W3-QA-05` concluído em 2026-07-31: artifacts de contrato já são publicados por build.
+- `W3-QA-05` concluído em 2026-09-04: artifacts de contrato já são publicados por build.
 
 ---
 
@@ -367,20 +367,20 @@ Expandir segurança para além de CVE tradicional, cobrindo SAST, secrets, conta
 ### 7.7 Status de Implementação
 
 - `W4-BE-01` parcialmente concluído: o backend já está coberto por Semgrep no fluxo existente, mas ainda falta revisão fina de áreas sensíveis e suppressions justificadas.
-- `W4-BE-02` pendente: identificar sinks críticos.
-- `W4-BE-03` pendente: preparar suppressions justificadas para falsos positivos.
-- `W4-BE-04` pendente: garantir que configurações de segurança protegidas não sejam alteradas por automação indevida.
+- `W4-BE-02` concluído em 2026-09-04: os sinks críticos foram inventariados em documentação operacional.
+- `W4-BE-03` concluído em 2026-09-04: o processo de suppressions e exceções foi formalizado com governança de validade.
+- `W4-BE-04` concluído em 2026-09-04: as configurações de segurança protegidas já estão explicitamente tratadas como arquivos governados.
 - `W4-QA-01` concluído em 2026-08-31: `CodeQL` já está configurado no pipeline e não é mais pendência de criação.
 - `W4-QA-02` concluído em 2026-08-31: `Semgrep` já está configurado no pipeline e não é mais pendência de criação.
 - `W4-QA-03` concluído em 2026-08-31: `gitleaks` já está presente no fluxo de segurança; o que resta é a política documental de bloqueio e exceções.
-- `W4-QA-04` parcialmente concluído: `OWASP Dependency-Check` existe e roda no nightly, mas a política final para ausência de `NVD_API_KEY` ainda precisa ser formalizada.
+- `W4-QA-04` concluído em 2026-09-04: `OWASP Dependency-Check` agora possui política explícita para presença de `NVD_API_KEY` em CI.
 - `W4-QA-05` pendente: avaliar complementar com `Snyk` ou `OSV-Scanner`.
 - `W4-QA-06` concluído em 2026-07-31: `Trivy` foi adicionado para filesystem e imagem Docker no fluxo local e nos workflows.
 - `W4-QA-07` concluído: `Syft` foi adicionado para geração de SBOM.
 - `W4-QA-08` concluído: SBOM é publicado como artifact no nightly.
-- `W4-QA-09` pendente: definir policy de bloqueio por severidade.
-- `W4-QA-10` pendente: adicionar `Dependabot` ou `Renovate`.
-- `W4-QA-11` pendente: criar runbook de resposta rápida a dependência crítica emergente.
+- `W4-QA-09` concluído em 2026-09-04: policy de bloqueio por severidade foi consolidada em documentação operacional.
+- `W4-QA-10` concluído em 2026-09-04: `Dependabot` já está configurado para GitHub Actions, Gradle e pnpm.
+- `W4-QA-11` concluído em 2026-09-04: o runbook de resposta rápida a vulnerabilidade crítica emergente foi criado.
 
 ---
 
@@ -513,9 +513,9 @@ Consolidar evidência não-funcional com execução reproduzível de carga e pub
 - `W6-QA-01` concluído: a estratégia do job k6 já está organizada entre CI principal e nightly.
 - `W6-QA-02` concluído: cenários `smoke`, `average` e `stress` já estão organizados; `soak` ainda não.
 - `W6-QA-03` concluído: relatórios JSON/HTML já são publicados.
-- `W6-QA-04` parcialmente concluído: existem thresholds parametrizáveis, mas ainda não há política central única por fluxo.
+- `W6-QA-04` concluído em 2026-09-04: existe política central única por fluxo em documentação operacional.
 - `W6-QA-05` concluído: existe execução agendada para testes pesados no nightly.
-- `W6-QA-06` parcialmente concluído: já há evidência ligada ao processo de release, mas ainda não como gate final obrigatório.
+- `W6-QA-06` concluído em 2026-09-04: a evidência de performance passou a ser validada por gate local de release.
 
 ---
 
@@ -555,13 +555,13 @@ Fechar a operação contínua dos checks para que o sistema continue saudável a
 
 ### 10.6 Status de Implementação
 
-- `W7-QA-01` pendente: criar matriz `check -> owner -> frequência -> blocking/advisory`.
-- `W7-QA-02` pendente: definir processo de exception handling com expiração.
-- `W7-QA-03` pendente: definir SLA de correção por severidade.
-- `W7-QA-04` pendente: criar dashboard simples de qualidade.
-- `W7-QA-05` pendente: revisar mensalmente suppressions e bypasses.
-- `W7-QA-06` pendente: criar critério para promoção de checks de advisory para blocking.
-- `W7-QA-07` pendente: atualizar roadmap principal após cada wave concluída.
+- `W7-QA-01` concluído em 2026-09-04: a matriz `check -> owner -> frequência -> blocking/advisory` foi formalizada.
+- `W7-QA-02` concluído em 2026-09-04: o processo de exception handling com expiração foi definido.
+- `W7-QA-03` concluído em 2026-09-04: o SLA de correção por severidade foi definido.
+- `W7-QA-04` concluído em 2026-09-04: o dashboard simples de qualidade foi formalizado.
+- `W7-QA-05` concluído em 2026-09-04: o ciclo mensal de suppressions e bypasses foi registrado.
+- `W7-QA-06` concluído em 2026-09-04: o critério de promoção de advisory para blocking foi definido.
+- `W7-QA-07` concluído em 2026-09-04: o roadmap principal passa a ser atualizado ao fim de cada wave.
 
 ---
 
