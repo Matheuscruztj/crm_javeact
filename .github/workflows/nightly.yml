@@ -225,7 +225,6 @@ jobs:
     needs: detect-changes
     if: needs.detect-changes.outputs.backend == 'true' || needs.detect-changes.outputs.frontend == 'true' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     environment: Pipeline
-    environment: Pipeline
 
     steps:
       - name: Checkout
