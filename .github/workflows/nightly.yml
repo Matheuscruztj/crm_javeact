@@ -13,6 +13,11 @@ env:
   POSTGRES_USER: atlasops
   POSTGRES_PASSWORD: atlasops_ci
   REDIS_URL: redis://localhost:6379
+  POSTGRES_PORT: "5433"
+  REDIS_PORT: "6380"
+  MINIO_PORT: "9002"
+  MINIO_CONSOLE_PORT: "9003"
+  APP_PORT: "8080"
 
 jobs:
   detect-changes:
@@ -87,6 +92,7 @@ jobs:
       - name: Enforce Dependency-Check policy
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+          OWASP_NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
           CI: "true"
         run: ./scripts/quality/dependency-check-policy.sh
 
