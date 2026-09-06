@@ -124,7 +124,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Start backend stack for load test
-        run: POSTGRES_PORT=5433 REDIS_PORT=6380 MINIO_PORT=9002 MINIO_CONSOLE_PORT=9003 APP_PORT=8080 docker compose up -d postgres redis minio backend-api
+        run: POSTGRES_PORT=5433 REDIS_PORT=6380 MINIO_PORT=9002 MINIO_CONSOLE_PORT=9003 APP_PORT=8080 docker compose up -d --wait --wait-timeout 180 --build --pull never postgres redis minio backend-api
 
       - name: Wait for backend API readiness
         run: |
@@ -136,7 +136,7 @@ jobs:
             sleep 10
           done
           docker compose ps
-          docker compose logs backend-api
+          docker compose logs backend-api postgres redis minio
           exit 1
 
       - name: Install k6
@@ -509,7 +509,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Start backend API for DAST
-        run: POSTGRES_PORT=5433 REDIS_PORT=6380 MINIO_PORT=9002 MINIO_CONSOLE_PORT=9003 APP_PORT=8080 docker compose up -d postgres redis minio backend-api
+        run: POSTGRES_PORT=5433 REDIS_PORT=6380 MINIO_PORT=9002 MINIO_CONSOLE_PORT=9003 APP_PORT=8080 docker compose up -d --wait --wait-timeout 180 --build --pull never postgres redis minio backend-api
 
       - name: Wait for readiness
         run: |
@@ -534,6 +534,10 @@ jobs:
           name: zap-report-${{ github.run_number }}
           path: build/reports/zap/
           retention-days: 30
+
+      - name: Dump backend logs on failure
+        if: failure()
+        run: docker compose logs backend-api postgres redis minio
 
       - name: Stop backend API
         if: always()
