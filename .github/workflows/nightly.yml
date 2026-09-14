@@ -124,7 +124,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Start backend stack for load test
-        run: POSTGRES_PORT=5433 REDIS_PORT=6380 MINIO_PORT=9002 MINIO_CONSOLE_PORT=9003 APP_PORT=8080 docker compose up -d --wait --wait-timeout 180 --build --pull never postgres redis minio backend-api
+        run: POSTGRES_PORT=5433 REDIS_PORT=6380 MINIO_PORT=9002 MINIO_CONSOLE_PORT=9003 APP_PORT=8080 docker compose up -d --wait --wait-timeout 180 --build --pull missing postgres redis minio backend-api
 
       - name: Wait for backend API readiness
         run: |
@@ -509,7 +509,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Start backend API for DAST
-        run: POSTGRES_PORT=5433 REDIS_PORT=6380 MINIO_PORT=9002 MINIO_CONSOLE_PORT=9003 APP_PORT=8080 docker compose up -d --wait --wait-timeout 180 --build --pull never postgres redis minio backend-api
+        run: POSTGRES_PORT=5433 REDIS_PORT=6380 MINIO_PORT=9002 MINIO_CONSOLE_PORT=9003 APP_PORT=8080 docker compose up -d --wait --wait-timeout 180 --build --pull missing postgres redis minio backend-api
 
       - name: Wait for readiness
         run: |
