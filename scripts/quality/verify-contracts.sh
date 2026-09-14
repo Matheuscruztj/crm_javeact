@@ -4,7 +4,12 @@ set -euo pipefail
 
 source "$(cd "$(dirname "$0")" && pwd)/common.sh"
 
-run_quiet_or_fail "OpenAPI contract export failed" run_in_root ./gradlew :backend:app-boot:openApiContractExportTest
+gradle_args=()
+if [[ -n "${PRE_PUSH_GRADLE_WORKERS:-}" ]]; then
+  gradle_args+=(--max-workers="$PRE_PUSH_GRADLE_WORKERS")
+fi
+
+run_quiet_or_fail "OpenAPI contract export failed" run_in_root ./gradlew "${gradle_args[@]}" :backend:app-boot:openApiContractExportTest
 
 command -v npx >/dev/null 2>&1 || fail "npx is required for contract linting"
 run_quiet_or_fail "OpenAPI contract lint failed" run_in_root npx -y @stoplight/spectral-cli@6.15.0 lint backend/app-boot/build/reports/openapi/openapi.json
