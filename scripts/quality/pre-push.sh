@@ -14,9 +14,7 @@ run_quiet_or_fail "Frontend verification failed" run_in_root pnpm --dir frontend
 run_quiet_or_fail "Frontend architecture checks failed" run_in_root pnpm --dir frontend architecture:check
 run_quiet_or_fail "Frontend unit coverage failed" run_in_root pnpm --dir frontend test:unit:coverage
 
-if [[ -z "$changed_files" ]] || needs_contract_checks "$changed_files"; then
-  run_quiet_or_fail "Contract verification failed" run_in_root make verify-contracts
-fi
+run_quiet_or_fail "Contract verification failed" run_in_root make verify-contracts
 
 if [[ -z "$changed_files" ]] || needs_resilience_checks "$changed_files"; then
   run_quiet_or_fail "Resilience checks failed" run_in_root make test-resilience-minio
