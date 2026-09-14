@@ -41,9 +41,19 @@ public class FilterRegistrationConfig {
     return registration;
   }
 
-  /**
-   * Idempotency filter for deduplicating POST requests using Idempotency-Key header (P0.E.1).
-   */
+  @Bean
+  public FilterRegistrationBean<OpenApiTrailingSlashFilter>
+      openApiTrailingSlashFilterRegistration() {
+    FilterRegistrationBean<OpenApiTrailingSlashFilter> registration =
+        new FilterRegistrationBean<>();
+    registration.setFilter(new OpenApiTrailingSlashFilter());
+    registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 2);
+    registration.setName("openApiTrailingSlashFilter");
+    registration.addUrlPatterns("/v3/api-docs/*");
+    return registration;
+  }
+
+  /** Idempotency filter for deduplicating POST requests using Idempotency-Key header (P0.E.1). */
   @Bean
   public FilterRegistrationBean<IdempotencyFilter> idempotencyFilterRegistration(
       StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
@@ -55,9 +65,7 @@ public class FilterRegistrationConfig {
     return registration;
   }
 
-  /**
-   * ETag filter for GET responses and conditional request support (P0.Q.2).
-   */
+  /** ETag filter for GET responses and conditional request support (P0.Q.2). */
   @Bean
   public FilterRegistrationBean<ETagFilter> eTagFilterRegistration() {
     FilterRegistrationBean<ETagFilter> registration = new FilterRegistrationBean<>();

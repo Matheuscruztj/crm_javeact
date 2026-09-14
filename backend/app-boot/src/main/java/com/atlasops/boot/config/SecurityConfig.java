@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -39,14 +40,17 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(
-      HttpSecurity http,
-      JwtAuthenticationFilter jwtAuthenticationFilter,
-      ObjectMapper objectMapper) throws Exception {
+      HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter, ObjectMapper objectMapper)
+      throws Exception {
 
     http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(csrf -> csrf.disable())
         .sessionManagement(
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .headers(
+            headers ->
+                headers.addHeaderWriter(
+                    new StaticHeadersWriter("Cross-Origin-Resource-Policy", "same-origin")))
         .authorizeHttpRequests(
             authorize ->
                 authorize
@@ -81,8 +85,8 @@ public class SecurityConfig {
   }
 
   /**
-   * CORS configuration allowing frontend origins (P0.K.1).
-   * Allows localhost:3000 in dev; configurable via {@code app.cors.allowed-origins} in production.
+   * CORS configuration allowing frontend origins (P0.K.1). Allows localhost:3000 in dev;
+   * configurable via {@code app.cors.allowed-origins} in production.
    */
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
@@ -90,18 +94,16 @@ public class SecurityConfig {
     List<String> origins = List.of(allowedOrigins.split(","));
     config.setAllowedOrigins(origins);
     config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-    config.setAllowedHeaders(List.of(
-        "Authorization",
-        "Content-Type",
-        "X-Tenant-ID",
-        "X-User-ID",
-        "X-Correlation-ID",
-        "Idempotency-Key",
-        "Last-Event-ID"));
-    config.setExposedHeaders(List.of(
-        "X-Correlation-ID",
-        "X-API-Deprecated",
-        "Location"));
+    config.setAllowedHeaders(
+        List.of(
+            "Authorization",
+            "Content-Type",
+            "X-Tenant-ID",
+            "X-User-ID",
+            "X-Correlation-ID",
+            "Idempotency-Key",
+            "Last-Event-ID"));
+    config.setExposedHeaders(List.of("X-Correlation-ID", "X-API-Deprecated", "Location"));
     config.setAllowCredentials(true);
     config.setMaxAge(3600L);
 

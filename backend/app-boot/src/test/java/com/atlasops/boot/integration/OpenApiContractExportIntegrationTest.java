@@ -209,6 +209,29 @@ class OpenApiContractExportIntegrationTest {
   }
 
   @Test
+  @DisplayName("should_returnOpenApiSpec_when_apiDocsPathHasTrailingSlash")
+  void should_returnOpenApiSpec_when_apiDocsPathHasTrailingSlash() {
+    ResponseEntity<String> response = restTemplate.getForEntity("/v3/api-docs/", String.class);
+
+    assertThat(response.getStatusCode().is2xxSuccessful())
+        .as(
+            "Expected /v3/api-docs/ to return 2xx but got %s with body: %s",
+            response.getStatusCode(), response.getBody())
+        .isTrue();
+    assertThat(response.getBody()).contains("\"openapi\"");
+  }
+
+  @Test
+  @DisplayName("should_includeCrossOriginResourcePolicyHeader_when_apiDocsAreServed")
+  void should_includeCrossOriginResourcePolicyHeader_when_apiDocsAreServed() {
+    ResponseEntity<String> response = restTemplate.getForEntity("/v3/api-docs", String.class);
+
+    assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
+    assertThat(response.getHeaders().getFirst("Cross-Origin-Resource-Policy"))
+        .isEqualTo("same-origin");
+  }
+
+  @Test
   @DisplayName("should_preserveBaselineContractPaths_from_committedOpenApiSnapshot")
   void should_preserveBaselineContractPaths_from_committedOpenApiSnapshot() throws IOException {
     ResponseEntity<String> response = restTemplate.getForEntity("/v3/api-docs", String.class);
