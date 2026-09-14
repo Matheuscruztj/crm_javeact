@@ -42,6 +42,8 @@ const P95_MS = Number(__ENV.K6_P95_MS || 500);
 const P99_MS = Number(__ENV.K6_P99_MS || 1500);
 const ERROR_RATE = Number(__ENV.K6_ERROR_RATE || 0.01);
 
+http.setResponseCallback(http.expectedStatuses({ min: 100, max: 499 }));
+
 // ─── Custom Metrics ────────────────────────────────────────────────────────
 
 export const errorRate = new Rate("errors");

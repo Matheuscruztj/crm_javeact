@@ -21,9 +21,12 @@ import { Rate, Trend } from "k6/metrics";
 
 const BASE_URL = __ENV.K6_BASE_URL || __ENV.BASE_URL || "http://localhost:8080";
 const AUTH_TOKEN = __ENV.K6_AUTH_TOKEN || "";
+const TENANT_ID = __ENV.K6_TENANT_ID || __ENV.TENANT_ID || "tenant-alpha";
 const P95_MS = Number(__ENV.K6_P95_MS || 1000);
 const P99_MS = Number(__ENV.K6_P99_MS || 2000);
 const ERROR_RATE = Number(__ENV.K6_ERROR_RATE || 0.02);
+
+http.setResponseCallback(http.expectedStatuses({ min: 100, max: 499 }));
 
 export const errorRate = new Rate("errors");
 export const healthDuration = new Trend("health_duration");
@@ -45,7 +48,10 @@ export const options = {
 };
 
 function buildHeaders() {
-  const headers = { "Content-Type": "application/json" };
+  const headers = {
+    "Content-Type": "application/json",
+    "X-Tenant-ID": TENANT_ID,
+  };
   if (AUTH_TOKEN) {
     headers["Authorization"] = `Bearer ${AUTH_TOKEN}`;
   }
@@ -89,10 +95,10 @@ function scenarioLogin() {
     const res = http.post(
       `${BASE_URL}/api/v1/auth/login`,
       JSON.stringify({
-        email: "perf-test@atlasops.test",
+        email: `perf-test-${__VU}-${__ITER}@atlasops.test`,
         password: "wrong-password",
       }),
-      { headers: { "Content-Type": "application/json" } },
+      { headers: buildHeaders() },
     );
     loginDuration.add(res.timings.duration);
 

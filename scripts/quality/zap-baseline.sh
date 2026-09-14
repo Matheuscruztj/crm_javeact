@@ -17,6 +17,8 @@ if ! command -v docker >/dev/null 2>&1; then
 fi
 
 run_in_root mkdir -p "$ZAP_REPORT_DIR"
+ZAP_REPORT_HOST_DIR="$(cd "$ROOT_DIR" && cd "$ZAP_REPORT_DIR" && pwd)"
+ZAP_DOCKER_USER="$(id -u):$(id -g)"
 
 log "Waiting for application readiness at ${ZAP_BASE_URL}"
 for _ in $(seq 1 "$ZAP_WAIT_SECONDS"); do
@@ -79,7 +81,9 @@ fi
 log "Running OWASP ZAP API scan against ${ZAP_TARGET_URL}"
 run_quiet_or_fail "ZAP authenticated scan failed" run_in_root docker run --rm \
   --network host \
-  -v "$ROOT_DIR:/zap/wrk" \
+  --user "$ZAP_DOCKER_USER" \
+  -e HOME=/zap/wrk \
+  -v "$ZAP_REPORT_HOST_DIR:/zap/wrk:rw" \
   "$ZAP_IMAGE" \
   zap-api-scan.py \
     -t "$ZAP_TARGET_URL" \
@@ -89,9 +93,5 @@ run_quiet_or_fail "ZAP authenticated scan failed" run_in_root docker run --rm \
     -x zap-api.xml \
     -m "$ZAP_MAX_TIME" \
     "${zap_extra_args[@]}"
-
-run_in_root mv -f zap-api.html "$ZAP_REPORT_DIR/zap-api.html"
-run_in_root mv -f zap-api.json "$ZAP_REPORT_DIR/zap-api.json"
-run_in_root mv -f zap-api.xml "$ZAP_REPORT_DIR/zap-api.xml"
 
 printf 'OK\n'

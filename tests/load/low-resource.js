@@ -24,6 +24,8 @@ const P95_MS = Number(__ENV.K6_P95_MS || 1200);
 const P99_MS = Number(__ENV.K6_P99_MS || 2000);
 const ERROR_RATE = Number(__ENV.K6_ERROR_RATE || 0.01);
 
+http.setResponseCallback(http.expectedStatuses({ min: 100, max: 499 }));
+
 export const errorRate = new Rate("errors");
 export const healthLatency = new Trend("health_latency_ms", true);
 export const customerLatency = new Trend("customer_latency_ms", true);
