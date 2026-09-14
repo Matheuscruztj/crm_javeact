@@ -5,6 +5,23 @@ function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 
+function readK6Results(filePath, maxRecords = 50) {
+  const content = fs.readFileSync(filePath, "utf8").trim();
+  if (!content) {
+    return [];
+  }
+
+  try {
+    return JSON.parse(content);
+  } catch {
+    return content
+      .split(/\r?\n/)
+      .filter(Boolean)
+      .slice(0, maxRecords)
+      .map((line) => JSON.parse(line));
+  }
+}
+
 function formatNumber(value, fractionDigits = 2) {
   if (typeof value !== "number" || Number.isNaN(value)) {
     return "n/a";
@@ -31,7 +48,7 @@ if (!summaryFile || !jsonFile || !htmlFile) {
 }
 
 const summary = readJson(summaryFile);
-const results = readJson(jsonFile);
+const results = readK6Results(jsonFile);
 const scenario = summary?.root_group?.name || path.basename(summaryFile);
 
 const totalRequests = metricValue(summary, "http_reqs", "count");

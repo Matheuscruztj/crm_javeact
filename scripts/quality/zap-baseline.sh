@@ -18,7 +18,7 @@ fi
 
 run_in_root mkdir -p "$ZAP_REPORT_DIR"
 ZAP_REPORT_HOST_DIR="$(cd "$ROOT_DIR" && cd "$ZAP_REPORT_DIR" && pwd)"
-ZAP_DOCKER_USER="$(id -u):$(id -g)"
+run_in_root chmod 0777 "$ZAP_REPORT_DIR"
 
 log "Waiting for application readiness at ${ZAP_BASE_URL}"
 for _ in $(seq 1 "$ZAP_WAIT_SECONDS"); do
@@ -81,7 +81,6 @@ fi
 log "Running OWASP ZAP API scan against ${ZAP_TARGET_URL}"
 run_quiet_or_fail "ZAP authenticated scan failed" run_in_root docker run --rm \
   --network host \
-  --user "$ZAP_DOCKER_USER" \
   -e HOME=/zap/wrk \
   -v "$ZAP_REPORT_HOST_DIR:/zap/wrk:rw" \
   "$ZAP_IMAGE" \
