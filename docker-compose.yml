@@ -96,6 +96,7 @@ services:
       APP_ENV: local
       APP_PORT: 8080
       JAVA_TOOL_OPTIONS: ${JAVA_TOOL_OPTIONS:-}
+      SPRING_AUTOCONFIGURE_EXCLUDE: org.springframework.cloud.function.context.config.ContextFunctionCatalogAutoConfiguration
       DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-atlasops}
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-atlasops}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-atlasops}
@@ -123,7 +124,7 @@ services:
       minio:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health/readiness"]
       interval: 10s
       timeout: 5s
       start_period: 60s

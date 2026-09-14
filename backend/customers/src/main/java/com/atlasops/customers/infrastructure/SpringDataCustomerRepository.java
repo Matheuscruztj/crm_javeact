@@ -35,22 +35,34 @@ public interface SpringDataCustomerRepository extends JpaRepository<CustomerJpaE
    * would use ST_DWithin with geography type.
    */
   @Query(
-      "SELECT c FROM CustomerJpaEntity c WHERE c.tenantId = :tenantId"
-          + " AND c.latitude IS NOT NULL AND c.longitude IS NOT NULL"
-          + " AND (6371.0 * FUNCTION('acos', "
-          + "   FUNCTION('cos', FUNCTION('radians', :lat))"
-          + "   * FUNCTION('cos', FUNCTION('radians', c.latitude))"
-          + "   * FUNCTION('cos', FUNCTION('radians', c.longitude) - FUNCTION('radians', :lon))"
-          + "   + FUNCTION('sin', FUNCTION('radians', :lat))"
-          + "   * FUNCTION('sin', FUNCTION('radians', c.latitude))"
-          + " )) <= :distanceKm"
-          + " ORDER BY (6371.0 * FUNCTION('acos', "
-          + "   FUNCTION('cos', FUNCTION('radians', :lat))"
-          + "   * FUNCTION('cos', FUNCTION('radians', c.latitude))"
-          + "   * FUNCTION('cos', FUNCTION('radians', c.longitude) - FUNCTION('radians', :lon))"
-          + "   + FUNCTION('sin', FUNCTION('radians', :lat))"
-          + "   * FUNCTION('sin', FUNCTION('radians', c.latitude))"
-          + " )) ASC")
+      value =
+          "SELECT * FROM customers c WHERE c.tenant_id = :tenantId"
+              + " AND c.latitude IS NOT NULL AND c.longitude IS NOT NULL"
+              + " AND (6371.0 * acos("
+              + "   cos(radians(:lat))"
+              + "   * cos(radians(c.latitude))"
+              + "   * cos(radians(c.longitude) - radians(:lon))"
+              + "   + sin(radians(:lat))"
+              + "   * sin(radians(c.latitude))"
+              + " )) <= :distanceKm"
+              + " ORDER BY (6371.0 * acos("
+              + "   cos(radians(:lat))"
+              + "   * cos(radians(c.latitude))"
+              + "   * cos(radians(c.longitude) - radians(:lon))"
+              + "   + sin(radians(:lat))"
+              + "   * sin(radians(c.latitude))"
+              + " )) ASC",
+      countQuery =
+          "SELECT count(*) FROM customers c WHERE c.tenant_id = :tenantId"
+              + " AND c.latitude IS NOT NULL AND c.longitude IS NOT NULL"
+              + " AND (6371.0 * acos("
+              + "   cos(radians(:lat))"
+              + "   * cos(radians(c.latitude))"
+              + "   * cos(radians(c.longitude) - radians(:lon))"
+              + "   + sin(radians(:lat))"
+              + "   * sin(radians(c.latitude))"
+              + " )) <= :distanceKm",
+      nativeQuery = true)
   Page<CustomerJpaEntity> findByRadiusWithHaversine(
       @Param("lat") double latitude,
       @Param("lon") double longitude,
