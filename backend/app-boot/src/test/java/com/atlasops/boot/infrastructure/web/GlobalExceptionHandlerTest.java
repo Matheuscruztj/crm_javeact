@@ -12,7 +12,6 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -31,11 +30,6 @@ class GlobalExceptionHandlerTest {
   private final GlobalExceptionHandler handler = new GlobalExceptionHandler();
   private static final String TRACE_ID = "test-correlation-id-123";
 
-  @BeforeEach
-  void setUp() {
-    MDC.put("correlationId", TRACE_ID);
-  }
-
   @AfterEach
   void tearDown() {
     MDC.clear();
@@ -51,7 +45,8 @@ class GlobalExceptionHandlerTest {
     MethodArgumentNotValidException ex =
         new MethodArgumentNotValidException(methodParameter, bindingResult);
 
-    ResponseEntity<ProblemDetailResponse> response = handler.handleMethodArgumentNotValid(ex);
+    ResponseEntity<ProblemDetailResponse> response =
+        withTraceId(() -> handler.handleMethodArgumentNotValid(ex));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     ProblemDetailResponse body = response.getBody();
@@ -78,7 +73,8 @@ class GlobalExceptionHandlerTest {
 
     ConstraintViolationException ex = new ConstraintViolationException(Set.of(violation));
 
-    ResponseEntity<ProblemDetailResponse> response = handler.handleConstraintViolation(ex);
+    ResponseEntity<ProblemDetailResponse> response =
+        withTraceId(() -> handler.handleConstraintViolation(ex));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     ProblemDetailResponse body = response.getBody();
@@ -95,7 +91,8 @@ class GlobalExceptionHandlerTest {
   void should_returnBadRequest_when_illegalArgument() {
     IllegalArgumentException ex = new IllegalArgumentException("Invalid page size");
 
-    ResponseEntity<ProblemDetailResponse> response = handler.handleIllegalArgument(ex);
+    ResponseEntity<ProblemDetailResponse> response =
+        withTraceId(() -> handler.handleIllegalArgument(ex));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     ProblemDetailResponse body = response.getBody();
@@ -111,7 +108,8 @@ class GlobalExceptionHandlerTest {
   void should_returnNotFound_when_resourceNotFound() {
     ResourceNotFoundException ex = new ResourceNotFoundException("Customer not found");
 
-    ResponseEntity<ProblemDetailResponse> response = handler.handleResourceNotFound(ex);
+    ResponseEntity<ProblemDetailResponse> response =
+        withTraceId(() -> handler.handleResourceNotFound(ex));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     ProblemDetailResponse body = response.getBody();
@@ -126,7 +124,8 @@ class GlobalExceptionHandlerTest {
   void should_returnConflict_when_duplicateResource() {
     DuplicateResourceException ex = new DuplicateResourceException("Email already registered");
 
-    ResponseEntity<ProblemDetailResponse> response = handler.handleDuplicateResource(ex);
+    ResponseEntity<ProblemDetailResponse> response =
+        withTraceId(() -> handler.handleDuplicateResource(ex));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
     ProblemDetailResponse body = response.getBody();
@@ -141,7 +140,8 @@ class GlobalExceptionHandlerTest {
   void should_returnForbidden_when_forbiddenAction() {
     ForbiddenActionException ex = new ForbiddenActionException("Insufficient permissions");
 
-    ResponseEntity<ProblemDetailResponse> response = handler.handleForbiddenAction(ex);
+    ResponseEntity<ProblemDetailResponse> response =
+        withTraceId(() -> handler.handleForbiddenAction(ex));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
     ProblemDetailResponse body = response.getBody();
@@ -156,7 +156,8 @@ class GlobalExceptionHandlerTest {
   void should_returnUnauthorized_when_unauthorized() {
     UnauthorizedException ex = new UnauthorizedException("Token expired");
 
-    ResponseEntity<ProblemDetailResponse> response = handler.handleUnauthorized(ex);
+    ResponseEntity<ProblemDetailResponse> response =
+        withTraceId(() -> handler.handleUnauthorized(ex));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
     ProblemDetailResponse body = response.getBody();
@@ -172,7 +173,8 @@ class GlobalExceptionHandlerTest {
     BusinessRuleViolationException ex =
         new BusinessRuleViolationException("Cannot deactivate own account");
 
-    ResponseEntity<ProblemDetailResponse> response = handler.handleBusinessRuleViolation(ex);
+    ResponseEntity<ProblemDetailResponse> response =
+        withTraceId(() -> handler.handleBusinessRuleViolation(ex));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
     ProblemDetailResponse body = response.getBody();
@@ -187,7 +189,8 @@ class GlobalExceptionHandlerTest {
   void should_returnInternalServerError_when_unexpectedException() {
     Exception ex = new RuntimeException("Unexpected database failure");
 
-    ResponseEntity<ProblemDetailResponse> response = handler.handleGenericException(ex);
+    ResponseEntity<ProblemDetailResponse> response =
+        withTraceId(() -> handler.handleGenericException(ex));
 
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     ProblemDetailResponse body = response.getBody();
@@ -209,5 +212,11 @@ class GlobalExceptionHandlerTest {
     ProblemDetailResponse body = response.getBody();
     assertThat(body).isNotNull();
     assertThat(body.traceId()).isEqualTo("unknown");
+  }
+
+  private ResponseEntity<ProblemDetailResponse> withTraceId(
+      java.util.function.Supplier<ResponseEntity<ProblemDetailResponse>> handlerCall) {
+    MDC.put("correlationId", TRACE_ID);
+    return handlerCall.get();
   }
 }
